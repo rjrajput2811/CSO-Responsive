@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - CSO </title>
+    <title>@ViewData["Title"] - CS0 </title>
     <link href="~/css/icomoon/styles.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -16,35 +16,35 @@
     <link href="~/css/colors.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/components.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/layout.min.css" rel="stylesheet" asp-append-version="true" />
-   
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // $(document).ready(function () {
-        //     // Get the current URL
-        //     var currentUrl = window.location.href.toLowerCase();
+        $(document).ready(function () {
+            // Get the current URL
+            var currentUrl = window.location.href.toLowerCase();
 
-        //     // Highlight the active menu item for non-treeview items
+            // Highlight the active menu item for non-treeview items
 
-        //     $('ul.nav-sidebar a').filter(function () {
-        //         return this.href.toLowerCase() === currentUrl;
-        //     }).addClass('menu-active');
+            $('ul.nav-sidebar a').filter(function () {
+                return this.href.toLowerCase() === currentUrl;
+            }).addClass('menu-active');
 
-        //     // For treeview items (submenus)
-        //     $('ul.nav-group-sub a').filter(function () {
-        //         return this.href.toLowerCase() === currentUrl;
-        //     }).each(function () {
-        //         // Open the parent submenu and highlight the active item
-        //         $(this).closest('.nav-item-submenu').addClass('menu-open');
-        //     });
+            // For treeview items (submenus)
+            $('ul.nav-group-sub a').filter(function () {
+                return this.href.toLowerCase() === currentUrl;
+            }).each(function () {
+                // Open the parent submenu and highlight the active item
+                $(this).closest('.nav-item-submenu').addClass('menu-open');
+            });
 
-        //     $('.nav-group-sub').each(function () {
-        //         // Check if the submenu contains an active item
-        //         if ($(this).find('.menu-active').length > 0) {
-        //             $(this).addClass('open');
-        //         }
-        //     });
-        // });
+            $('.nav-group-sub').each(function () {
+                // Check if the submenu contains an active item
+                if ($(this).find('.menu-active').length > 0) {
+                    $(this).addClass('open');
+                }
+            });
+        });
     </script>
 
     <style type="text/css">
@@ -84,174 +84,198 @@
     </style>
 </head>
 <body>
-   
     <!-- Main navbar -->
-    <div class="navbar navbar-expand-lg navbar-dark navbar-static">
-        
-
-        <div class="navbar-brand wmin-0 mr-lg-5">
-
-            <img id="imglogo" name="imglogo" src="~/images/wipro-logo.png" class="img-fluid  shadow-0 " alt="" />
-       
+    <div class="navbar navbar-expand-md navbar-dark navbar-static">
+        <div class="d-md-none">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-mobile">
+                <i class="icon-tree5"></i>
+            </button>
+            <button class="navbar-toggler sidebar-mobile-main-toggle" type="button">
+                <i class="icon-paragraph-justify3"></i>
+            </button>
         </div>
 
-        
-
-        <ul class="navbar-nav flex-row order-1 order-lg-2 flex-1 flex-lg-0 justify-content-end align-items-center">
-          
-
-            <li class="nav-item nav-item-dropdown-lg dropdown dropdown-user h-100">
-                <a href="#" class="navbar-nav-link navbar-nav-link-toggler d-inline-flex align-items-center h-100 dropdown-toggle" data-toggle="dropdown">
-
-                    <span>
-                        <span class="font-weight-bold">@HttpContextAccessor.HttpContext.Session.GetString("FullName")</span>
-                    </span>
-                </a>
-
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a href="#" class="dropdown-item"><i class="icon-cog5"></i> Account settings</a>
-                    <a href="@Url.Action("Logout", "Account")" class="dropdown-item"><i class="icon-switch2"></i> Logout</a>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <!-- Secondary navbar -->
-    <div class="navbar navbar-expand navbar-light px-0 px-lg-3">
-        <div class="overflow-auto overflow-lg-visible scrollbar-hidden flex-1">
-            <ul class="navbar-nav flex-row text-nowrap">
+        <div class="navbar-collapse d-block" id="navbar-mobile">
+            <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a asp-controller="" asp-action="" class="nav-link" title="Dashboard" id="Dashboard">
-                        <i class="icon-home4"></i>
-                        <span>Dashboard</span>
+                    <a href="#" class="navbar-nav-link sidebar-control sidebar-main-toggle d-none d-md-block mt-1">
+                        <i class="icon-paragraph-justify3"></i>
                     </a>
                 </li>
 
-                <li class="nav-item nav-item-dropdown-lg mega-menu-full">
-                    <a href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown">
-                        <i class="icon-stack2 mr-2"></i>
-                        CSO
+                <div class="navbar-brand w-100 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between px-2">
+                    <span class="text-white font-weight-bold text-wrap" style="font-size: 1rem;">
+                        Customer Satisfaction Opportunities
+                    </span>
+                    <span class="text-white mt-1 mt-md-0" style="font-size: 0.85rem;">
+                        Version - 1.1 17/05/2025
+                    </span>
+                </div>
+
+            </ul>
+            <span class="badge ml-md-3 mr-md-auto"> </span>
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown dropdown-user">
+                    <a href="#" class="navbar-nav-link d-flex align-items-center dropdown-toggle" data-toggle="dropdown">
+                        <span>
+                            <span class="font-weight-bold">@HttpContextAccessor.HttpContext.Session.GetString("FullName")</span>
+                        </span>
                     </a>
 
-                    <div class="dropdown-menu dropdown-scrollable-lg wmin-lg-300 p-0">
-                        <div class="dropdown-content-body">
-                            <div class="row">
-                                <div class="col-md-3 mb-3 mb-md-0">
-                                    <div class="font-weight-bold border-bottom pb-2 mb-2">View Users</div>
-                                    <a asp-controller="User" asp-action="UserDetail" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-people"></i>
-                                        <span>User</span>
-                                    </a>
-                                   
-                                </div>
-
-                                <div class="col-md-3 mb-3 mb-md-0">
-                                    <div class="font-weight-bold border-bottom pb-2 mb-2">Log CSO</div>
-                                    <a asp-controller="" asp-action="" class="nav-link" title="CSO Log" id="CSOLog">
-                                        <i class="far fa-edit"></i>
-                                        <span>CSO Log</span>
-                                    </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Analysis and Solution" id="AnalysisandSolution">
-                                        <i class="fas fa-clipboard-list"></i>
-                                        <span>Analysis and Solution</span>
-                                    </a>
-                                </div>
-
-                                <div class="col-md-3">
-                                    <div class="font-weight-bold border-bottom pb-2 mb-2">Report</div>
-                                    <a asp-controller="" asp-action="" class="nav-link" title="MIS" id="MIS">
-                                        <i class="fas fa-regular fa-folder-tree"></i>
-                                        <span>MIS</span>
-                                    </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="CSO Log Report" id="CSOLogReport">
-                                        <i class="fas fa-regular fa-rectangle-list"></i>
-                                        <span>CSO Log Report</span>
-                                    </a>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="font-weight-bold border-bottom pb-2 mb-2">Configration</div>
-                                    <a asp-controller="" asp-action="" class="nav-link" title="Mail Matrix" id="Mail Matrix">
-                                        <i class="fas fa-envelope-square"></i>
-                                        <span>Mail Matrix</span>
-                                    </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>Email/SMTP Setting</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="nav-item nav-item-dropdown-lg mega-menu-full">
-                    <a href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown">
-                        <i class="icon-indent-decrease2 mr-2"></i>
-                        Master
-                    </a>
-
-                    <div class="dropdown-menu dropdown-scrollable-lg wmin-lg-300 p-0">
-                        <div class="dropdown-content-body">
-                            <div class="row">
-                                <div class="col-md-3 mb-3 mb-md-0">
-                                    <div class="font-weight-semibold border-bottom pb-2 mb-2">Primary</div>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>Division</span>
-                                    </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>Category</span>
-                                    </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>Complain Type</span>
-                                    </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>CSO Class</span>
-                                    </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>Brand</span>
-                                    </a>
-                                    
-                                </div>
-
-                                <div class="col-md-3 mb-3 mb-md-0">
-                                    <div class="font-weight-semibold border-bottom pb-2 mb-2">Secondary</div>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>Product Type</span>
-                                    </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>Plant</span>
-                                    </a>
-                                        <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                            <i class="icon-gear"></i>
-                                            <span>Nearest Plant</span>
-                                        </a>
-                                        <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                            <i class="icon-gear"></i>
-                                            <span>User Role</span>
-                                        </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>Recycle Days Configration</span>
-                                    </a>
-                                </div>
-
-                            </div>
-                        </div>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a href="#" class="dropdown-item"><i class="icon-cog5"></i> Account settings</a>
+                        <a href="@Url.Action("Logout", "Account")" class="dropdown-item"><i class="icon-switch2"></i> Logout</a>
                     </div>
                 </li>
             </ul>
-          </div>
-     </div>
-    <div class="content-wrapper">
-        @RenderBody()
+        </div>
     </div>
-                
+    <!-- /main navbar -->
+    <!-- Page content -->
+    <div class="page-content">
+        <!-- Main sidebar -->
+        <div class="sidebar sidebar-dark sidebar-main sidebar-expand-md">
+            <!-- Sidebar mobile toggler -->
+            <div class="sidebar-mobile-toggler text-center">
+                <a href="#" class="sidebar-mobile-main-toggle">
+                    <i class="icon-arrow-left8"></i>
+                </a>
+                Navigation
+                <a href="#" class="sidebar-mobile-expand">
+                    <i class="icon-screen-full"></i>
+                    <i class="icon-screen-normal"></i>
+                </a>
+            </div>
+            <!-- /sidebar mobile toggler -->
+            <!-- Sidebar content -->
+            <div class="sidebar-content">
+                <!-- User menu -->
+                <div class="sidebar-user">
+                    <div class="card-body text-center bg-white p-3 border-right">
+                        <a>
+                            <img id="imglogo" name="imglogo" src="~/images/wipro-logo.png" class="img-fluid  shadow-0 " alt="" />
+                        </a>
+                    </div>
+                </div>
+                <!-- /user menu -->
+                <!-- Main navigation -->
+                <div class="card card-sidebar-mobile">
+                    <ul class="nav nav-sidebar" data-nav-type="accordion">
 
+                        <li class="nav-item">
+                            <a asp-controller="" asp-action="" class="nav-link" title="Dashboard" id="Dashboard">
+                                <i class="icon-home4"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a asp-controller="" asp-action="" class="nav-link" id="Log_CSO" title="Log CSO">
+                                <i class="far fa-edit"></i>
+                                <span>
+                                    Log CSO
+                                </span>
+                            </a>
+                        </li>
+
+
+                        <li class="nav-item">
+                            <a asp-controller="" asp-action="" class="nav-link" id="Analysis_Solution" title="Analysis & Solution">
+                                <i class="fas fa-clipboard-list"></i>
+                                <span>
+                                    Analysis & Solution
+                                </span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-submenu">
+                            <a href="#" class="nav-link" title="Reports" id="Masters"><i class="icon-file-eye"></i><span>Reports</span></a>
+                            <ul class="nav nav-group-sub" data-submenu-title="Reports">
+
+                                <li class="nav-item  nav-item-submenu">
+                                    <a asp-controller="" asp-action="" class="nav-link" title="MIS" id="MIS">
+                                        <i class="icon-pencil5"></i>
+                                        <span>MIS</span>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item  nav-item-submenu">
+                                    <a asp-controller="" asp-action="" class="nav-link" title="CSO Log Report" id="CSO_Log_Report">
+                                        <i class="icon-pencil5"></i>
+                                        <span>CSO Log Report</span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a asp-controller="" asp-action="" class="nav-link" title="CPS_Details" id="CPS">
+                                <i class="fas fa-envelope-square"></i>
+                                <span>
+                                    Email/SMTP Setting
+                                </span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a asp-controller="" asp-action="" class="nav-link" title="Users" id="Users">
+                                <i class="icon-user"></i>
+                                <span>
+                                    User
+                                </span>
+                            </a>
+                        </li>
+
+
+
+                        <li class="nav-item">
+                            <a asp-controller="" asp-action="" class="nav-link" title="Email" id="Email">
+                                <i class="fas fa-envelope-square"></i>
+                                <span>
+                                    Mail Matrix
+                                </span>
+                            </a>
+                        </li>
+
+
+
+                        <li class="nav-item nav-item-submenu">
+                            <a href="#" class="nav-link" title="Utility" id="Utility"><i class="icon-copy"></i> <span>Utility</span></a>
+                            <ul class="nav nav-group-sub" data-submenu-title="Utility">
+
+                                <li class="nav-item  nav-item-submenu">
+                                    <a asp-controller="" asp-action="" class="nav-link" title="Division" id="Division">
+                                        <i class="icon-pencil5"></i>
+                                        <span>Division</span>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item  nav-item-submenu">
+                                    <a asp-controller="" asp-action="" class="nav-link" title="Category" id="Category">
+                                        <i class="icon-pencil5"></i>
+                                        <span>Category</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+
+                    </ul>
+                </div>
+
+
+                <!-- /main navigation -->
+            </div>
+            <!-- /sidebar content -->
+        </div>
+        <!-- /main sidebar -->
+        <!-- Main content -->
+        <div class="content-wrapper">
+            @RenderBody()
+        </div>
+        <!-- /main content -->
+    </div>
     <!-- /page content -->
 
 
