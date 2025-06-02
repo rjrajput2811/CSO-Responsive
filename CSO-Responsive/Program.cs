@@ -1,5 +1,11 @@
+using CSO.Core.DatabaseContext;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure database connection.
+var connstring = builder.Configuration.GetConnectionString("DbConnectionString");
+builder.Services.AddDbContext<CSOResponsiveDbContext>(Options => Options.UseSqlServer(connstring));
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
