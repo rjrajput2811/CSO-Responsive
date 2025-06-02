@@ -8,7 +8,16 @@ var connstring = builder.Configuration.GetConnectionString("DbConnectionString")
 builder.Services.AddDbContext<CSOResponsiveDbContext>(Options => Options.UseSqlServer(connstring));
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSession();
+//builder.Services.AddCors(opt =>
+//{
+//    opt.AddPolicy("CorsPolicy", builder => builder
+//        .AllowAnyHeader()
+//        .AllowAnyMethod()
+//        .WithOrigins(Configuration.GetSection(Constants.CORS_ORIGINS).Get<string[]>())
+//        .AllowCredentials());
+//});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -22,8 +31,10 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseRouting();
 
+app.UseRouting();
+//app.UseCors("CorsPolicy");
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(
