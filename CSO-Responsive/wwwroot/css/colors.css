@@ -15,8 +15,7 @@
  *  'true'  - enables component and includes it to main CSS file.
  *  'false' - disables component and excludes it from main CSS file.
  *
- *  Layout helper: @if $layout == 'base' {...}
- *  Theme helper: @if $theme == 'material' {...}
+ *  Layout helper: @if $is-layout5 {...}
  *  Component helper: @if $enable-* {...}
  *
  * ---------------------------------------------------------------------------- */
@@ -2138,7 +2137,7 @@
 .bg-grey-400 {
   background-color: #888; }
 
-.border-grey-400 {
+.border-secondary {
   border-color: #888; }
 
 .border-top-grey-400 {
@@ -2346,8 +2345,7 @@
     color: #273338; }
 
 .bg-slate-800 {
-    background-color: #a193c7;
-}
+  background-color: #37474F; }
 
 .border-slate-800 {
   border-color: #37474F; }
@@ -2417,11 +2415,3 @@
 
 .bg-body {
   background-color: #f5f5f5; }
-
-.text-sky-100 {
-    color: #2ec7c9;
-}
-
-.text-puple-100 {
-    color: #b6a2de;
-}
