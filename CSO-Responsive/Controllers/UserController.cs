@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CSO_Responsive.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CSO_Responsive.Controllers
 {
@@ -11,7 +13,22 @@ namespace CSO_Responsive.Controllers
 
         public IActionResult UserDetail()
         {
-            return View();
+            var model = new UserViewModel
+            {
+                RoleList = new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Admin", Value = "1" },
+                    new SelectListItem { Text = "User", Value = "2" }
+                },
+                
+                UserTypeList = new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Internal", Value = "1" },
+                    new SelectListItem { Text = "Vendor", Value = "2" }
+                },
+            };
+
+            return View(model);
         }
     }
 }

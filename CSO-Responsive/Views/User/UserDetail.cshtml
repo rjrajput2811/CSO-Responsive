@@ -1,4 +1,7 @@
-﻿@{
+﻿@model UserViewModel
+
+
+@{
     ViewData["Title"] = "User Details";
 }
 
@@ -114,21 +117,21 @@
                 <div class="card-body row">
                     <div class="col-lg-4 mb-3">
                                 @Html.LabelFor(m => m.RoleId)<em>*</em>
-                                @Html.DropDownListFor(l => l.RoleId, (IEnumerable<SelectListItem>)ViewBag.RoleList, "Select Role", new { @id = "ddlRole", @class = "form-control" })
+                                @Html.DropDownListFor(l => l.RoleId, Model.RoleList, "Select Role", new { @id = "ddlRole", @class = "form-control" })
                                 @Html.ValidationMessageFor(l => l.RoleId, "", new { @class = "text-danger" })
                       
                     </div>
                     <div class="col-lg-4 mb-3">
                                 @Html.LabelFor(m => m.UserType)<em>*</em>
-                                @Html.DropDownListFor(l => l.UserType, (IEnumerable<SelectListItem>)ViewBag.UserTypeList, "Select User Type", new { @id = "ddlUserType", @class = "form-control" })
+                                @Html.DropDownListFor(l => l.UserType, Model.UserTypeList, "Select User Type", new { @id = "ddlUserType", @class = "form-control" })
                                 @Html.ValidationMessageFor(l => l.UserType, "", new { @class = "text-danger" })
                         
                     </div>
                     <div class="col-lg-4 mb-3">
                                 @Html.LabelFor(m => m.DivisionId)<em>*</em>
                                 <br />
-                                <div class="col-sm-10 lstDivisionCtr" style="max-width: 100% !important">
-                                    <select tabindex="-1" class="lstDivision" multiple="multiple" id="lstDivision" placeholder="Select Section">
+                                <div class="lstDivisionCtr" style="">
+                                    <select tabindex="-1" class="lstDivision select2" multiple="multiple" id="lstDivision" placeholder="Select Section">
                                     </select>
                                 </div>
                     </div>
