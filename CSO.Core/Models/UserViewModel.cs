@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CSO.Core.Models;
 
@@ -14,6 +14,10 @@ public class UserViewModel
     public string? MobileNo { get; set; }
 
     public int RoleId { get; set; }
+
+    public IEnumerable<SelectListItem>? RoleList { get; set; }
+
+    public IEnumerable<SelectListItem>? UserTypeList { get; set; }
 
     public string? Rights { get; set; }
 

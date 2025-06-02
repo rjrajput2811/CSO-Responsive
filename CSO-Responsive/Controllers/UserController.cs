@@ -1,4 +1,4 @@
-﻿using CSO_Responsive.Models;
+﻿using CSO.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -20,7 +20,7 @@ namespace CSO_Responsive.Controllers
                     new SelectListItem { Text = "Admin", Value = "1" },
                     new SelectListItem { Text = "User", Value = "2" }
                 },
-                
+
                 UserTypeList = new List<SelectListItem>
                 {
                     new SelectListItem { Text = "Internal", Value = "1" },
