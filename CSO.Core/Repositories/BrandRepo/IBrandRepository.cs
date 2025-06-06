@@ -1,9 +1,8 @@
-﻿using CSO.Core.DatabaseContext;
-using CSO.Core.Models;
+﻿using CSO.Core.Models;
 
 namespace CSO.Core.Repositories.BrandRepo;
 
 public interface IBrandRepository
 {
-    
+    Task<List<BrandViewModel>> GetBrandListByDivisionIdAsync(int divisionId);
 }

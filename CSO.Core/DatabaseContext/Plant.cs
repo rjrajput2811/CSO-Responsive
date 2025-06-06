@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CSO.Core.DatabaseContext;
 
-[Table("Plant")]
+[Table("Plants")]
 public class Plant : SqlTable
 {
     public string? Name { get; set; }

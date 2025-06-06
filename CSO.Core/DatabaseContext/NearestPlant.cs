@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CSO.Core.DatabaseContext;
 
-[Table("NearestPlant")]
+[Table("NearestPlants")]
 public class NearestPlant : SqlTable
 {
     public string? Name { get; set; }

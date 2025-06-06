@@ -1,4 +1,12 @@
 using CSO.Core.DatabaseContext;
+using CSO.Core.Repositories.BrandRepo;
+using CSO.Core.Repositories.DivisionRepo;
+using CSO.Core.Repositories.NearestPlantRepo;
+using CSO.Core.Repositories.PlantRepo;
+using CSO.Core.Repositories.ProductTypeRepo;
+using CSO.Core.Repositories.UserRepo;
+using CSO.Core.Repositories.UsersRoleRepo;
+using CSO.Core.Services.SystemLogs;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +15,18 @@ var builder = WebApplication.CreateBuilder(args);
 var connstring = builder.Configuration.GetConnectionString("DbConnectionString");
 builder.Services.AddDbContext<CSOResponsiveDbContext>(Options => Options.UseSqlServer(connstring));
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddRazorRuntimeCompilation();
+
+builder.Services.AddTransient<ISystemLogService, SystemLogService>();
+builder.Services.AddTransient<IUsersRoleRepository, UsersRoleRepository>();
+builder.Services.AddTransient<IDivisionRepository, DivisionRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IPlantRepository, PlantRepository>();
+builder.Services.AddTransient<IBrandRepository, BrandRepository>();
+builder.Services.AddTransient<INearestPlantRepository, NearestPlantRepository>();
+builder.Services.AddTransient<IProductTypeRepository, ProductTypeRepository>();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 //builder.Services.AddCors(opt =>

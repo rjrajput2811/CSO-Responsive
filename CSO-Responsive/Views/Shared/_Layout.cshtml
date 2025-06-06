@@ -104,7 +104,7 @@
                 <a href="#" class="navbar-nav-link navbar-nav-link-toggler d-inline-flex align-items-center h-100 dropdown-toggle" data-toggle="dropdown">
 
                     <span>
-                        <span class="font-weight-bold">@HttpContextAccessor.HttpContext.Session.GetString("FullName")</span>
+                        <span class="font-weight-bold">@HttpContextAccessor?.HttpContext?.Session.GetString("FullName")</span>
                     </span>
                 </a>
 
@@ -137,9 +137,9 @@
                             <div class="row">
                                 <div class="col-md-3 mb-3 mb-md-0">
                                     <div class="font-weight-bold border-bottom pb-2 mb-2">View Users</div>
-                                    <a asp-controller="User" asp-action="UserDetail" class="nav-link" title="Dashboard" id="Dashboard">
+                                    <a asp-controller="Users" asp-action="Index" class="nav-link" title="Dashboard" id="Dashboard">
                                         <i class="icon-people"></i>
-                                        <span>User</span>
+                                        <span>Users</span>
                                     </a>
                                    
                                 </div>
@@ -260,6 +260,7 @@
     <!-- Core JS files -->
     <script src="~/js/app.js" asp-append-version="true"></script>
     <script src="~/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/js/noty.min.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.min.js" asp-append-version="true"></script>
     <script src="~/js/jquery.min.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap/dist/js/blockui.min.js" asp-append-version="true"></script>
