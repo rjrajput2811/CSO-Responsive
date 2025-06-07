@@ -84,36 +84,130 @@
     </style>
 </head>
 <body>
-   
     <!-- Main navbar -->
-    <div class="navbar navbar-expand-lg navbar-dark navbar-static">
-        
+    <div class="navbar navbar-expand-md navbar-dark bg-indigo navbar-static">
+        @*<div class="navbar-brand">
+        <a href="index.html" class="d-inline-block">
 
-        <div class="navbar-brand wmin-0 mr-lg-5">
+        </a>
+        </div>*@
 
-            <img id="imglogo" name="imglogo" src="~/images/wipro-logo.png" class="img-fluid  shadow-0 " alt="" />
-       
+        <div class="d-md-none">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-mobile">
+                
+            </button>
+            <button class="navbar-toggler sidebar-mobile-main-toggle" type="button">
+            
+            </button>
         </div>
 
-        
+        <div class="collapse navbar-collapse" id="navbar-mobile">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="#" class="navbar-nav-link sidebar-control sidebar-main-toggle d-none d-md-block">
+                        <i class="icon-paragraph-justify3"></i>
+                    </a>
+                </li>
+            </ul>
 
-        <ul class="navbar-nav flex-row order-1 order-lg-2 flex-1 flex-lg-0 justify-content-end align-items-center">
-          
+            <span class="navbar-text ml-md-3 font-weight-bolder" style="font-size:22px;" id="spnLogin">
+                <span class="badge mr-2"></span> @* badge-mark  border-orange-300*@
+                Customer Satisfaction Opportunities
+                @*<span style="font-size:12px;">Version:@CSO.Web.HtmlHelperExtensions.GetApplicationVersion()</span>*@
+                <span style="font-size:12px;">Version:3.14  Date: 10-04-2025</span>
+            </span>
 
-            <li class="nav-item nav-item-dropdown-lg dropdown dropdown-user h-100">
-                <a href="#" class="navbar-nav-link navbar-nav-link-toggler d-inline-flex align-items-center h-100 dropdown-toggle" data-toggle="dropdown">
 
-                    <span>
-                        <span class="font-weight-bold">@HttpContextAccessor?.HttpContext?.Session.GetString("FullName")</span>
-                    </span>
-                </a>
+            @if (@HttpContextAccessor.HttpContext.Session.GetInt32("UserId") > 0)
+            {
+                <ul class="navbar-nav ml-md-auto">
+                    <li class="nav-item" style="margin-top: 0.875rem; margin-right: 10px; white-space: nowrap; ">
+                        @if (@HttpContextAccessor.HttpContext.Session.GetString("FullName") != null)
+                        {
+                            <span class="font-weight-bold">Welcome @HttpContextAccessor.HttpContext.Session.GetString("FullName")</span>
+                        }
+                    </li>
+                    <li class="nav-item" style="margin-top: 0.875rem; margin-right: 10px; white-space: nowrap">
+                        <div class="row">
+                            <div class="col-1"><span class="font-weight-bold">FY:</span></div>
+                            <div class="col-2">
+                                <select id="ddlFinancialYear" style="border-radius:5px;">
+                                    @{
+                                        var fyStartMonth = DateTime.Now.Month;
+                                        var fyYear = DateTime.Now.Year;
+                                        if (fyStartMonth > 3)
+                                        {
+                                            fyYear = fyYear + 1;
+                                        }
+                                        var selectedFyYear = HttpContextAccessor.HttpContext.Session.GetString("FYear");
+                                    }
+                                    @for (int i = 2021; i < fyYear; i++)
+                                    {
 
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a href="#" class="dropdown-item"><i class="icon-cog5"></i> Account settings</a>
-                    <a href="@Url.Action("Logout", "Account")" class="dropdown-item"><i class="icon-switch2"></i> Logout</a>
-                </div>
-            </li>
-        </ul>
+                                        var value = i.ToString().Substring(2) + (i + 1).ToString().Substring(2);
+                                        var Text = i.ToString() + "-" + (i + 1).ToString().Substring(2);
+
+                                        if (value == selectedFyYear)
+                                        {
+                                            <option value="@value" selected>@Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@value">@Text</option>
+                                        }
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+
+                    </li>
+                    <li class="nav-item" style="margin-top: 0.875rem; margin-right: 10px;">
+                        <a class="navbar-nav-link" id="iProfileIcon">
+                            <i class="fa fa-user"></i>
+
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">My Account</a></li>
+                            <li><a href="#">View Profile</a></li>
+                            <li><a href="#">Edit Profile</a></li>
+                            <li><a href="#">Change Password</a></li>
+                            <li><a href="#">Setting</a></li>
+                            <li><a href="#">Logout</a></li>
+                        </ul>
+                        @*@if (@HttpContextAccessor.HttpContext.Session.GetString("FullName") != null)
+                    {
+                    <span>@HttpContextAccessor.HttpContext.Session.GetString("FullName")</span>
+                    }*@
+                        @if (@HttpContextAccessor.HttpContext.Session.GetString("RoleName") != null)
+                        {
+                            <input type="hidden" id="hdnRoleName" style="float: right" value='@HttpContextAccessor.HttpContext.Session.GetString("RoleName")' />
+                        }
+                    </li>
+                    <li class="nav-item" style="margin-top: 0.875rem;">
+                        @*<a href="@Url.Action("LogOut", "Home")" class="navbar-nav-link">
+                    <i class="icon-switch2"></i>
+                    <span class="ml-2">Logout</span>
+                    </a>*@
+                        <a href="@Url.Action("LogOut", "Home")" class="navbar-nav-link">
+                            <i class="fa fa-sign-out"></i>
+
+                        </a>
+                    </li>
+                </ul>
+            }
+            else
+            {
+                <ul class="navbar-nav ml-md-auto">
+                    <li class="nav-item">
+                        <a href="@Url.Action("Login", "Account")" class="navbar-nav-link">
+                            <i class="icon-switch2"></i>
+                            <span class="ml-2">Login</span>
+                        </a>
+                    </li>
+                </ul>
+            }
+        </div>
     </div>
     <!-- Secondary navbar -->
     <div class="navbar navbar-expand navbar-light px-0 px-lg-3">
@@ -193,7 +287,7 @@
                             <div class="row">
                                 <div class="col-md-3 mb-3 mb-md-0">
                                     <div class="font-weight-semibold border-bottom pb-2 mb-2">Primary</div>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
+                                    <a asp-controller="Division" asp-action="Division" class="nav-link" title="Dashboard" id="Dashboard">
                                         <i class="icon-gear"></i>
                                         <span>Division</span>
                                     </a>
