@@ -1,9 +1,12 @@
+using CSO.Core.DatabaseContext;
 using CSO.Core.Models;
 
 namespace CSO.Core.Repositories.UserRepo;
 
 public interface IUserRepository
 {
+    Task<User> Login(LoginViewModel loginViewModel);
+    Task<User> LoginWithAdId(string AdId);
     Task<UserViewModel?> GetUserByIdAsync(int userId);
     Task<OperationResult> InsertUserAsync(UserViewModel user);
     Task<OperationResult> UpdateUserAsync(UserViewModel user);

@@ -19,6 +19,33 @@ public class UserRepository : SqlTableRepository, IUserRepository
         _systemLogService = systemLogService;
     }
 
+    public async Task<User> Login(LoginViewModel loginViewModel)
+    {
+        try
+        {
+            var result = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserName == loginViewModel.Username && x.Password == loginViewModel.Password);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<User> LoginWithAdId(string AdId)
+    {
+        try
+        {
+            var result = await _dbContext.Users.FirstOrDefaultAsync(x => x.ADid == AdId);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
     public async Task<UserViewModel?> GetUserByIdAsync(int userId)
     {
         try
