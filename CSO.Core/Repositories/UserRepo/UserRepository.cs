@@ -100,7 +100,10 @@ public class UserRepository : SqlTableRepository, IUserRepository
                 IsInMailMatrix = user.IsInMailMatrix,
                 ADid = user.ADid,
                 UserName = user.ADid,
-                Password = user.ADid
+                Password = user.ADid,
+                AddedBy = user.AddedBy,
+                AddedOn = user.AddedOn,
+                Rights = ""
             };
 
             var result = await base.CreateAsync<User>(userDetails);
@@ -140,6 +143,8 @@ public class UserRepository : SqlTableRepository, IUserRepository
             userDetails.ADid = user.ADid;
             userDetails.UserName = user.ADid;
             userDetails.Password = user.ADid;
+            userDetails.UpdatedBy = user.UpdatedBy;
+            userDetails.UpdatedOn = user.UpdatedOn;
 
             var result = await base.UpdateAsync<User>(userDetails);
             return result;
@@ -157,6 +162,36 @@ public class UserRepository : SqlTableRepository, IUserRepository
         {
             var result = await base.DeleteAsync<User>(userId);
             return result;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<List<UsersGridModel>> GetAllUsersAsync()
+    {
+        try
+        {
+            var list = await _dbContext.Users
+                .Join(_dbContext.UserRoles,
+                    user => user.RoleId,
+                    role => role.Id,
+                    (user, role) => new UsersGridModel
+                    {
+                        Id = user.Id,
+                        Name = user.Name,
+                        ADid = user.ADid,
+                        Email = user.Email,
+                        MobileNo = user.MobileNo,
+                        Designation = user.Designation,
+                        Role = role.RoleName
+                    }
+                )
+                .ToListAsync();
+
+            return list;
         }
         catch (Exception ex)
         {

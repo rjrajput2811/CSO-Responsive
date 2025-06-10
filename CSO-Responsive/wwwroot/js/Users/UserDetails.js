@@ -1,12 +1,14 @@
 ﻿$(function () {
     $('.select2').select2({
         placeholder: "", // Placeholder text
-        allowClear: true
+        allowClear: true,
+        width: '100%'
     });
 
     GetDivisionList();
 
     $("#lstDivision").on('change', function () {
+        Blockloadershow();
         var items = '';
         $('.lstDivision option:selected').each(function (i) {
             items += $(this).val() + ','
@@ -17,6 +19,7 @@
             type: "GET",
             data: { divisionIds: items },
             success: function (response) {
+                Blockloaderhide();
                 $('#lstPlant').empty();
                 $('#lstBrand').empty();
                 if (response.plantList.length > 0) {
@@ -52,13 +55,15 @@
                     $('#lstBrand').trigger('change');
                 }
             },
-            error: function (e) {
-                alert(e.responseText);
+            error: function (xhr, status, error) {
+                Blockloaderhide();
+                showDangerAlert('Error retrieving data: ' + error);
             }
         });
     });
 
     $("#lstPlant").on('change', function () {
+        Blockloadershow();
         var items = '';
         $('.lstPlant option:selected').each(function (i) {
             items += $(this).val() + ','
@@ -69,6 +74,7 @@
             type: "GET",
             data: { plantIds: items },
             success: function (response) {
+                Blockloaderhide();
                 $('#lstNPlant').empty();
                 if (response.length > 0) {
                     response.forEach(function (item) {
@@ -90,13 +96,15 @@
                     $('#lstNPlant').prop("disabled", true);
                 }
             },
-            error: function (e) {
-                alert(e.responseText);
+            error: function (xhr, status, error) {
+                Blockloaderhide();
+                showDangerAlert('Error retrieving data: ' + error);
             }
         });
     });
 
     $("#lstBrand").on('change', function () {
+        Blockloadershow();
         var items = '';
         $('.lstBrand option:selected').each(function (i) {
             items += $(this).val() + ','
@@ -123,20 +131,27 @@
                     });
 
                     $('#lstProductType').trigger('change');
+                    Blockloaderhide();
+                }
+                else {
+                    Blockloaderhide();
                 }
             },
-            error: function (e) {
-                alert(e.responseText);
+            error: function (xhr, status, error) {
+                Blockloaderhide();
+                showDangerAlert('Error retrieving data: ' + error);
             }
         });
     });
 });
 
 function GetDivisionList() {
+    Blockloadershow();
     $.ajax({
         url: $("#hf_GetDivisions").val(),
         type: "GET",
         success: function (response) {
+            Blockloaderhide();
             $('#lstDivision').empty();
             if (response.length > 0) {
                 response.forEach(function (item) {
@@ -155,8 +170,134 @@ function GetDivisionList() {
                 $('#lstDivision').trigger('change');
             }
         },
-        error: function (e) {
-            alert(e.responseText);
+        error: function (xhr, status, error) {
+            Blockloaderhide();
+            showDangerAlert('Error retrieving data: ' + error);
+        }
+    });
+}
+
+function InsertUpdateUser() {
+    Blockloadershow();
+    const requiredFields = [
+        { id: 'txtADid', name: 'ADid' },
+        { id: 'txtName', name: 'Name' },
+        { id: 'txtEmail', name: 'Email' },
+        { id: 'txtMobile', name: 'Mobile No' },
+        { id: 'ddlRole', name: 'Role' },
+        { id: 'ddlUserType', name: 'User Type' },
+        { id: 'lstDivision', name: 'Division' },
+        { id: 'lstPlant', name: 'Plant' }, ,
+        { id: 'lstBrand', name: 'Brand' },
+        { id: 'lstProductType', name: 'Product Type' },
+    ];
+
+    let isValid = true;
+    let missingFields = [];
+
+    requiredFields.forEach(field => {
+        const element = $('#' + field.id);
+        if (!element.val()) {
+            isValid = false;
+            missingFields.push(field.name);
+            element.addClass('missing-field');
+        }
+    });
+
+    if (!isValid) {
+        const missingFieldsList = missingFields.map(field => `<li>${field}</li>`).join('');
+        const alertMessage = `
+                <p>Please fill out the following required field(s):</p>
+                <ul>${missingFieldsList}</ul>
+            `;
+        showDangerAlert(alertMessage);
+        Blockloaderhide();
+        return false;
+    }
+
+    if (!isValid) {
+        const missingFieldsList = missingFields.map(field => `<li>${field}</li>`).join('');
+        const alertMessage = `
+                <p>Please fill out the following required field(s):</p>
+                <ul>${missingFieldsList}</ul>
+            `;
+        showDangerAlert(alertMessage);
+        Blockloaderhide();
+        return false;
+    }
+
+    $("#Id").val(userId);
+
+    var divisions = '';
+    $('.lstDivision option:selected').each(function (i) {
+        divisions += $(this).val() + ','
+    });
+
+    var plants = '';
+    $('.lstPlant option:selected').each(function (i) {
+        plants += $(this).val() + ','
+    });
+
+    var nPlant = '';
+    $('.lstNPlant option:selected').each(function (i) {
+        nPlant += $(this).val() + ','
+    });
+
+    var brands = '';
+    $('.lstBrand option:selected').each(function (i) {
+        brands += $(this).val() + ','
+    });
+
+    var productTypes = '';
+    $('.lstProductType option:selected').each(function (i) {
+        productTypes += $(this).val() + ','
+    });
+
+    const form = $('#userForm')[0];
+    const formData = new FormData(form);
+
+    formData.append('DivisionId', divisions);
+    formData.append('PlantId', plants);
+    formData.append('NearestPlantId', nPlant);
+    formData.append('BrandId', brands);
+    formData.append('ProductTypeId', productTypes);
+
+    $.ajax({
+        url: $('#userForm').attr('action'),
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            Blockloaderhide();
+            if (!response.success) {
+                var errorMessg = "";
+                for (var error in response.errors) {
+                    errorMessg += error + "\n";
+                }
+                if (errorMessg != "") {
+                    showDangerAlert(errorMessg);
+                }
+                else {
+                    showDangerAlert(response.message);
+                }
+                return false;
+            }
+            else {
+                if ($("#Id").val() > 0) {
+                    showSuccessAlert("User Updated Successfully.");
+                }
+                else {
+                    showSuccessAlert("User Saved Successfully.");
+                    setTimeout(function () {
+                        window.open($("#hf_UsersGridPage").val(), '_self');
+                    }, 2500);
+                }
+            }
+        },
+        error: function (xhr, status, error) {
+            Blockloaderhide();
+            showDangerAlert('Error saving data: ' + error);
         }
     });
 }

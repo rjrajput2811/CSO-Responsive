@@ -39,7 +39,7 @@ public class UsersController : Controller
         _productTypeRepository = productTypeRepository;
     }
 
-    public async Task<IActionResult> IndexAsync()
+    public IActionResult Index()
     {
         return View();
     }
@@ -193,5 +193,41 @@ public class UsersController : Controller
         productTypeList = productTypeList.GroupBy(g => g.Value).Select(x => x.First()).OrderBy(o => o.Text).ToList();
 
         return Json(productTypeList);
+    }
+
+    public async Task<ActionResult> GetUsersListAsync()
+    {
+        var usersList = await _userRepository.GetAllUsersAsync();
+        return Json(usersList);
+    }
+
+    public async Task<ActionResult> DeleteUserAsync(int id)
+    {
+        var result = await _userRepository.DeleteUserAsync(id);
+        return Json(result);
+    }
+
+    public async Task<ActionResult> InsertUpdateUserAsync(UserViewModel userViewModel)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            return Json(new { Success = false, Errors = errors });
+        }
+
+        if (userViewModel.Id > 0)
+        {
+            userViewModel.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+            userViewModel.UpdatedOn = DateTime.Now;
+            var updateResult = await _userRepository.UpdateUserAsync(userViewModel);
+            return Json(updateResult);
+        }
+        else
+        {
+            userViewModel.AddedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
+            userViewModel.AddedOn = DateTime.Now;
+            var insertResult = await _userRepository.InsertUserAsync(userViewModel);
+            return Json(insertResult);
+        }
     }
 }

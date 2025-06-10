@@ -27,7 +27,7 @@ namespace CSO_Responsive.Controllers
                 if (loginUser != null)
                 {
                     HttpContext.Session.SetInt32("UserId", loginUser.Id);
-                    HttpContext.Session.SetString("FullName", loginUser.Name);
+                    HttpContext.Session.SetString("FullName", loginUser.Name ?? "");
                     HttpContext.Session.SetInt32("UserRole", (int)loginUser.RoleId);
 
                         return RedirectToAction("Index", "Home");
