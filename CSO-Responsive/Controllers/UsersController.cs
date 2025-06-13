@@ -44,6 +44,18 @@ public class UsersController : Controller
         return View();
     }
 
+    public async Task<ActionResult> GetUsersListAsync()
+    {
+        var usersList = await _userRepository.GetAllUsersAsync();
+        return Json(usersList);
+    }
+
+    //public async Task<ActionResult> GetUsersListAsync([FromBody] TabulatorRequest request)
+    //{
+    //    var usersList = await _userRepository.GetAllUsersAsync(request);
+    //    return Json(usersList);
+    //}
+
     public async Task<IActionResult> UserDetailsAsync(int Id)
     {
         var model = new UserViewModel();
@@ -182,23 +194,18 @@ public class UsersController : Controller
 
         foreach(var brandId in brandIdList)
         {
-            var result = await _productTypeRepository.GetProductTypeListByBrandIdAsync(brandId);
-            productTypeList.AddRange(result.Select(x => new SelectListItem
+            var brandResult = await _brandRepository.GetBrandByIdAsync(brandId);
+            var productTypeResult = await _productTypeRepository.GetProductTypeListByBrandIdAsync(brandId);
+            productTypeList.AddRange(productTypeResult.Select(x => new SelectListItem
             {
-                Value = x.Id.ToString(),
-                Text = x.Name
+                Value = $"[{brandId}-{x.Id}]",
+                Text = $"{brandResult?.Name} - {x.Name}"
             }));
         }
 
-        productTypeList = productTypeList.GroupBy(g => g.Value).Select(x => x.First()).OrderBy(o => o.Text).ToList();
+        productTypeList = productTypeList.OrderBy(o => o.Text).ToList();
 
         return Json(productTypeList);
-    }
-
-    public async Task<ActionResult> GetUsersListAsync()
-    {
-        var usersList = await _userRepository.GetAllUsersAsync();
-        return Json(usersList);
     }
 
     public async Task<ActionResult> DeleteUserAsync(int id)

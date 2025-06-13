@@ -69,6 +69,107 @@ var headerMenu = function () {
     return menu;
 };
 
+//function loadUsersData() {
+//    let columns = [
+//        {
+//            title: "Action",
+//            field: "Action",
+//            responsive: 0,
+//            width: 120,
+//            headerMenu: headerMenu,
+//            hozAlign: "center",
+//            headerHozAlign: "center",
+//            formatter: function (cell, formatterParams) {
+//                const rowData = cell.getRow().getData();
+//                return `<i data-toggle="modal" onclick="delConfirm(${rowData.Id})" class="fas fa-trash-alt mr-2 fa-1x" title="Delete" style="color:red;cursor:pointer;margin-left: 5px;"></i>`;
+//            }
+//        },
+//        {
+//            title: "SNo",
+//            field: "sr_No",
+//            width: 100,
+//            responsive: 1,
+//            sorter: "number",
+//            headerMenu: headerMenu,
+//            hozAlign: "center",
+//            headerHozAlign: "left"
+//        },
+//        { title: "Name", field: "name", headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
+//        { title: "ADid", field: "aDid", headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
+//        { title: "Email", field: "email", headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
+//        { title: "MobileNo", field: "mobileNo", headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
+//        { title: "Designation", field: "designation", headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
+//        { title: "Role", field: "role", headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
+//    ];
+
+//    table = new Tabulator("#div_Table", {
+//        layout: "fitColumns",
+//        columns: columns,
+//        pagination: "remote",
+//        paginationSize: 10,
+//        paginationSizeSelector: [50, 100, 500, 1500, 2000],
+//        serverPagination: true,
+//        serverSorting: true,
+//        serverFiltering: true,
+//        paginationElement: document.getElementById("pager"),
+//        paginationCounter: "rows", // shows range like "Showing 1-10 of 62 rows"
+//        ajaxURL: $("#hf_GetUsersList").val(),
+//        ajaxConfig: {
+//            method: "POST",
+//            headers: {
+//                "Content-Type": "application/json"
+//            }
+//        },
+//        ajaxContentType: "json",
+//        ajaxRequestFunc: function (url, config, params) {
+//            const payload = {
+//                Page: params.page || 1,
+//                Size: params.size || 10,
+//                Sorters: params.sorters || [],
+//                Filters: params.filters || []
+//            };
+
+//            return fetch(url, {
+//                method: "POST",
+//                headers: config.headers,
+//                body: JSON.stringify(payload)
+//            }).then(response => {
+//                if (!response.ok) throw new Error("Failed to load data");
+//                return response.json();
+//            });
+//        },
+//        ajaxResponse: function (url, params, response) {
+//            return response.data;
+//        },
+//        ajaxError: function (xhr) {
+//            try {
+//                const err = JSON.parse(xhr.responseText);
+//                showDangerAlert(err.message || "Something went wrong.");
+//            } catch {
+//                showDangerAlert("Server error occurred.");
+//            }
+//        },
+//        paginationDataReceived: {
+//            last_page: "last_page"
+//        },
+//        renderHorizontal: "virtual",
+//        movableColumns: true,
+//        responsiveLayout: "collapse",
+//        responsiveLayoutCollapseFormatter: function (data) {
+//            return data.map(d => `<strong>${d.title}</strong>: ${d.value}`).join("<br>");
+//        }
+//    });
+
+//    // Handle row click
+//    table.on("cellClick", function (e, cell) {
+//        if (cell.getColumn().getField() !== "Action") {
+//            const rowData = cell.getRow().getData();
+//            editUser(rowData.Id);
+//        }
+//    });
+//}
+
+
 function OnDivGridLoad(response) {
     Blockloadershow();
 

@@ -4,7 +4,7 @@ using CSO.Core.Repositories.Shared;
 using CSO.Core.Security;
 using CSO.Core.Services.SystemLogs;
 using Microsoft.EntityFrameworkCore;
-using System.Xml.Linq;
+using System.Linq.Dynamic.Core;
 
 namespace CSO.Core.Repositories.UserRepo;
 
@@ -189,6 +189,7 @@ public class UserRepository : SqlTableRepository, IUserRepository
                         Role = role.RoleName
                     }
                 )
+                .OrderBy(o => o.Name)
                 .ToListAsync();
 
             return list;
@@ -199,4 +200,104 @@ public class UserRepository : SqlTableRepository, IUserRepository
             throw;
         }
     }
+
+    //public async Task<TabulatorResult> GetAllUsersAsync(TabulatorRequest request)
+    //{
+    //    try
+    //    {
+    //        // Initial base query (before filters)
+    //        var baseQuery = _dbContext.Users
+    //            .Join(_dbContext.UserRoles,
+    //                user => user.RoleId,
+    //                role => role.Id,
+    //                (user, role) => new UsersGridModel
+    //                {
+    //                    Id = user.Id,
+    //                    Name = user.Name,
+    //                    ADid = user.ADid,
+    //                    Email = user.Email,
+    //                    MobileNo = user.MobileNo,
+    //                    Designation = user.Designation,
+    //                    Role = role.RoleName
+    //                })
+    //            .AsQueryable();
+
+    //        int totalRecords = await baseQuery.CountAsync(); // total before filter
+
+    //        // Clone query for filtering
+    //        var query = baseQuery;
+
+    //        // Apply filters
+    //        if (request.Filters != null)
+    //        {
+    //            foreach (var filter in request.Filters)
+    //            {
+    //                if (string.IsNullOrWhiteSpace(filter.Value)) continue;
+
+    //                switch (filter.Field)
+    //                {
+    //                    case "Name":
+    //                        query = query.Where(x => x.Name.Contains(filter.Value));
+    //                        break;
+    //                    case "ADid":
+    //                        query = query.Where(x => x.ADid.Contains(filter.Value));
+    //                        break;
+    //                    case "Email":
+    //                        query = query.Where(x => x.Email.Contains(filter.Value));
+    //                        break;
+    //                    case "MobileNo":
+    //                        query = query.Where(x => x.MobileNo.Contains(filter.Value));
+    //                        break;
+    //                    case "Designation":
+    //                        query = query.Where(x => x.Designation.Contains(filter.Value));
+    //                        break;
+    //                    case "Role":
+    //                        query = query.Where(x => x.Role.Contains(filter.Value));
+    //                        break;
+    //                }
+    //            }
+    //        }
+
+    //        int filteredRecords = await query.CountAsync(); // after filter
+
+    //        // Apply sorting
+    //        if (request.Sorters?.Any() == true)
+    //        {
+    //            var sorter = request.Sorters.First();
+    //            var sortExpr = $"{sorter.Field} {(sorter.Dir == "asc" ? "ascending" : "descending")}";
+    //            query = query.OrderBy(sortExpr); // Requires System.Linq.Dynamic.Core
+    //        }
+    //        else
+    //        {
+    //            // Default sort on Name
+    //            query = query.OrderBy(x => x.Name);
+    //        }
+
+    //        // Pagination
+    //        var data = await query
+    //            .Skip((request.Page - 1) * request.Size)
+    //            .Take(request.Size)
+    //            .ToListAsync();
+
+    //        // Assign serial numbers
+    //        int srNo = ((request.Page - 1) * request.Size) + 1;
+    //        for (int i = 0; i < data.Count; i++)
+    //        {
+    //            data[i].Sr_No = srNo + i;
+    //        }
+
+    //        return new TabulatorResult
+    //        {
+    //            LastPage = (int)Math.Ceiling((double)filteredRecords / request.Size),
+    //            Data = data,
+    //            TotalRecords = totalRecords,
+    //            FilteredRecords = filteredRecords
+    //        };
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _systemLogService.WriteLog(ex.Message);
+    //        throw;
+    //    }
+    //}
 }

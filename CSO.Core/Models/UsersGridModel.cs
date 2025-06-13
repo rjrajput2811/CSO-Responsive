@@ -12,4 +12,5 @@ public class UsersGridModel
     public int RoleId { get; set; }
     public string? Role { get; set; }
     public string? ADid { get; set; }
+    public int Sr_No { get; set; }
 }
