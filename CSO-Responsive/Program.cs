@@ -1,5 +1,6 @@
 using CSO.Core.DatabaseContext;
 using CSO.Core.Repositories.BrandRepo;
+using CSO.Core.Repositories.CategoryRepo;
 using CSO.Core.Repositories.DivisionRepo;
 using CSO.Core.Repositories.NearestPlantRepo;
 using CSO.Core.Repositories.PlantRepo;
@@ -26,6 +27,7 @@ builder.Services.AddTransient<IPlantRepository, PlantRepository>();
 builder.Services.AddTransient<IBrandRepository, BrandRepository>();
 builder.Services.AddTransient<INearestPlantRepository, NearestPlantRepository>();
 builder.Services.AddTransient<IProductTypeRepository, ProductTypeRepository>();
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();

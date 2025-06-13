@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Division";
+    ViewData["Title"] = "Category";
 }
 
 
@@ -128,10 +128,10 @@
     <div class="card" style="margin-top:10px;">
         <div class="card-body d-flex justify-content-between align-items-center">
             <div style="font-size:x-large">
-                Division
+                Category
             </div>
             <div>
-                <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openDivisModal()">
+                <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openCategoryModal()">
                     <i class="fas fa-plus mr-2 fa-1x"></i>Add
                 </button>
                 <button id="backButton" class="btn btn-outline-primary ">
@@ -160,13 +160,13 @@
     </div>
 </div>
 
-@* ///////// Model Of Division  //////// *@
+@* ///////// Model Of Category  //////// *@
 
-<div class="modal fade" id="divisionModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header custom-header">
-                <h5 class="modal-title" id="formModalLabel">Add/Edit Division</h5>
+                <h5 class="modal-title" id="formModalLabel">Add/Edit Category</h5>
             </div>
             <div class="modal-body">
                 <!-- Your Form Starts Here -->
@@ -183,7 +183,7 @@
                 </form>
                 <br />
                 <div class="ml-auto">
-                    <button type="button" class="btn btn-primary legitRipple" onclick="InsertUpdateDivision()">Submit</button>
+                    <button type="button" class="btn btn-primary legitRipple" onclick="InsertUpdateCategory()">Submit</button>
                     <button type="button" class="btn btn-warning legitRipple" onclick="clearForm()">Clear</button>&nbsp;
                     <button type="button" class="btn btn-secondary legitRipple" data-bs-dismiss="modal" onclick="">Close</button>
                 </div>
@@ -213,7 +213,7 @@
         function loadDivsionData() {
             Blockloadershow();
             $.ajax({
-                url: '@Url.Action("GetAllDivision", "Division")',
+                url: '@Url.Action("GetAllCategory", "Category")',
                 type: 'GET',
                 success: function (data) {
                     Blockloaderhide();
@@ -360,7 +360,7 @@
                 });
 
                  table.on("cellClick", function (e, cell) {
-                    let columnField = cell.getColumn().getField(); 
+                    let columnField = cell.getColumn().getField();
 
                     if (columnField !== "Action") {
                         let rowData = cell.getRow().getData();
@@ -391,9 +391,9 @@
         }
 
 
-        function openDivisModal() {
+        function openCategoryModal() {
             clearForm();
-            $('#divisionModal').modal('show');
+            $('#categoryModal').modal('show');
 
         }
 
@@ -417,7 +417,7 @@
             });
         }
 
-        function InsertUpdateDivision() {
+        function InsertUpdateCategory() {
             Blockloadershow();
             var errorMsg = "";
             var fields = "";
@@ -437,10 +437,10 @@
 
             var ajaxUrl = "";
             if ($("#hdnId").val() != "0") {
-                ajaxUrl = '@Url.Action("Update", "Division")';
+                ajaxUrl = '@Url.Action("Update", "Category")';
             }
             else {
-                ajaxUrl = '@Url.Action("Create", "Division")';
+                ajaxUrl = '@Url.Action("Create", "Category")';
             }
 
             var Model = {
@@ -455,10 +455,10 @@
                     Blockloaderhide();
                     if (response.success) {
                         if ($("#hdnId").val() != "0") {
-                            showSuccessAlert("Division updated successfully!");
+                            showSuccessAlert("Category updated successfully!");
                         }
                         else {
-                            showSuccessAlert("Division Saved Successfully!");
+                            showSuccessAlert("Category Saved Successfully!");
                         }
                         setTimeout(function () {
                             window.location.reload();
@@ -506,12 +506,12 @@
                 },
             })).get().on('pnotify.confirm', function () {
                 $.ajax({
-                    url: '@Url.Action("Delete", "Division")',
+                    url: '@Url.Action("Delete", "Category")',
                     type: 'POST',
                     data: { id: recid },
                     success: function (data) {
                         if (data.success == true) {
-                            showSuccessAlert("Division Deleted successfully.");
+                            showSuccessAlert("Category Deleted successfully.");
                             setTimeout(function () {
                                 window.location.reload();
                             }, 2500);
@@ -535,10 +535,10 @@
         function showEditCard(recid) {
             clearForm();
             // Open the modal
-            $('#divisionModal').modal('show');
+            $('#categoryModal').modal('show');
 
             $.ajax({
-                url: '@Url.Action("GetById", "Division")',
+                url: '@Url.Action("GetById", "Category")',
                 type: 'GET',
                 data: { id: recid },
                 success: function (data) {

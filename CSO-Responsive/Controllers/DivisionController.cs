@@ -17,6 +17,7 @@ namespace CSO_Responsive.Controllers
             _divisionRepository = divisionRepository;
             _systemLogService = systemLogService;
         }
+
         public IActionResult Division()
         {
             return View();
@@ -47,6 +48,8 @@ namespace CSO_Responsive.Controllers
                     bool existingResult = await _divisionRepository.CheckDuplicate(model.Name.Trim(), 0);
                     if (!existingResult)
                     {
+                        model.AddedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
+                        model.AddedOn = DateTime.Now;
                         operationResult = await _divisionRepository.CreateAsync(model);
                         return Json(operationResult);
                     }
@@ -77,6 +80,8 @@ namespace CSO_Responsive.Controllers
                     bool existingResult = await _divisionRepository.CheckDuplicate(model.Name.Trim(), model.Id);
                     if (!existingResult)
                     {
+                        model.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                        model.UpdatedOn = DateTime.Now;
                         operationResult = await _divisionRepository.UpdateAsync(model);
                         return Json(operationResult);
                     }
