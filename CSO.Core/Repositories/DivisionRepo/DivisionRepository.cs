@@ -29,8 +29,11 @@ public class DivisionRepository : SqlTableRepository, IDivisionRepository
                     AddedOn = x.AddedOn,
                     AddedBy = x.AddedBy,
                     UpdatedOn = x.UpdatedOn,
-                    UpdatedBy = x.UpdatedBy
+                    UpdatedBy = x.UpdatedBy,
+                    AddedByUser = _dbContext.Users.Where(i => i.Id == x.AddedBy).Select(x => x.Name).FirstOrDefault(),
+                    UpdatedByUser = _dbContext.Users.Where(i => i.Id == x.UpdatedBy).Select(x => x.Name).FirstOrDefault()
                 })
+                .OrderBy(o => o.Name)
                 .ToListAsync();
 
             return list;
