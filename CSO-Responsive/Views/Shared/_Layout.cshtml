@@ -81,6 +81,102 @@
 
         }
 
+        /* Navbar container */
+        .navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Nav links */
+        .navbar-nav .nav-link {
+            color: #333;
+            font-weight: 500;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+            /* Nav icons */
+            .navbar-nav .nav-link i {
+                margin-right: 8px;
+                font-size: 16px;
+                color: #5a68c7;
+            }
+
+            /* Hover Effect */
+            .navbar-nav .nav-link:hover,
+            .navbar-nav .nav-link:focus {
+                background-color: #f0f2ff;
+                color: #5a68c7;
+            }
+
+            /* Active/Selected Menu */
+            .navbar-nav .nav-link.active,
+            .navbar-nav .nav-link.selected {
+                background-color: #5a68c7;
+                color: #fff !important;
+            }
+
+                .navbar-nav .nav-link.active i,
+                .navbar-nav .nav-link.selected i {
+                    color: #fff;
+                }
+
+        /* Dropdown toggle */
+        .navbar-nav .dropdown-toggle::after {
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        /* Dropdown menu */
+        .dropdown-menu {
+            border: 1px solid #eee;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            background-color: #fff;
+            border-radius: 6px;
+            padding: 15px;
+            z-index: 1000;
+        }
+
+        /* Dropdown content columns */
+        .dropdown-content-body .col-md-3 {
+            padding: 10px;
+        }
+
+        /* Dropdown headings */
+        .dropdown-content-body .font-weight-bold,
+        .dropdown-content-body .font-weight-semibold {
+            color: #444;
+            font-size: 15px;
+        }
+
+        /* Inner dropdown nav links */
+        .dropdown-menu .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            color: #444;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            border-radius: 4px;
+        }
+
+            .dropdown-menu .nav-link i {
+                margin-right: 8px;
+                color: #5a68c7;
+            }
+
+            /* Hover on inner links */
+            .dropdown-menu .nav-link:hover {
+                background-color: #eef1ff;
+                color: #5a68c7;
+            }
+
+
     </style>
 </head>
 <body>
