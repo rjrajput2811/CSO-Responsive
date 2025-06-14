@@ -38,4 +38,26 @@ public class BrandRepository : SqlTableRepository, IBrandRepository
             throw;
         }
     }
+
+    public async Task<BrandViewModel?> GetBrandByIdAsync(int brandId)
+    {
+        try
+        {
+            var result = await _dbContext.Brands
+                .Where(i => i.Id == brandId)
+                .Select(x => new BrandViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                })
+                .FirstOrDefaultAsync();
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
 }
