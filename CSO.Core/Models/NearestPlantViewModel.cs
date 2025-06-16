@@ -9,6 +9,7 @@ public class NearestPlantViewModel
     public string? Name { get; set; }
 
     public string? PlantId { get; set; }
+    public string? PlantName{ get; set; }
 
     public int AddedBy { get; set; }
 

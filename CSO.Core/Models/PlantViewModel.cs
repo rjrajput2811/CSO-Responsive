@@ -8,6 +8,8 @@ public class PlantViewModel
 
     public string? DivisionId { get; set; }
 
+    public string? DivisionName { get; set; }
+
     public bool IsThirdParty { get; set; }
 
     public int AddedBy { get; set; }

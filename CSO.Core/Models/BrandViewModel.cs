@@ -21,5 +21,7 @@ public class BrandViewModel
     public DateTime? DeletedOn { get; set; }
 
     public string? DivisionId { get; set; }
+
+    public string? DivisionName { get; set; }
     public string? ActiveInactive { get; set; }
 }

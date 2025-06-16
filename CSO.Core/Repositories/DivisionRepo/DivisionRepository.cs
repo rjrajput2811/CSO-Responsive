@@ -78,7 +78,6 @@ public class DivisionRepository : SqlTableRepository, IDivisionRepository
         try
         {
             var divisionToCreate = await base.GetByIdAsync<Division>(division.Id);
-            //featureBenefitRecordToCreate.Serial_No = updateFeatureBenefitRecord.Serial_No;
             divisionToCreate.Name = division.Name;
             divisionToCreate.UpdatedBy = division.UpdatedBy;
             divisionToCreate.UpdatedOn = division.UpdatedOn;

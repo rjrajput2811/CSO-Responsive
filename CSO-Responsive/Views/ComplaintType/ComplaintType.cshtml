@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Division";
+    ViewData["Title"] = "Complaint Type";
 }
 
 
@@ -128,10 +128,10 @@
     <div class="card" style="margin-top:10px;">
         <div class="card-body d-flex justify-content-between align-items-center">
             <div style="font-size:x-large">
-                Division
+                Complaint Type
             </div>
             <div>
-                <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openDivisModal()">
+                <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openCompTypeModal()">
                     <i class="fas fa-plus mr-2 fa-1x"></i>Add
                 </button>
                 <button id="backButton" class="btn btn-outline-primary ">
@@ -149,9 +149,9 @@
                     <div class="form-group row">
                         <div class="col-12">
                             <div class="table-responsive">
-                                <div id="div_Table"></div>
+                                <div id="div_CompTypeTable"></div>
                             </div>
-                            <div id="pager" class="mt-2"></div> <!-- 👈 Optional pager placement -->
+                            <div id="pager" class="mt-2"></div>
                         </div>
                     </div>
                 </div>
@@ -160,13 +160,13 @@
     </div>
 </div>
 
-@* ///////// Model Of Division  //////// *@
+@* ///////// Model Of Complaint Type  //////// *@
 
-<div class="modal fade" id="divisionModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+<div class="modal fade" id="compTypeModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header custom-header">
-                <h5 class="modal-title" id="formModalLabel">Add/Edit Division</h5>
+                <h5 class="modal-title" id="formModalLabel">Add/Edit Complaint Type</h5>
             </div>
             <div class="modal-body">
                 <!-- Your Form Starts Here -->
@@ -183,7 +183,7 @@
                 </form>
                 <br />
                 <div class="ml-auto">
-                    <button type="button" class="btn btn-primary legitRipple" onclick="InsertUpdateDivision()">Submit</button>
+                    <button type="button" class="btn btn-primary legitRipple" onclick="InsertUpdateCompType()">Submit</button>
                     <button type="button" class="btn btn-warning legitRipple" onclick="clearForm()">Clear</button>&nbsp;
                     <button type="button" class="btn btn-secondary legitRipple" data-bs-dismiss="modal" onclick="">Close</button>
                 </div>
@@ -207,18 +207,18 @@
                 });
             });
 
-            loadDivsionData();
+            loadCompTypeData();
         });
 
-        function loadDivsionData() {
+        function loadCompTypeData() {
             Blockloadershow();
             $.ajax({
-                url: '@Url.Action("GetAllDivision", "Division")',
+                url: '@Url.Action("GetAllComplaintType", "ComplaintType")',
                 type: 'GET',
                 success: function (data) {
                     Blockloaderhide();
                     if (data && Array.isArray(data)) {
-                        OnDivGridLoad(data);
+                        OnCompTypeGridLoad(data);
                     }
                     else {
                         showDangerAlert('No data available to load.');
@@ -277,7 +277,7 @@
             return menu;
         };
 
-        function OnDivGridLoad(response) {
+        function OnCompTypeGridLoad(response) {
             debugger;
             Blockloadershow();
 
@@ -339,7 +339,7 @@
                 );
 
                 // // Initialize Tabulator
-                table = new Tabulator("#div_Table", {
+                table = new Tabulator("#div_CompTypeTable", {
                     data: tabledata,
                     layout: "fitColumns",
                     responsiveLayout: "collapse",
@@ -358,7 +358,7 @@
                 });
 
                  table.on("cellClick", function (e, cell) {
-                    let columnField = cell.getColumn().getField(); 
+                    let columnField = cell.getColumn().getField();
 
                     if (columnField !== "Action") {
                         let rowData = cell.getRow().getData();
@@ -389,9 +389,9 @@
         }
 
 
-        function openDivisModal() {
+        function openCompTypeModal() {
             clearForm();
-            $('#divisionModal').modal('show');
+            $('#compTypeModal').modal('show');
 
         }
 
@@ -415,7 +415,7 @@
             });
         }
 
-        function InsertUpdateDivision() {
+        function InsertUpdateCompType() {
             Blockloadershow();
             var errorMsg = "";
             var fields = "";
@@ -435,10 +435,10 @@
 
             var ajaxUrl = "";
             if ($("#hdnId").val() != "0") {
-                ajaxUrl = '@Url.Action("Update", "Division")';
+                ajaxUrl = '@Url.Action("Update", "ComplaintType")';
             }
             else {
-                ajaxUrl = '@Url.Action("Create", "Division")';
+                ajaxUrl = '@Url.Action("Create", "ComplaintType")';
             }
 
             var Model = {
@@ -453,17 +453,17 @@
                     Blockloaderhide();
                     if (response.success) {
                         if ($("#hdnId").val() != "0") {
-                            showSuccessAlert("Division updated successfully!");
+                            showSuccessAlert("Complaint Type updated successfully!");
                         }
                         else {
-                            showSuccessAlert("Division Saved Successfully!");
+                            showSuccessAlert("Complaint Type Saved Successfully!");
                         }
                         setTimeout(function () {
                             window.location.reload();
                         }, 2500);
                     }
                     else if (response.message == "Exist") {
-                        showDangerAlert("Division already exist.");
+                        showDangerAlert("Complaint Type already exist.");
                     }
                     else {
                         var errorMessg = "";
@@ -504,12 +504,12 @@
                 },
             })).get().on('pnotify.confirm', function () {
                 $.ajax({
-                    url: '@Url.Action("Delete", "Division")',
+                    url: '@Url.Action("Delete", "ComplaintType")',
                     type: 'POST',
                     data: { id: recid },
                     success: function (data) {
                         if (data.success == true) {
-                            showSuccessAlert("Division Deleted successfully.");
+                            showSuccessAlert("Complaint Type Deleted successfully.");
                             setTimeout(function () {
                                 window.location.reload();
                             }, 2500);
@@ -533,10 +533,10 @@
         function showEditCard(recid) {
             clearForm();
             // Open the modal
-            $('#divisionModal').modal('show');
+            $('#compTypeModal').modal('show');
 
             $.ajax({
-                url: '@Url.Action("GetById", "Division")',
+                url: '@Url.Action("GetById", "ComplaintType")',
                 type: 'GET',
                 data: { id: recid },
                 success: function (data) {

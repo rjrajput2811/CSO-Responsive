@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Division";
+    ViewData["Title"] = "Recycle Day Configuration";
 }
 
 
@@ -128,10 +128,10 @@
     <div class="card" style="margin-top:10px;">
         <div class="card-body d-flex justify-content-between align-items-center">
             <div style="font-size:x-large">
-                Division
+                Recycle Day Configuration
             </div>
             <div>
-                <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openDivisModal()">
+                <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openRecycleDayModal()">
                     <i class="fas fa-plus mr-2 fa-1x"></i>Add
                 </button>
                 <button id="backButton" class="btn btn-outline-primary ">
@@ -149,9 +149,9 @@
                     <div class="form-group row">
                         <div class="col-12">
                             <div class="table-responsive">
-                                <div id="div_Table"></div>
+                                <div id="div_RecycleDayTable"></div>
                             </div>
-                            <div id="pager" class="mt-2"></div> <!-- 👈 Optional pager placement -->
+                            <div id="pager" class="mt-2"></div> 
                         </div>
                     </div>
                 </div>
@@ -162,11 +162,11 @@
 
 @* ///////// Model Of Division  //////// *@
 
-<div class="modal fade" id="divisionModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+<div class="modal fade" id="recycleDayModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header custom-header">
-                <h5 class="modal-title" id="formModalLabel">Add/Edit Division</h5>
+                <h5 class="modal-title" id="formModalLabel">Add/Edit Recycle Day Configuration</h5>
             </div>
             <div class="modal-body">
                 <!-- Your Form Starts Here -->
@@ -174,16 +174,28 @@
                     <div class="form-group">
                         <div class="row form-group align-items-center mb-2">
                             <input type="hidden" id="hdnId" name="Id" value="0" />
-                            <label class="col-2">Name</label>
-                            <div class="col-10">
-                                <input name="Name" id="Name" class="form-control" required />
+                            <label class="col-2">From Date</label>
+                            <div class="col-4">
+                                <input type="date" name="FromDate" id="FromDate" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="row form-group align-items-center mb-2">
+                            <label class="col-2">To Date</label>
+                            <div class="col-4">
+                                <input type="date" name="ToDate" id="ToDate" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="row form-group align-items-center mb-2">
+                            <label class="col-2">Recycle Days</label>
+                            <div class="col-4">
+                                <input name="RecDay" id="RecDay" class="form-control" required />
                             </div>
                         </div>
                     </div>
                 </form>
                 <br />
                 <div class="ml-auto">
-                    <button type="button" class="btn btn-primary legitRipple" onclick="InsertUpdateDivision()">Submit</button>
+                    <button type="button" class="btn btn-primary legitRipple" onclick="InsertUpdateRecycleDay()">Submit</button>
                     <button type="button" class="btn btn-warning legitRipple" onclick="clearForm()">Clear</button>&nbsp;
                     <button type="button" class="btn btn-secondary legitRipple" data-bs-dismiss="modal" onclick="">Close</button>
                 </div>
@@ -207,18 +219,18 @@
                 });
             });
 
-            loadDivsionData();
+            loadRecycleDayData();
         });
 
-        function loadDivsionData() {
+        function loadRecycleDayData() {
             Blockloadershow();
             $.ajax({
-                url: '@Url.Action("GetAllDivision", "Division")',
+                url: '@Url.Action("GetAllRecycleDay", "RecycleDay")',
                 type: 'GET',
                 success: function (data) {
                     Blockloaderhide();
                     if (data && Array.isArray(data)) {
-                        OnDivGridLoad(data);
+                        OnDivRecycleDayGridLoad(data);
                     }
                     else {
                         showDangerAlert('No data available to load.');
@@ -277,7 +289,7 @@
             return menu;
         };
 
-        function OnDivGridLoad(response) {
+        function OnDivRecycleDayGridLoad(response) {
             debugger;
             Blockloadershow();
 
@@ -290,22 +302,35 @@
 
                     let formattedDate = "";
                     let updatedDate = "";
-                    if (item.addedOn) {
-                        const dateObj = new Date(item.addedOn);
+                    let fromDate = "";
+                    let toDate = "";
+                    if (item.addedDate) {
+                        const dateObj = new Date(item.addedDate);
                         formattedDate = dateObj.toLocaleDateString("en-GB");
                     }
-                    if (item.updatedOn) {
-                        const updatedateObj = new Date(item.updatedOn);
+                    if (item.modifiedDate) {
+                        const updatedateObj = new Date(item.modifiedDate);
                         updatedDate = updatedateObj.toLocaleDateString("en-GB");
+                    }
+                    if (item.fromDate) {
+                        const fromDateObj = new Date(item.fromDate);
+                        fromDate = fromDateObj.toLocaleDateString("en-GB");
+                    }
+                    if (item.toDate) {
+                        const toDateObj = new Date(item.toDate);
+                        toDate = toDateObj.toLocaleDateString("en-GB");
                     }
 
                     tabledata.push({
                         Sr_No: index + 1,
                         Id: item.id,
-                        Name: item.name,
+                        FormDate: fromDate,
+                        ToDate: toDate,
+                        ThresholdDays: item.thresholdDays,
+                        FinancialYear :item.financialYear,
                         CreatedDate: formattedDate,
                         CreatedBy: item.addedBy,
-                        UpdatedBy: item.updatedBy,
+                        UpdatedBy: item.modifiedBy,
                         UpdatedDate: updatedDate
                     });
                 });
@@ -331,15 +356,18 @@
                     {
                                 title: "SNo", field: "Sr_No", width: 50, responsive: 1,  sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
                     },
-                    { title: "Name", field: "Name", responsive: 2,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
-                    { title: "User", field: "CreatedBy", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
-                    { title: "Create Date", field: "CreatedDate", responsive: 4,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
-                    { title: "Updated By", field: "UpdatedBy", responsive: 5,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
-                    { title: "Update Date", field: "UpdatedDate", responsive: 6,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Form Date", field: "FormDate", responsive: 2,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "To Date", field: "ToDate", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "Recycle Days", field: "ThresholdDays", responsive: 4,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "Financial Year", field: "FinancialYear", responsive: 5,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "User", field: "CreatedBy", responsive: 6,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Create Date", field: "CreatedDate", responsive: 7,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Updated By", field: "UpdatedBy", responsive: 8,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Update Date", field: "UpdatedDate", responsive: 9,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
                 );
 
                 // // Initialize Tabulator
-                table = new Tabulator("#div_Table", {
+                table = new Tabulator("#div_RecycleDayTable", {
                     data: tabledata,
                     layout: "fitColumns",
                     responsiveLayout: "collapse",
@@ -358,7 +386,7 @@
                 });
 
                  table.on("cellClick", function (e, cell) {
-                    let columnField = cell.getColumn().getField(); 
+                    let columnField = cell.getColumn().getField();
 
                     if (columnField !== "Action") {
                         let rowData = cell.getRow().getData();
@@ -389,9 +417,9 @@
         }
 
 
-        function openDivisModal() {
+        function openRecycleDayModal() {
             clearForm();
-            $('#divisionModal').modal('show');
+            $('#recycleDayModal').modal('show');
 
         }
 
@@ -415,13 +443,21 @@
             });
         }
 
-        function InsertUpdateDivision() {
+        function InsertUpdateRecycleDay() {
             Blockloadershow();
             var errorMsg = "";
             var fields = "";
 
-            if ($("#Name").val() == '' || $("#Name").val() == null || $("#Name").val() == undefined) {
-                fields += " - Name" + "<br>";
+            if ($("#FromDate").val() == '' || $("#FromDate").val() == null || $("#FromDate").val() == undefined) {
+                fields += " - From Date" + "<br>";
+            }
+
+             if ($("#ToDate").val() == '' || $("#ToDate").val() == null || $("#ToDate").val() == undefined) {
+                fields += " - To Date" + "<br>";
+            }
+
+             if ($("#RecDay").val() == '' || $("#RecDay").val() == null || $("#RecDay").val() == undefined) {
+                fields += " - Recycle Days" + "<br>";
             }
 
             if (fields != "") {
@@ -435,15 +471,17 @@
 
             var ajaxUrl = "";
             if ($("#hdnId").val() != "0") {
-                ajaxUrl = '@Url.Action("Update", "Division")';
+                ajaxUrl = '@Url.Action("Update", "RecycleDay")';
             }
             else {
-                ajaxUrl = '@Url.Action("Create", "Division")';
+                ajaxUrl = '@Url.Action("Create", "RecycleDay")';
             }
 
             var Model = {
                 Id: $("#hdnId").val(),
-                Name: $("#Name").val(),
+                FromDate: $("#FromDate").val(),
+                ToDate: $("#ToDate").val(),
+                ThresholdDays: $("#RecDay").val()
             };
             $.ajax({
                 type: "POST",
@@ -453,17 +491,17 @@
                     Blockloaderhide();
                     if (response.success) {
                         if ($("#hdnId").val() != "0") {
-                            showSuccessAlert("Division updated successfully!");
+                            showSuccessAlert("Recycle Day Configuration updated successfully!");
                         }
                         else {
-                            showSuccessAlert("Division Saved Successfully!");
+                            showSuccessAlert("Recycle Day Configuration Saved Successfully!");
                         }
                         setTimeout(function () {
                             window.location.reload();
                         }, 2500);
                     }
                     else if (response.message == "Exist") {
-                        showDangerAlert("Division already exist.");
+                        showDangerAlert("Recycle Day Configuration already exist.");
                     }
                     else {
                         var errorMessg = "";
@@ -504,12 +542,12 @@
                 },
             })).get().on('pnotify.confirm', function () {
                 $.ajax({
-                    url: '@Url.Action("Delete", "Division")',
+                    url: '@Url.Action("Delete", "RecycleDay")',
                     type: 'POST',
                     data: { id: recid },
                     success: function (data) {
                         if (data.success == true) {
-                            showSuccessAlert("Division Deleted successfully.");
+                            showSuccessAlert("Recycle Day Configuration Deleted successfully.");
                             setTimeout(function () {
                                 window.location.reload();
                             }, 2500);
@@ -533,17 +571,19 @@
         function showEditCard(recid) {
             clearForm();
             // Open the modal
-            $('#divisionModal').modal('show');
+            $('#recycleDayModal').modal('show');
 
             $.ajax({
-                url: '@Url.Action("GetById", "Division")',
+                url: '@Url.Action("GetById", "RecycleDay")',
                 type: 'GET',
                 data: { id: recid },
                 success: function (data) {
                     if (data) {
                         console.log(data);
                         $("#hdnId").val(data.id);
-                        $("#Name").val(data.name);
+                        $("#FromDate").val(formatDate(data.fromDate));
+                        $("#ToDate").val(formatDate(data.toDate));
+                        $("#RecDay").val(data.thresholdDays);
                     } else {
                         showDangerAlert('No data received.');
                     }
@@ -552,6 +592,15 @@
                     showDangerAlert('Error retrieving data: ' + error);
                 }
             });
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return "";
+            const date = new Date(dateString);
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
 
     </script>
