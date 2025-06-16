@@ -184,7 +184,7 @@ function OnDivGridLoad(response) {
                 Sr_No: index + 1,
                 Id: item.id,
                 Name: item.name,
-                ADid: item.adid,
+                ADid: item.aDid,
                 Email: item.email,
                 MobileNo: item.mobileNo,
                 Designation: item.designation,
