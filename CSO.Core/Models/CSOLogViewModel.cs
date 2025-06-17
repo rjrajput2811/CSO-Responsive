@@ -6,7 +6,12 @@ namespace CSO.Core.Models;
 public class CSOLogViewModel
 {
     public int Id { get; set; }
+
+    public int CSONo { get; set; }
+
     public int UserId { get; set; }
+
+    public string? UserName { get; set; }
 
     public DateTime Logdate { get; set; }
 

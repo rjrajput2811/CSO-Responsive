@@ -1,4 +1,6 @@
-﻿@{
+﻿@model CSO.Core.Models.CSOLogViewModel
+
+@{
     ViewData["Title"] = "CSOLog";
 }
 <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
@@ -227,7 +229,7 @@
                         <label for="images" class="form-label required">Upload Images</label>
                                 @Html.Label("Images")
                                 <input id="File" type="file" class="form-control" name="img" onchange="csoLogIndex.SelectUploadFile(this,this.id);" multiple disabled />
-                                @Html.ValidationMessageFor(m => m.CSOLogFileName, "", new { @class = "text-danger" })
+                                @* @Html.ValidationMessageFor(m => m.CSOLogFileName, "", new { @class = "text-danger" }) *@
                                 @Html.Label("FileSize", "Maximum upload file size: 5 MB.", new { style = "font-style: italic; font-weight: normal;" })
                         <div class="form-text">Max size 5MB per file</div>
                     </div>

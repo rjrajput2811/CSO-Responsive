@@ -1,5 +1,6 @@
 using CSO.Core.DatabaseContext;
 using CSO.Core.Repositories.BrandRepo;
+using CSO.Core.Repositories.CategoryRepo;
 using CSO.Core.Repositories.ComplaintTypeRepo;
 using CSO.Core.Repositories.CSOClassRepo;
 using CSO.Core.Repositories.DivisionRepo;
@@ -29,6 +30,7 @@ builder.Services.AddTransient<IPlantRepository, PlantRepository>();
 builder.Services.AddTransient<IBrandRepository, BrandRepository>();
 builder.Services.AddTransient<INearestPlantRepository, NearestPlantRepository>();
 builder.Services.AddTransient<IProductTypeRepository, ProductTypeRepository>();
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 builder.Services.AddTransient<IComplaintTypeRepository, ComplaintTypeRepository>();
 builder.Services.AddTransient<ICSOClassRepository, CSOClassRepository>();
 builder.Services.AddTransient<IBrandRepository, BrandRepository>();
