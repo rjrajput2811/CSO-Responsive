@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CSO.Core.DatabaseContext;
 
-[Table("ComplaintType")]
+[Table("ComplaintTypes")]
 public class ComplaintType : SqlTable
 {
     public string? Name { get; set; }

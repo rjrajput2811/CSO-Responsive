@@ -30,7 +30,16 @@ namespace CSO_Responsive.Controllers
                     HttpContext.Session.SetString("FullName", loginUser.Name ?? "");
                     HttpContext.Session.SetInt32("UserRole", (int)loginUser.RoleId);
 
-                        return RedirectToAction("Index", "Home");
+                    if (DateTime.Now.Month > 3)
+                    {
+                        HttpContext.Session.SetString("FYear", (DateTime.Now.Year.ToString().Substring(2) + (DateTime.Now.Year + 1).ToString().Substring(2)));
+                    }
+                    else
+                    {
+                        HttpContext.Session.SetString("FYear", ((DateTime.Now.Year - 1).ToString().Substring(2) + (DateTime.Now.Year).ToString().Substring(2)));
+                    }
+
+                    return RedirectToAction("Index", "Home");
                     
                     
                 }

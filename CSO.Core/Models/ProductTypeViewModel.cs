@@ -21,4 +21,6 @@ public class ProductTypeViewModel
     public DateTime? DeletedOn { get; set; }
 
     public string? BrandId { get; set; }
+    public string? BrandName { get; set; }
+    public string? DivisionName { get; set; }
 }

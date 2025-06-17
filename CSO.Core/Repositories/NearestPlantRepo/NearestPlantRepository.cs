@@ -38,4 +38,151 @@ public class NearestPlantRepository : SqlTableRepository, INearestPlantRepositor
             throw;
         }
     }
+
+    public async Task<List<NearestPlantViewModel>> GetNearestPlantList()
+    {
+        try
+        {
+            var plants = await _dbContext.Plants.ToListAsync();
+            //var divisions = await _dbContext.Divisions.ToListAsync();
+
+            var nearestPlant = await _dbContext.NearestPlants.ToListAsync();
+
+            var list = nearestPlant.Select(b =>
+            {
+                var plantIds = b.PlantId.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                               .Select(id => Convert.ToInt32(id))
+                                               .ToList();
+
+                // find matching division names
+                var plantNames = plants
+                    .Where(d => plantIds.Contains(d.Id))
+                    .Select(d => d.Name)
+                    .ToList();
+
+                return new NearestPlantViewModel
+                {
+                    Id = b.Id,
+                    Name = b.Name,
+                    PlantId = b.PlantId,
+                    PlantName = string.Join(", ", plantNames),
+                    AddedOn = b.AddedOn,
+                    AddedBy = b.AddedBy,
+                    UpdatedOn = b.UpdatedOn,
+                    UpdatedBy = b.UpdatedBy
+                };
+            })
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            return list;
+
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<NearestPlant?> GetByIdAsync(int Id)
+    {
+        try
+        {
+            var result = await base.GetByIdAsync<NearestPlant>(Id);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<OperationResult> CreateAsync(NearestPlant plant, bool returnCreatedRecord = false)
+    {
+        try
+        {
+            var plantToCreate = new NearestPlant();
+            plantToCreate.Name = plant.Name;
+            plantToCreate.PlantId = plant.PlantId;
+            plantToCreate.AddedBy = plant.AddedBy;
+            plantToCreate.AddedOn = plant.AddedOn;
+            return await base.CreateAsync<NearestPlant>(plantToCreate, returnCreatedRecord);
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<OperationResult> UpdateAsync(NearestPlant plant, bool returnUpdatedRecord = false)
+    {
+        try
+        {
+            var plantToCreate = await base.GetByIdAsync<NearestPlant>(plant.Id);
+            plantToCreate.Name = plant.Name;
+            plantToCreate.PlantId = plant.PlantId;
+            plantToCreate.UpdatedBy = plant.UpdatedBy;
+            plantToCreate.UpdatedOn = plant.UpdatedOn;
+            return await base.UpdateAsync<NearestPlant>(plantToCreate, returnUpdatedRecord);
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<OperationResult> DeleteAsync(int Id)
+    {
+        try
+        {
+            return await base.DeleteAsync<NearestPlant>(Id);
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<bool> CheckDuplicate(string searchText, int Id)
+    {
+        try
+        {
+            bool existingflag = false;
+            int? existingId = null;
+
+            IQueryable<int> query = _dbContext.NearestPlants
+                .Where(x => x.Name == searchText)
+                .Select(x => x.Id);
+
+            // Add additional condition if Id is not 0
+            if (Id != 0)
+            {
+                query = _dbContext.NearestPlants
+                    .Where(x =>
+                           x.Name == searchText
+                           && x.Id != Id)
+                    .Select(x => x.Id);
+            }
+
+
+            existingId = await query.FirstOrDefaultAsync();
+
+            if (existingId != null && existingId > 0)
+            {
+                existingflag = true;
+            }
+
+            return existingflag;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
 }

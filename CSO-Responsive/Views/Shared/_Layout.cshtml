@@ -16,7 +16,7 @@
     <link href="~/css/colors.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/components.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/layout.min.css" rel="stylesheet" asp-append-version="true" />
-   
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -66,19 +66,16 @@
             }
 
         @@media (max-width: 767.98px) {
-            .navbar-brand
+            .navbar-brand {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+            }
 
-        {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-        }
-
-        .navbar-brand span {
-            font-size: 14px !important;
-            line-height: 1.3;
-            white-space: normal;
-        }
-
+                .navbar-brand span {
+                    font-size: 14px !important;
+                    line-height: 1.3;
+                    white-space: normal;
+                }
         }
 
         /* Navbar container */
@@ -190,10 +187,8 @@
 
         <div class="d-md-none">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-mobile">
-                
             </button>
             <button class="navbar-toggler sidebar-mobile-main-toggle" type="button">
-            
             </button>
         </div>
 
@@ -331,7 +326,7 @@
                                         <i class="icon-people"></i>
                                         <span>Users</span>
                                     </a>
-                                   
+
                                 </div>
 
                                 <div class="col-md-3 mb-3 mb-md-0">
@@ -383,7 +378,7 @@
                             <div class="row">
                                 <div class="col-md-3 mb-3 mb-md-0">
                                     <div class="font-weight-semibold border-bottom pb-2 mb-2">Primary</div>
-                                    <a asp-controller="Division" asp-action="Division" class="nav-link" title="Dashboard" id="Dashboard">
+                                    <a asp-controller="Division" asp-action="Division" class="nav-link" title="Division" id="Division">
                                         <i class="icon-gear"></i>
                                         <span>Division</span>
                                     </a>
@@ -391,40 +386,40 @@
                                         <i class="icon-gear"></i>
                                         <span>Category</span>
                                     </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
+                                    <a asp-controller="ComplaintType" asp-action="ComplaintType" class="nav-link" title="Complaint Type" id="ComplaintType">
                                         <i class="icon-gear"></i>
                                         <span>Complain Type</span>
                                     </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
+                                    <a asp-controller="CsoClass" asp-action="CSOClass" class="nav-link" title="CSO Class" id="CsoClass">
                                         <i class="icon-gear"></i>
                                         <span>CSO Class</span>
                                     </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
+                                    <a asp-controller="Brand" asp-action="Brand" class="nav-link" title="Brand" id="Brand">
                                         <i class="icon-gear"></i>
                                         <span>Brand</span>
                                     </a>
-                                    
+
                                 </div>
 
                                 <div class="col-md-3 mb-3 mb-md-0">
                                     <div class="font-weight-semibold border-bottom pb-2 mb-2">Secondary</div>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
+                                    <a asp-controller="ProductType" asp-action="ProductType" class="nav-link" title="Dashboard" id="Dashboard">
                                         <i class="icon-gear"></i>
                                         <span>Product Type</span>
                                     </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
+                                    <a asp-controller="Plant" asp-action="Plant" class="nav-link" title="Plant" id="Plant">
                                         <i class="icon-gear"></i>
                                         <span>Plant</span>
                                     </a>
-                                        <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                            <i class="icon-gear"></i>
-                                            <span>Nearest Plant</span>
-                                        </a>
-                                        <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                            <i class="icon-gear"></i>
-                                            <span>User Role</span>
-                                        </a>
+                                    <a asp-controller="NearestPlant" asp-action="NearestPlant" class="nav-link" title="Nearest Plant" id="NearestPlant">
+                                        <i class="icon-gear"></i>
+                                        <span>Nearest Plant</span>
+                                    </a>
                                     <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
+                                        <i class="icon-gear"></i>
+                                        <span>User Role</span>
+                                    </a>
+                                    <a asp-controller="RecycleDay" asp-action="RecycleDayConfiguration" class="nav-link" title="Dashboard" id="Dashboard">
                                         <i class="icon-gear"></i>
                                         <span>Recycle Days Configration</span>
                                     </a>
@@ -435,12 +430,12 @@
                     </div>
                 </li>
             </ul>
-          </div>
-     </div>
+        </div>
+    </div>
     <div class="content-wrapper">
         @RenderBody()
     </div>
-                
+
 
     <!-- /page content -->
 

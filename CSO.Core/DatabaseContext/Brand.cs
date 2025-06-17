@@ -23,5 +23,9 @@ public class Brand : SqlTable
     public DateTime? DeletedOn { get; set; }
 
     public string? DivisionId { get; set; }
+
     public string? ActiveInactive { get; set; }
+
+    [NotMapped]
+    public Division? Divisions { get; set; }   
 }

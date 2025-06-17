@@ -1,56 +1,65 @@
 ﻿using CSO.Core.DatabaseContext;
 using CSO.Core.Models;
 using CSO.Core.Repositories.DivisionRepo;
+using CSO.Core.Repositories.RecycleDayRepo;
 using CSO.Core.Services.SystemLogs;
 using Microsoft.AspNetCore.Mvc;
-using System.Numerics;
 
 namespace CSO_Responsive.Controllers
 {
-    public class DivisionController : Controller
+    public class RecycleDayController : Controller
     {
-        private readonly IDivisionRepository _divisionRepository;
+        private readonly IRecycleDayRepository _recycleDayRepository;
         private readonly ISystemLogService _systemLogService;
 
-        public DivisionController(IDivisionRepository divisionRepository, ISystemLogService systemLogService)
+        public RecycleDayController(IRecycleDayRepository recycleDayRepository, ISystemLogService systemLogService)
         {
-            _divisionRepository = divisionRepository;
+            _recycleDayRepository = recycleDayRepository;
             _systemLogService = systemLogService;
         }
-
-        public IActionResult Division()
+        public IActionResult RecycleDayConfiguration()
         {
             return View();
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetAllDivision()
+        public async Task<JsonResult> GetAllRecycleDay()
         {
-            var divisionList = await _divisionRepository.GetDivisionList();
-            return Json(divisionList);
+            var recycleDayList = await _recycleDayRepository.GetRecycleDayList();
+            return Json(recycleDayList);
         }
 
         [HttpGet]
         public async Task<JsonResult> GetById(int Id)
         {
-            var divbyId = await _divisionRepository.GetByIdAsync(Id);
+            var divbyId = await _recycleDayRepository.GetByIdAsync(Id);
             return Json(divbyId);
         }
 
         [HttpPost]
-        public async Task<JsonResult> CreateAsync(Division model)
+        public async Task<JsonResult> CreateAsync(RecycleDay model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    var financialYear = 0;
                     var operationResult = new OperationResult();
-                    bool existingResult = await _divisionRepository.CheckDuplicate(model.Name.Trim(), 0);
+                    bool existingResult = false;
                     if (!existingResult)
                     {
-                        model.AddedOn = DateTime.Now;
+                        var fy = HttpContext.Session.GetString("FYear");
+                        if (fy != null)
+                        {
+                            var fromYear = int.Parse($"20{fy.Substring(0, 2)}");
+                            var toYear = int.Parse($"20{fy.Substring(2, 2)}");
+                            financialYear = int.Parse(fy);
+                        }
+
+                        model.FinancialYear = financialYear;
+                        model.AddedDate = DateTime.Now;
                         model.AddedBy = 1;
-                        operationResult = await _divisionRepository.CreateAsync(model);
+                        operationResult = await _recycleDayRepository.CreateAsync(model);
                         return Json(operationResult);
                     }
                     else
@@ -70,19 +79,19 @@ namespace CSO_Responsive.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UpdateAsync(Division model)
+        public async Task<JsonResult> UpdateAsync(RecycleDay model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var operationResult = new OperationResult();
-                    bool existingResult = await _divisionRepository.CheckDuplicate(model.Name.Trim(), model.Id);
+                    bool existingResult = false;
                     if (!existingResult)
                     {
-                        model.UpdatedOn = DateTime.Now;
-                        model.UpdatedBy = 1;
-                        operationResult = await _divisionRepository.UpdateAsync(model);
+                        model.ModifiedDate = DateTime.Now;
+                        model.ModifiedBy = 1;
+                        operationResult = await _recycleDayRepository.UpdateAsync(model);
                         return Json(operationResult);
                     }
                     else
@@ -106,7 +115,7 @@ namespace CSO_Responsive.Controllers
         {
             try
             {
-                var operationResult = await _divisionRepository.DeleteAsync(id);
+                var operationResult = await _recycleDayRepository.DeleteAsync(id);
                 return Json(operationResult);
             }
             catch (Exception ex)

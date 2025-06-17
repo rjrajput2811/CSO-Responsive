@@ -1,56 +1,56 @@
 ﻿using CSO.Core.DatabaseContext;
 using CSO.Core.Models;
+using CSO.Core.Repositories.ComplaintTypeRepo;
 using CSO.Core.Repositories.DivisionRepo;
 using CSO.Core.Services.SystemLogs;
 using Microsoft.AspNetCore.Mvc;
-using System.Numerics;
 
 namespace CSO_Responsive.Controllers
 {
-    public class DivisionController : Controller
+    public class ComplaintTypeController : Controller
     {
-        private readonly IDivisionRepository _divisionRepository;
+        private readonly IComplaintTypeRepository _compTypeRepository;
         private readonly ISystemLogService _systemLogService;
 
-        public DivisionController(IDivisionRepository divisionRepository, ISystemLogService systemLogService)
+        public ComplaintTypeController(IComplaintTypeRepository compTypeRepository, ISystemLogService systemLogService)
         {
-            _divisionRepository = divisionRepository;
+            _compTypeRepository = compTypeRepository;
             _systemLogService = systemLogService;
         }
 
-        public IActionResult Division()
+        public IActionResult ComplaintType()
         {
             return View();
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetAllDivision()
+        public async Task<JsonResult> GetAllComplaintType()
         {
-            var divisionList = await _divisionRepository.GetDivisionList();
-            return Json(divisionList);
+            var compTypeList = await _compTypeRepository.GetComTypeList();
+            return Json(compTypeList);
         }
 
         [HttpGet]
         public async Task<JsonResult> GetById(int Id)
         {
-            var divbyId = await _divisionRepository.GetByIdAsync(Id);
-            return Json(divbyId);
+            var compTypebyId = await _compTypeRepository.GetByIdAsync(Id);
+            return Json(compTypebyId);
         }
 
         [HttpPost]
-        public async Task<JsonResult> CreateAsync(Division model)
+        public async Task<JsonResult> CreateAsync(ComplaintType model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var operationResult = new OperationResult();
-                    bool existingResult = await _divisionRepository.CheckDuplicate(model.Name.Trim(), 0);
+                    bool existingResult = await _compTypeRepository.CheckDuplicate(model.Name.Trim(), 0);
                     if (!existingResult)
                     {
                         model.AddedOn = DateTime.Now;
                         model.AddedBy = 1;
-                        operationResult = await _divisionRepository.CreateAsync(model);
+                        operationResult = await _compTypeRepository.CreateAsync(model);
                         return Json(operationResult);
                     }
                     else
@@ -70,19 +70,19 @@ namespace CSO_Responsive.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UpdateAsync(Division model)
+        public async Task<JsonResult> UpdateAsync(ComplaintType model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var operationResult = new OperationResult();
-                    bool existingResult = await _divisionRepository.CheckDuplicate(model.Name.Trim(), model.Id);
+                    bool existingResult = await _compTypeRepository.CheckDuplicate(model.Name.Trim(), model.Id);
                     if (!existingResult)
                     {
                         model.UpdatedOn = DateTime.Now;
                         model.UpdatedBy = 1;
-                        operationResult = await _divisionRepository.UpdateAsync(model);
+                        operationResult = await _compTypeRepository.UpdateAsync(model);
                         return Json(operationResult);
                     }
                     else
@@ -106,7 +106,7 @@ namespace CSO_Responsive.Controllers
         {
             try
             {
-                var operationResult = await _divisionRepository.DeleteAsync(id);
+                var operationResult = await _compTypeRepository.DeleteAsync(id);
                 return Json(operationResult);
             }
             catch (Exception ex)
