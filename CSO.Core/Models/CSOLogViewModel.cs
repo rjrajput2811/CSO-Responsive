@@ -85,4 +85,11 @@ public class CSOLogViewModel
 
     public string? PKDDate { get; set; }
 
+    public string? CSONoFYear { get; set; }
+
+    public string? PlantName { get; set; }
+    public string? BrandName { get; set; }
+    public string? ProductTypeName { get; set; }
+    public string? ComplainTypeName { get; set; }
+
 }
