@@ -1,4 +1,5 @@
 ﻿using CSO.Core.DatabaseContext.Shared;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CSO.Core.Models;
@@ -7,10 +8,11 @@ public class CSOLogViewModel
 {
     public int Id { get; set; }
 
+
     public int CSONo { get; set; }
 
+    
     public int UserId { get; set; }
-
     public string? UserName { get; set; }
 
     public DateTime Logdate { get; set; }
