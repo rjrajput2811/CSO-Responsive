@@ -3,6 +3,7 @@ using CSO.Core.Repositories.BrandRepo;
 using CSO.Core.Repositories.CategoryRepo;
 using CSO.Core.Repositories.ComplaintTypeRepo;
 using CSO.Core.Repositories.CSOClassRepo;
+using CSO.Core.Repositories.CSOLogRepo;
 using CSO.Core.Repositories.DivisionRepo;
 using CSO.Core.Repositories.NearestPlantRepo;
 using CSO.Core.Repositories.PlantRepo;
@@ -38,6 +39,10 @@ builder.Services.AddTransient<IProductTypeRepository, ProductTypeRepository>();
 builder.Services.AddTransient<IPlantRepository, PlantRepository>();
 builder.Services.AddTransient<INearestPlantRepository, NearestPlantRepository>();
 builder.Services.AddTransient<IRecycleDayRepository, RecycleDayRepository>();
+
+builder.Services.AddTransient<ICSOLogRepository, CSOLogRepository>();
+
+
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();

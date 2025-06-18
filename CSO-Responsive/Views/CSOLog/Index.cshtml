@@ -1,5 +1,452 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "CSO Log";
+}
+
+
+<link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
+<link href="~/css/tabulator/tabulator.min.css" rel="stylesheet" />
+<link href="~/css/tabulator/tabulator_bootstrap4.min.css" rel="stylesheet" />
+<script src="~/js/jquery.min.js"></script>
+<script src="~/js/jquery.datatables.js"></script>
+<link href="~/css/pnotify.css" rel="stylesheet" />
+<script src="~/js/pnotify.js"></script>
+<script src="~/js/pnotify.confirm.js"></script>
+<script src="~/lib/bootstrap/dist/js/popupAlert.js"></script>
+<script src="~/lib/bootstrap/dist/js/buttons.html5.min.js"></script>
+<script src="~/js/common.js"></script>
+<script src="~/js/xlsx.min.js"></script>
+<script src="~/js/tabulator.min.js"></script>
+
+<style>
+
+    .form-control {
+        padding: 0 10px !important;
+        border: 0;
+        border-bottom: 1px solid #cccccc;
+        border-radius: 0px;
+    }
+
+    label {
+        margin-bottom: 0;
+        margin-top: .3rem;
+    }
+
+    #scrollToTopBtn:hover {
+        background-color: #0056b3; /* Darker blue */
+    }
+
+    #scrollToTopBtn {
+        outline: none; /* Removes the focus border */
+    }
+
+
+    .tabulator .tabulator-header .tabulator-col {
+        font-size: 14px;
+        background-color: #D6E4F0;
+        font-weight: 600;
+        border-right: 1px solid #ccc;
+    }
+
+    .tabulator-row .tabulator-cell {
+        padding: 5px 5px;
+        font-size: 14px;
+        height: 30px;
+    }
+
+    .tabulator-cell:hover {
+        color: #4682B4 !important;
+        cursor: pointer !important;
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 0.5rem; /* Reduce space between each input group */
+    }
+
+    .custom-header {
+        background-color: #bec6e1 !important; /* Attractive blue background */
+        color: black; /* White text */
+        border-radius: 4px 4px 0 0; /* Rounded corners */
+        font-weight: bold;
+    }
+
+    /* Responsive pagination styling */
+    .tabulator-paginator {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 10px 15px;
+        background: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        font-size: 14px;
+    }
+
+    .tabulator-page,
+    .tabulator-page.active,
+    .tabulator-page.disabled {
+        padding: 6px 12px;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        background-color: #ffffff;
+        color: #495057;
+        cursor: pointer;
+    }
+
+        .tabulator-page.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .tabulator-page.disabled {
+            color: #adb5bd;
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+
+    .tabulator-page-size {
+        height: 32px;
+        padding: 4px 8px;
+        font-size: 14px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
+
+    @@media (max-width: 576px) {
+        .tabulator-paginator {
+            justify-content: center;
+        }
+
+        .tabulator-page-size {
+            width: 100%;
+            margin-top: 5px;
+        }
+    }
+</style>
+
+<div class="content">
+    <div class="card" style="margin-top:10px;">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div style="font-size:x-large">
+                CSO Log
+            </div>
+            <div>
+                <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2">
+                    <i class="fas fa-plus mr-2 fa-1x"></i>Add
+                </button>
+                <button id="backButton" class="btn btn-outline-primary ">
+                    <i class="fas fa-arrow-left"></i>Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="form-group row">
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <div id="div_CsoLogTable"></div>
+                            </div>
+                            <div id="pager" class="mt-2"></div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @* <script src="~/js/tabulator.js"></script> *@
+    @* <script src="~/js/select2.min.js"></script> *@
+    <script>
+        var tabledata = [];
+        var table = '';
+        const searchTerms = {};
+        $(document).ready(function () {
+
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('backButton').addEventListener('click', function () {
+                    window.history.back();
+                });
+            });
+
+            loadCSOLogData();
+        });
+
+        function loadCSOLogData() {
+            Blockloadershow();
+            $.ajax({
+                url: '@Url.Action("GetCsoList", "CSOLog")',
+                type: 'GET',
+                success: function (data) {
+                    Blockloaderhide();
+                    if (data && Array.isArray(data)) {
+                        OnCSOLogGridLoad(data);
+                    }
+                    else {
+                        showDangerAlert('No data available to load.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showDangerAlert('Error retrieving data: ' + error);
+                    Blockloaderhide();
+                }
+            });
+        }
+
+                //define column header menu as column visibility toggle
+        var headerMenu = function () {
+            var menu = [];
+            var columns = this.getColumns();
+
+            for (let column of columns) {
+
+                //create checkbox element using font awesome icons
+                let icon = document.createElement("i");
+                icon.classList.add("fas");
+                icon.classList.add(column.isVisible() ? "fa-check-square" : "fa-square");
+
+                //build label
+                let label = document.createElement("span");
+                let title = document.createElement("span");
+
+                title.textContent = " " + column.getDefinition().title;
+
+                label.appendChild(icon);
+                label.appendChild(title);
+
+                //create menu item
+                menu.push({
+                    label: label,
+                    action: function (e) {
+                        //prevent menu closing
+                        e.stopPropagation();
+
+                        //toggle current column visibility
+                        column.toggle();
+
+                        //change menu item icon
+                        if (column.isVisible()) {
+                            icon.classList.remove("fa-square");
+                            icon.classList.add("fa-check-square");
+                        } else {
+                            icon.classList.remove("fa-check-square");
+                            icon.classList.add("fa-square");
+                        }
+                    }
+                });
+            }
+
+            return menu;
+        };
+
+        function OnCSOLogGridLoad(response) {
+            debugger;
+            Blockloadershow();
+
+            tabledata = [];
+            let columns = [];
+
+            // Map the response to the table format
+            if (response.length > 0) {
+                $.each(response, function (index, item) {
+
+                    let formattedDate = "";
+                    let updatedDate = "";
+                    let logedDate = "";
+                    if (item.addedOn) {
+                        const dateObj = new Date(item.addedOn);
+                        formattedDate = dateObj.toLocaleDateString("en-GB");
+                    }
+                    if (item.updatedOn) {
+                        const updatedateObj = new Date(item.updatedOn);
+                        updatedDate = updatedateObj.toLocaleDateString("en-GB");
+                    }
+                    if (item.logdate) {
+                        const logedDateObj = new Date(item.logdate);
+                        logedDate = logedDateObj.toLocaleDateString("en-GB");
+                    }
+
+                    tabledata.push({
+                        Sr_No: index + 1,
+                        Id: item.id,
+                        Date: logedDate,
+                        CSO_No: item.csoNoFYear,
+                        Logged_By: item.userName,
+                        Plant_Name: item.plantName,
+                        Brand_Name: item.brandName,
+                        ProductType: item.productTypeName,
+                        ComplainTypeName: item.complainTypeName,
+                        CreatedDate: formattedDate,
+                        CreatedBy: item.addedBy,
+                        UpdatedBy: item.updatedBy,
+                        UpdatedDate: updatedDate
+                    });
+                });
+
+                columns.push(
+                    {
+                        title: "Action",
+                        field: "Action",
+                        // responsive: 0,
+                        width: 50,
+                        headerMenu: headerMenu,
+                        hozAlign: "center",
+                        headerHozAlign: "center",
+                        formatter: function (cell, formatterParams) {
+                            const rowData = cell.getRow().getData();
+                            let actionButtons = "";
+
+                            actionButtons += `<i data-toggle="modal" onclick="delConfirm(${rowData.Id})" class="fas fa-trash-alt mr-2 fa-1x" title="Delete" style="color:red;cursor:pointer;margin-left: 5px;"></i>`
+
+                            return actionButtons;
+                        }
+                    },
+                    {
+                                title: "SNo", field: "Sr_No", width: 50, responsive: 1,  sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
+                    },
+                    { title: "Date", field: "Date", /* responsive: 2, */ sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "CSO No", field: "CSO_No", /* responsive: 3,  */ headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "Logged By", field: "Logged_By", /* responsive: 4,  */ headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "Plant Name", field: "Plant_Name", /* responsive: 5, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "Brand Name", field: "Brand_Name", /* responsive: 6, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "ProductType", field: "ProductType", /* responsive: 7, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "Description of Complain", field: "ComplainTypeName", /* responsive: 8, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "User", field: "CreatedBy", /* responsive: 9, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Create Date", field: "CreatedDate", /* responsive: 10, */  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Updated By", field: "UpdatedBy", /* responsive: 11, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Update Date", field: "UpdatedDate", /* responsive: 12, */  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                );
+
+                // // Initialize Tabulator
+                table = new Tabulator("#div_CsoLogTable", {
+                    data: tabledata,
+                    layout: "fitColumns",
+                    responsiveLayout: "collapse",
+                    responsiveLayoutCollapseFormatter: function (data) {
+                        const container = document.createElement("div");
+                        data.forEach(function (d) {
+                            const row = document.createElement("div");
+                            row.innerHTML = `<strong>${d.title}:</strong> ${d.value}`;
+                            container.appendChild(row);
+                        });
+                        return container;
+                    },
+                    // renderHorizontal: "virtual",
+                    movableColumns: true,
+                    pagination: "local",
+                    paginationSize: 10,
+                    paginationSizeSelector: [50, 100, 500, 1500, 2000],
+                    paginationCounter: "rows",
+                        paginationElement: document.getElementById("pager"),
+                    dataEmpty: "<div style='text-align: center; font-size: 1rem; color: gray;'>No data available</div>", // Placeholder message
+                    columns: columns
+                });
+
+                 table.on("cellClick", function (e, cell) {
+                    let columnField = cell.getColumn().getField();
+
+                    if (columnField !== "Action") {
+                        let rowData = cell.getRow().getData();
+                        showEditCard(rowData.Id);
+                    }
+                });
+
+                // table.on("cellClick", function (e, cell) {
+                //     let columnField = cell.getColumn().getField();
+
+                //     if (columnField !== "Action") {
+                //         let rowData = cell.getRow().getData();
+                //         showEditVendor(rowData.Id);
+                //     }
+                // });
+
+                // Export to Excel on button click
+                // document.getElementById("exportExcel").addEventListener("click", function () {
+                //     table.download("xlsx", "ProductCode_Data.xlsx", { sheetName: "Product Code Data" });
+                // });
+            }
+            else {
+                showDangerAlert('No data available.');
+            }
+
+            // Hide loader
+            Blockloaderhide();
+        }
+
+        function clearForm() {
+            // Clear all input fields
+            document.querySelectorAll('.form-control').forEach(function (input) {
+                if (input.tagName === 'INPUT') {
+                    if (input.type === 'hidden' || input.readOnly) {
+                        // Skip hidden or readonly inputs
+                        return;
+                    }
+                    input.value = ''; // Clear input value
+                } else if (input.tagName === 'SELECT') {
+                    input.selectedIndex = 0; // Reset dropdown to first option
+                }
+            });
+
+            // Clear error messages if needed
+            document.querySelectorAll('.text-danger').forEach(function (error) {
+                error.textContent = '';
+            });
+        }
+
+        function delConfirm(recid) {
+            PNotify.prototype.options.styling = "bootstrap3";
+            (new PNotify({
+                title: 'Confirmation Needed',
+                text: 'Are you sure to delete? It will not delete if this record is used in transactions.',
+                icon: 'glyphicon glyphicon-question-sign',
+                hide: false,
+                confirm: {
+                    confirm: true
+                },
+                buttons: {
+                    closer: false,
+                    sticker: false
+                },
+                history: {
+                    history: false
+                },
+            })).get().on('pnotify.confirm', function () {
+                $.ajax({
+                    url: '@Url.Action("Delete", "ProductType")',
+                    type: 'POST',
+                    data: { id: recid },
+                    success: function (data) {
+                        if (data.success == true) {
+                            showSuccessAlert("Product Type Deleted successfully.");
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2500);
+                        }
+                        else if (data.success == false && data.message == "Not_Deleted") {
+                            showDangerAlert("Record is used in PPS Log transactions.");
+                        }
+                        else {
+                            showDangerAlert(data.message);
+                        }
+                    },
+                    error: function () {
+                        showDangerAlert('Error retrieving data.');
+                    }
+                });
+            }).on('pnotify.cancel', function () {
+                loadData();
+            });
+        }
+
+
+    </script>
 }
