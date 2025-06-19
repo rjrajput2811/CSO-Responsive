@@ -184,7 +184,7 @@
         function loadCSOLogData() {
             Blockloadershow();
             $.ajax({
-                url: '@Url.Action("GetCsoList", "CSOLog")',
+                url: '@Url.Action("GetCSOLogList", "CSOLog")',
                 type: 'GET',
                 success: function (data) {
                     Blockloaderhide();
@@ -356,7 +356,7 @@
 
                     if (columnField !== "Action") {
                         let rowData = cell.getRow().getData();
-                        showEditCard(rowData.Id);
+                        editCSOLog(rowData.Id);
                     }
                 });
 
@@ -447,6 +447,9 @@
             });
         }
 
-
+        function editCSOLog(recid) {
+            var url = "@Url.Action("CSOLog", "CSOLog")" + "/" + recid;
+            window.open(url, '_self');
+        }
     </script>
 }

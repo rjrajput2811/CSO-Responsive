@@ -90,16 +90,21 @@
 
             <div class="content">
                 <form id="" method="post" asp-action="" asp-controller="">
-                    <div class="card">
-                        <div class="card-header bg-light">
-                            <label class="mb-0">General Details</label>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-3">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <label class="mb-0">General Details</label>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                                @Html.HiddenFor(m => m.Id)
                                 <div class="col-md-2">
                                     <label class="form-label required">CSO No.</label>
                                     @{
-                                        string CSONo = Model.CSONo + "/" + Model.FinancialYear;
+                                        string CSONo = string.Empty;
+                                        if (Model.CSONo > 0 && Model.FinancialYear > 0)
+                                        {
+                                            CSONo = Model.CSONo + "/" + Model.FinancialYear;
+                                        }
                                     }
 
                                     @Html.TextBox("CSONo", CSONo, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
