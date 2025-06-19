@@ -1,6 +1,7 @@
 using CSO.Core.DatabaseContext;
 using CSO.Core.Models;
 using CSO.Core.Repositories.Shared;
+using CSO.Core.Security;
 using CSO.Core.Services.SystemLogs;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,7 +23,7 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
         {
            
 
-            var result = await _dbContext.CSOLogs.FromSqlRaw("EXEC sp_Get_CSOLogs_Details").ToListAsync();
+            var result = await _dbContext.CSOLogVieModel.FromSqlRaw("EXEC sp_Get_CSOLogs_Details").ToListAsync();
 
             // Map results to ViewModel
             var viewModelList = result.Select(data => new CSOLogViewModel
@@ -36,7 +37,9 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
                 BrandName = data.BrandName ,
                 ProductTypeName = data.ProductTypeName,
                 ComplainTypeName = data.ComplainTypeName,
-                Description = data.Description
+                Description = data.Description,
+                Status = Enum.IsDefined(typeof(Status), data.Status1) ? ((Status)data.Status1).ToString() : ""
+                
             }).ToList();
 
             return viewModelList;
