@@ -1,11 +1,12 @@
 ﻿using CSO.Core.DatabaseContext.Shared;
-using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CSO.Core.Models;
 
 public class CSOLogViewModel
 {
+    [Key]
     public int Id { get; set; }
 
 
@@ -91,5 +92,7 @@ public class CSOLogViewModel
     public string? BrandName { get; set; }
     public string? ProductTypeName { get; set; }
     public string? ComplainTypeName { get; set; }
+
+    public string? Status { get; set; }
 
 }

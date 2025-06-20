@@ -22,7 +22,9 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
     {
         try
         {
-            var result = await _dbContext.CSOLogs.FromSqlRaw("EXEC sp_Get_CSOLogs_Details").ToListAsync();
+           
+
+            var result = await _dbContext.CSOLogVieModel.FromSqlRaw("EXEC sp_Get_CSOLogs_Details").ToListAsync();
 
             // Map results to ViewModel
             var csoLogList = result.Select(data => new CSOLogGridModel
@@ -35,8 +37,10 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
                 PlantName = data.PlantName,
                 BrandName = data.BrandName,
                 ProductTypeName = data.ProductTypeName,
-                ComplaintTypeName = data.ComplainTypeName,
-                Description = data.Description
+                ComplainTypeName = data.ComplainTypeName,
+                Description = data.Description,
+                Status = Enum.IsDefined(typeof(Status), data.Status1) ? ((Status)data.Status1).ToString() : ""
+                
             }).ToList();
 
             return csoLogList;

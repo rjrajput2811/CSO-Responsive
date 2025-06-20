@@ -39,7 +39,6 @@
         outline: none; /* Removes the focus border */
     }
 
-
     .tabulator .tabulator-header .tabulator-col {
         font-size: 14px;
         background-color: #D6E4F0;
@@ -124,6 +123,7 @@
             margin-top: 5px;
         }
     }
+
 </style>
 
 <div class="content">
@@ -148,12 +148,8 @@
             <div class="card shadow">
                 <div class="card-body">
                     <div class="form-group row">
-                        <div class="col-12">
-                            <div class="table-responsive">
-                                <div id="div_CsoLogTable"></div>
-                            </div>
-                            <div id="pager" class="mt-2"></div> 
-                        </div>
+                        <div id="div_CsoLogTable"></div>
+                        <div id="pager" class="mt-2"></div>
                     </div>
                 </div>
             </div>
@@ -285,6 +281,7 @@
                         Brand_Name: item.brandName,
                         ProductType: item.productTypeName,
                         ComplainTypeName: item.complainTypeName,
+                        Status: item.status,
                         CreatedDate: formattedDate,
                         CreatedBy: item.addedBy,
                         UpdatedBy: item.updatedBy,
@@ -296,7 +293,7 @@
                     {
                         title: "Action",
                         field: "Action",
-                        // responsive: 0,
+                        responsive: 0,
                         width: 50,
                         headerMenu: headerMenu,
                         hozAlign: "center",
@@ -313,13 +310,34 @@
                     {
                                 title: "SNo", field: "Sr_No", width: 50, responsive: 1,  sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
                     },
-                    { title: "Date", field: "Date", /* responsive: 2, */ sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
-                    { title: "CSO No", field: "CSO_No", /* responsive: 3,  */ headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
-                    { title: "Logged By", field: "Logged_By", /* responsive: 4,  */ headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
-                    { title: "Plant Name", field: "Plant_Name", /* responsive: 5, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
-                    { title: "Brand Name", field: "Brand_Name", /* responsive: 6, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
-                    { title: "ProductType", field: "ProductType", /* responsive: 7, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
-                    { title: "Description of Complain", field: "ComplainTypeName", /* responsive: 8, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "Date", field: "Date", responsive: 2, sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "CSO No", field: "CSO_No", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "Logged By", field: "Logged_By", responsive: 4,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "Plant Name", field: "Plant_Name", responsive: 5,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "Brand Name", field: "Brand_Name", responsive: 6,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "ProductType", field: "ProductType", responsive: 7,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "Description of Complain", field: "ComplainTypeName", responsive: 8,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    {
+                        title: "Status",
+                        field: "Status",
+                        headerMenu: headerMenu,
+                        headerFilter: "input",
+                        responsive: 10,
+                        hozAlign: "center",
+                        headerHozAlign: "center",
+                        formatter: function (cell, formatterParams) {
+                            let status = cell.getValue();
+                            let color = "black";
+
+                            if (status == 'Open') color = "#FFC107";
+                            else if (status == 'RootCause') color = "#FF9900";
+                            else if (status == 'Monitor') color = "#6495ED";
+                            else if (status == 'Approve') color = "#008000";
+                            else if (status == 'Close') color = "#808080";
+
+                            return `<span style="color: ${color}; font-weight: bold;">${status}</span>`;
+                        }
+                    },
                     { title: "User", field: "CreatedBy", /* responsive: 9, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
                     { title: "Create Date", field: "CreatedDate", /* responsive: 10, */  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
                     { title: "Updated By", field: "UpdatedBy", /* responsive: 11, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
@@ -331,16 +349,10 @@
                     data: tabledata,
                     layout: "fitColumns",
                     responsiveLayout: "collapse",
-                    responsiveLayoutCollapseFormatter: function (data) {
-                        const container = document.createElement("div");
-                        data.forEach(function (d) {
-                            const row = document.createElement("div");
-                            row.innerHTML = `<strong>${d.title}:</strong> ${d.value}`;
-                            container.appendChild(row);
-                        });
-                        return container;
-                    },
-                    // renderHorizontal: "virtual",
+                    // responsiveLayoutCollapseFormatter: function (data) {
+                    //     return data.map(d => `<strong>${d.title}</strong>: ${d.value}`).join("<br>");
+                    // },
+                    renderHorizontal: "virtual",
                     movableColumns: true,
                     pagination: "local",
                     paginationSize: 10,
