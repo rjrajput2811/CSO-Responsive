@@ -6,6 +6,7 @@ namespace CSO.Core.Repositories.NearestPlantRepo;
 public interface INearestPlantRepository
 {
     Task<List<NearestPlantViewModel>> GetNearestPlantListByPlantIdAsync(int plantId);
+    Task<List<NearestPlantViewModel>> GetNearestPlantListByPlantAndUserAsync(int plantId, int userId);
     Task<List<NearestPlantViewModel>> GetNearestPlantList();
     Task<NearestPlant?> GetByIdAsync(int nearestPlantId);
     Task<OperationResult> CreateAsync(NearestPlant nearestPlant, bool returnCreatedRecord = false);

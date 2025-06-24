@@ -215,17 +215,6 @@ function InsertUpdateUser() {
         return false;
     }
 
-    if (!isValid) {
-        const missingFieldsList = missingFields.map(field => `<li>${field}</li>`).join('');
-        const alertMessage = `
-                <p>Please fill out the following required field(s):</p>
-                <ul>${missingFieldsList}</ul>
-            `;
-        showDangerAlert(alertMessage);
-        Blockloaderhide();
-        return false;
-    }
-
     $("#Id").val(userId);
 
     var divisions = '';

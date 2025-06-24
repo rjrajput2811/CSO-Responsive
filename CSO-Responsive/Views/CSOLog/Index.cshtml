@@ -16,6 +16,7 @@
 <script src="~/js/common.js"></script>
 <script src="~/js/xlsx.min.js"></script>
 <script src="~/js/tabulator.min.js"></script>
+<script src="~/js/aes.js"></script>
 
 <style>
 
@@ -133,7 +134,7 @@
                 CSO Log
             </div>
             <div>
-                <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2">
+                <button id="addButton" type="button" onclick="csoLogPage()" class="btn btn-outline-success legitRipple mr-2">
                     <i class="fas fa-plus mr-2 fa-1x"></i>Add
                 </button>
                 <button id="backButton" class="btn btn-outline-primary ">
@@ -180,7 +181,7 @@
         function loadCSOLogData() {
             Blockloadershow();
             $.ajax({
-                url: '@Url.Action("GetCsoList", "CSOLog")',
+                url: '@Url.Action("GetCSOLogList", "CSOLog")',
                 type: 'GET',
                 success: function (data) {
                     Blockloaderhide();
@@ -368,7 +369,7 @@
 
                     if (columnField !== "Action") {
                         let rowData = cell.getRow().getData();
-                        showEditCard(rowData.Id);
+                        editCSOLog(rowData.Id);
                     }
                 });
 
@@ -459,6 +460,20 @@
             });
         }
 
+        function csoLogPage() {
+            var url = "@Url.Action("CSOLog", "CSOLog")";
+            window.open(url, '_self');
+        }
 
+        function editCSOLog(recid) {
+            var key = CryptoJS.enc.Utf8.parse('8080808080808080');
+            var iv = CryptoJS.enc.Utf8.parse('8080808080808080');
+            var encryptedId = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(recid.toString()), key,
+            { keySize: 256 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+            var encryptedBase64 = encryptedId.toString();
+            var urlSafe = encryptedBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            var url = "@Url.Action("CSOLog", "CSOLog")" + "/" + urlSafe;
+            window.open(url, '_self');
+        }
     </script>
 }

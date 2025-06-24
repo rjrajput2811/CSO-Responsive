@@ -22,7 +22,7 @@ public class BrandRepository : SqlTableRepository, IBrandRepository
         try
         {
             var brandList = await _dbContext.Brands
-                .Where(i => (i.DivisionId ?? "").Contains(divisionId.ToString()))
+                .Where(i => (i.DivisionId ?? "").Contains(divisionId.ToString()) && i.ActiveInactive == "Active")
                 .Select(x => new BrandViewModel
                 {
                     Id = x.Id,
@@ -39,12 +39,64 @@ public class BrandRepository : SqlTableRepository, IBrandRepository
         }
     }
 
+    public async Task<List<BrandViewModel>> GetBrandListByDivisionAndUserAsync(int divisionId, int userId)
+    {
+        try
+        {
+            // Get user's assigned BrandId string, e.g., "1,2,3"
+            var userAssignedBrands = await _dbContext.Users
+                .Where(i => i.Id == userId)
+                .Select(x => x.BrandId)
+                .FirstOrDefaultAsync();
+
+            if (string.IsNullOrWhiteSpace(userAssignedBrands))
+                return new List<BrandViewModel>();
+
+            // Parse string to List<int>
+            var BrandIdList = userAssignedBrands
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(id => int.TryParse(id, out var value) ? value : (int?)null)
+                .Where(id => id.HasValue)
+                .Select(id => id.Value)
+                .ToList();
+
+            // Early return if no valid IDs
+            if (BrandIdList.Count == 0)
+                return new List<BrandViewModel>();
+
+            string divisionIdWrapped = $",{divisionId},";
+
+            // Fetch all needed Brands first by Division (no filtering in SQL)
+            var allBrands = await _dbContext.Brands
+                .Where(i => ("," + (i.DivisionId ?? "") + ",").Contains(divisionIdWrapped))
+                .Select(x => new BrandViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                })
+                .ToListAsync();
+
+            // Filter in-memory (LINQ to Objects)
+            var list = allBrands
+                .Where(x => BrandIdList.Contains(x.Id))
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            return list;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
     public async Task<BrandViewModel?> GetBrandByIdAsync(int brandId)
     {
         try
         {
             var result = await _dbContext.Brands
-                .Where(i => i.Id == brandId)
+                .Where(i => i.Id == brandId && i.ActiveInactive == "Active")
                 .Select(x => new BrandViewModel
                 {
                     Id = x.Id,
@@ -67,7 +119,7 @@ public class BrandRepository : SqlTableRepository, IBrandRepository
         {
             var divisions = await _dbContext.Divisions.ToListAsync();
 
-            var brands = await _dbContext.Brands.ToListAsync();
+            var brands = await _dbContext.Brands.Where(i => i.ActiveInactive == "Active").ToListAsync();
 
             var list = brands.Select(b =>
             {
@@ -112,6 +164,7 @@ public class BrandRepository : SqlTableRepository, IBrandRepository
         try
         {
             var list = await _dbContext.Brands
+                .Where(i => i.ActiveInactive == "Active")
                 .Select(x => new BrandViewModel
                 {
                     Id = x.Id,

@@ -39,6 +39,58 @@ public class PlantRepository : SqlTableRepository, IPlantRepository
         }
     }
 
+    public async Task<List<PlantViewModel>> GetPlantListByDivisionAndUserAsync(int divisionId, int userId)
+    {
+        try
+        {
+            // Get user's assigned PlantId string, e.g., "1,2,3"
+            var userAssignedPlants = await _dbContext.Users
+                .Where(i => i.Id == userId)
+                .Select(x => x.PlantId)
+                .FirstOrDefaultAsync();
+
+            if (string.IsNullOrWhiteSpace(userAssignedPlants))
+                return new List<PlantViewModel>();
+
+            // Parse string to List<int>
+            var PlantIdList = userAssignedPlants
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(id => int.TryParse(id, out var value) ? value : (int?)null)
+                .Where(id => id.HasValue)
+                .Select(id => id.Value)
+                .ToList();
+
+            // Early return if no valid IDs
+            if (PlantIdList.Count == 0)
+                return new List<PlantViewModel>();
+
+            string divisionIdWrapped = $",{divisionId},";
+
+            // Fetch all needed Plants first (no filtering in SQL)
+            var allPlants = await _dbContext.Plants
+                .Where(i => ("," + (i.DivisionId ?? "") + ",").Contains(divisionIdWrapped))
+                .Select(x => new PlantViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                })
+                .ToListAsync();
+
+            // Filter in-memory (LINQ to Objects)
+            var list = allPlants
+                .Where(x => PlantIdList.Contains(x.Id))
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            return list;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
     public async Task<List<PlantViewModel>> GetPlantList()
     {
         try

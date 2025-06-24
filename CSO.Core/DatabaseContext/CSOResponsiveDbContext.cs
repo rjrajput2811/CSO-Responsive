@@ -20,7 +20,6 @@ public class CSOResponsiveDbContext : DbContext
     public DbSet<ProductType> ProductTypes { get; set; }
     public DbSet<NearestPlant> NearestPlants { get; set; }
     public DbSet<CSOLog> CSOLogs { get; set; }
-    public DbSet<CSOLogViewModel> CSOLogVieModel { get; set; }
     public DbSet<CSOLogFile> CSOLogFiles { get; set; }
     public DbSet<CSOLogHistory> CSOLogHistories { get; set; }
     public DbSet<MailMatrix> MailMatrices { get; set; }
