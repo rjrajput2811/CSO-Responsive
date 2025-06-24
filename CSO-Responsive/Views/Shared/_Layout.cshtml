@@ -1,53 +1,177 @@
 ﻿@using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - CSO </title>
-    <link href="~/css/icomoon/styles.min.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link href="~/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/css/bootstrap_limitless.min.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/css/colors.min.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/css/components.min.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/css/layout.min.css" rel="stylesheet" asp-append-version="true" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>CSO - @ViewData["Title"]</title>
+    <link href="~/css/icomoon/styles.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/icons/fontawesome/styles.min.css" rel="stylesheet" type="text/css" />
+    
+    <link href="~/css/icons/material/styles.min.css" rel="stylesheet" type="text/css" />
+    
+    <link href="~/css/bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/bootstrap_limitless.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/layout.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/components.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/colors.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/switch.css" rel="stylesheet" />
+  
+    <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
+  <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" /> 
+    <script src="~/js/jquery.min.js" type="text/javascript"></script>
+    <script src="~/js/bootstrap.bundle.min.js" type="tsext/javascript"></script>
+    <script src="~/js/blockui.min.js" type="text/javascript"></script>
+    <script src="~/js/ripple.min.js" type="text/javascript"></script>
+    @* <script src="~/js/pnotify.min.js" type="text/javascript"></script>*@
+    <script src="~/js/noty.min.js" type="text/javascript"></script>
+    <script src="~/js/form_checkboxes_radios.js" type="text/javascript"></script>
+    <script src="~/js/interactions.min.js" type="text/javascript"></script>
+    <script src="~/js/datatables.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript" src="~/js/datatables.buttons.min.js"></script>
+    <script type="text/javascript" src="~/js/jszip.min.js"></script>
+    <script type="text/javascript" src="~/js/buttons.html5.min.js"></script>
+
+    <script src="~/js/switch.min.js" type="text/javascript"></script>
+    <script src="~/js/uniform.min.js" type="text/javascript"></script>
+    <script src="~/js/form_select2.js" type="text/javascript"></script>
 
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/app.js" type="text/javascript"></script>
+
+    <script src="~/js/select2.min.js" type="text/javascript"></script>
+
+    <script src="~/js/form_checkboxes_radios.js" type="text/javascript"></script>
+    <script src="~/js/echarts.min.js" type="text/javascript"></script>
+    <script src="~/js/PopupAlert.js" type="text/javascript"></script>
+
+    <link href="~/js/sweetalert/sweetalert.css" rel="stylesheet" />
+    <script src="~/js/sweetalert/sweetalert.js"></script>
+
+    <link href="~/css/buttons.dataTables.min.css" rel="stylesheet" />
+
+
+    <script src="~/js/popper.min.js"></script>
+
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+   @*  <script src="~/lib/jquery.unobtrusive-ajax.js"></script> *@
+
+    <script src="~/js/pagination.js"></script>
+    <script src="~/js/loadingoverlay.min.js"></script>
+
+
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+    @RenderSection("styles", false)
+
+    <script src="~/js/plugins/tables/footable/footable.min.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.js"></script>
+    <script src="~/js/ellipsis.js"></script>
+@*     <link rel="stylesheet" href="~/css/font-awesome.min.css"> *@
+    <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.12.1/dataRender/ellipsis.js"></script>
+
     <script>
-        // $(document).ready(function () {
-        //     // Get the current URL
-        //     var currentUrl = window.location.href.toLowerCase();
+        $(document).ready(function () {
+            // Get the current URL
+            var currentUrl = window.location.href.toLowerCase();
 
-        //     // Highlight the active menu item for non-treeview items
+            // Highlight the active menu item for non-treeview items
+            $('ul.nav-sidebar a').filter(function () {
+                return this.href.toLowerCase() === currentUrl;
+            }).addClass('menu-active');
 
-        //     $('ul.nav-sidebar a').filter(function () {
-        //         return this.href.toLowerCase() === currentUrl;
-        //     }).addClass('menu-active');
+            // For treeview items (submenus)
+            $('ul.nav-group-sub a').filter(function () {
+                return this.href.toLowerCase() === currentUrl;
+            }).each(function () {
+                // Open the parent submenu and highlight the active item
+                $(this).closest('.nav-item-submenu').addClass('menu-open');
+            });
 
-        //     // For treeview items (submenus)
-        //     $('ul.nav-group-sub a').filter(function () {
-        //         return this.href.toLowerCase() === currentUrl;
-        //     }).each(function () {
-        //         // Open the parent submenu and highlight the active item
-        //         $(this).closest('.nav-item-submenu').addClass('menu-open');
-        //     });
-
-        //     $('.nav-group-sub').each(function () {
-        //         // Check if the submenu contains an active item
-        //         if ($(this).find('.menu-active').length > 0) {
-        //             $(this).addClass('open');
-        //         }
-        //     });
-        // });
+            $('.nav-group-sub').each(function () {
+                // Check if the submenu contains an active item
+                if ($(this).find('.menu-active').length > 0) {
+                    $(this).addClass('open');
+                }
+            });
+        });
     </script>
 
-    <style type="text/css">
+    <style>
+        .navbar-nav-link {
+        padding: 0 0 0 0 !important;
+        }
+
+        .fa-sign-out, .fa-user {
+        font-size: 24px;
+        }
+
+        #modalProfileContent {
+        width: 75% !important;
+        }
+
+        #myModal_Profile {
+        width: 75% !important;
+        left: 51%;
+        top: 5%;
+        }
+
+        .Profilelabel {
+        margin-left: 12px;
+        }
+
+        .custom-label {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .loader {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: url('~/images/Rolling.gif') 50% 50% no-repeat rgb(249,249,249);
+        }
+        #cover-spin {
+        position:fixed;
+        width:100%;
+        left:0;right:0;top:0;bottom:0;
+        background-color: rgba(255,255,255,0.7);
+        z-index:9999;
+        display:none;
+        }
+
+        -webkit-keyframes spin {
+        from {-webkit-transform:rotate(0deg);}
+        to {-webkit-transform:rotate(360deg);}
+        }
+
+        keyframes spin {
+        from {transform:rotate(0deg);}
+        to {transform:rotate(360deg);}
+        }
+
+        #cover-spin::after {
+        content:'';
+        display:block;
+        position:absolute;
+        left:48%;top:40%;
+        width:40px;height:40px;
+        border-style:solid;
+        border-color:black;
+        border-top-color:transparent;
+        border-width: 4px;
+        border-radius:50%;
+        -webkit-animation: spin .8s linear infinite;
+        animation: spin .8s linear infinite;
+        }
+
         .menu-active {
             background-color: #fff !important;
             color: black !important;
@@ -62,121 +186,16 @@
 
             .nav-group-sub.open {
                 display: block; /* Show the submenu when it has the 'open' class */
-                color: #FFFF00 !important;
             }
 
-        @@media (max-width: 767.98px) {
-            .navbar-brand {
-                flex-direction: column !important;
-                align-items: flex-start !important;
-            }
-
-                .navbar-brand span {
-                    font-size: 14px !important;
-                    line-height: 1.3;
-                    white-space: normal;
-                }
         }
-
-        /* Navbar container */
-        .navbar {
-            background-color: #ffffff;
-            border-bottom: 1px solid #ddd;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-        }
-
-        /* Nav links */
-        .navbar-nav .nav-link {
-            color: #333;
-            font-weight: 500;
-            padding: 12px 18px;
-            display: flex;
-            align-items: center;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-            /* Nav icons */
-            .navbar-nav .nav-link i {
-                margin-right: 8px;
-                font-size: 16px;
-                color: #5a68c7;
-            }
-
-            /* Hover Effect */
-            .navbar-nav .nav-link:hover,
-            .navbar-nav .nav-link:focus {
-                background-color: #f0f2ff;
-                color: #5a68c7;
-            }
-
-            /* Active/Selected Menu */
-            .navbar-nav .nav-link.active,
-            .navbar-nav .nav-link.selected {
-                background-color: #5a68c7;
-                color: #fff !important;
-            }
-
-                .navbar-nav .nav-link.active i,
-                .navbar-nav .nav-link.selected i {
-                    color: #fff;
-                }
-
-        /* Dropdown toggle */
-        .navbar-nav .dropdown-toggle::after {
-            margin-left: 6px;
-            vertical-align: middle;
-        }
-
-        /* Dropdown menu */
-        .dropdown-menu {
-            border: 1px solid #eee;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            background-color: #fff;
-            border-radius: 6px;
-            padding: 15px;
-            z-index: 1000;
-        }
-
-        /* Dropdown content columns */
-        .dropdown-content-body .col-md-3 {
-            padding: 10px;
-        }
-
-        /* Dropdown headings */
-        .dropdown-content-body .font-weight-bold,
-        .dropdown-content-body .font-weight-semibold {
-            color: #444;
-            font-size: 15px;
-        }
-
-        /* Inner dropdown nav links */
-        .dropdown-menu .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            color: #444;
-            font-size: 14px;
-            transition: background-color 0.2s;
-            border-radius: 4px;
-        }
-
-            .dropdown-menu .nav-link i {
-                margin-right: 8px;
-                color: #5a68c7;
-            }
-
-            /* Hover on inner links */
-            .dropdown-menu .nav-link:hover {
-                background-color: #eef1ff;
-                color: #5a68c7;
-            }
-
-
+        
     </style>
+
 </head>
-<body>
+
+<body style="height:100%" class="sidebar-xs">
+
     <!-- Main navbar -->
     <div class="navbar navbar-expand-md navbar-dark bg-indigo navbar-static">
         @*<div class="navbar-brand">
@@ -187,8 +206,10 @@
 
         <div class="d-md-none">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-mobile">
+                <i class="icon-tree5"></i>
             </button>
             <button class="navbar-toggler sidebar-mobile-main-toggle" type="button">
+                <i class="icon-paragraph-justify3"></i>
             </button>
         </div>
 
@@ -209,16 +230,11 @@
             </span>
 
 
-            @if (@HttpContextAccessor.HttpContext.Session.GetInt32("UserId") > 0)
-            {
                 <ul class="navbar-nav ml-md-auto">
                     <li class="nav-item" style="margin-top: 0.875rem; margin-right: 10px; white-space: nowrap; ">
-                        @if (@HttpContextAccessor.HttpContext.Session.GetString("FullName") != null)
-                        {
-                            <span class="font-weight-bold">Welcome @HttpContextAccessor.HttpContext.Session.GetString("FullName")</span>
-                        }
+                       
                     </li>
-                    <li class="nav-item" style="margin-top: 0.875rem; margin-right: 10px; white-space: nowrap">
+                    <li class="nav-item" style="margin-top: 0.875rem; margin-right: 10px; white-space: nowrap" >
                         <div class="row">
                             <div class="col-1"><span class="font-weight-bold">FY:</span></div>
                             <div class="col-2">
@@ -226,7 +242,7 @@
                                     @{
                                         var fyStartMonth = DateTime.Now.Month;
                                         var fyYear = DateTime.Now.Year;
-                                        if (fyStartMonth > 3)
+                                        if(fyStartMonth > 3)
                                         {
                                             fyYear = fyYear + 1;
                                         }
@@ -235,8 +251,8 @@
                                     @for (int i = 2021; i < fyYear; i++)
                                     {
 
-                                        var value = i.ToString().Substring(2) + (i + 1).ToString().Substring(2);
-                                        var Text = i.ToString() + "-" + (i + 1).ToString().Substring(2);
+                                        var value = i.ToString().Substring(2) + (i+1).ToString().Substring(2);
+                                        var Text = i.ToString() +"-"+ (i + 1).ToString().Substring(2);
 
                                         if (value == selectedFyYear)
                                         {
@@ -266,14 +282,8 @@
                             <li><a href="#">Setting</a></li>
                             <li><a href="#">Logout</a></li>
                         </ul>
-                        @*@if (@HttpContextAccessor.HttpContext.Session.GetString("FullName") != null)
-                    {
-                    <span>@HttpContextAccessor.HttpContext.Session.GetString("FullName")</span>
-                    }*@
-                        @if (@HttpContextAccessor.HttpContext.Session.GetString("RoleName") != null)
-                        {
-                            <input type="hidden" id="hdnRoleName" style="float: right" value='@HttpContextAccessor.HttpContext.Session.GetString("RoleName")' />
-                        }
+                      
+                      
                     </li>
                     <li class="nav-item" style="margin-top: 0.875rem;">
                         @*<a href="@Url.Action("LogOut", "Home")" class="navbar-nav-link">
@@ -286,9 +296,8 @@
                         </a>
                     </li>
                 </ul>
-            }
-            else
-            {
+          
+            
                 <ul class="navbar-nav ml-md-auto">
                     <li class="nav-item">
                         <a href="@Url.Action("Login", "Account")" class="navbar-nav-link">
@@ -297,174 +306,219 @@
                         </a>
                     </li>
                 </ul>
-            }
+            
         </div>
     </div>
-    <!-- Secondary navbar -->
-    <div class="navbar navbar-expand navbar-light px-0 px-lg-3">
-        <div class="overflow-auto overflow-lg-visible scrollbar-hidden flex-1">
-            <ul class="navbar-nav flex-row text-nowrap">
-                <li class="nav-item">
-                    <a asp-controller="" asp-action="" class="nav-link" title="Dashboard" id="Dashboard">
-                        <i class="icon-home4"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
+    <!-- /main navbar -->
+    <!-- Page content -->
+    <div class="page-content">
 
-                <li class="nav-item nav-item-dropdown-lg mega-menu-full">
-                    <a href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown">
-                        <i class="icon-stack2 mr-2"></i>
-                        CSO
-                    </a>
+        <!-- Main sidebar -->
+        <div class="sidebar sidebar-dark sidebar-main sidebar-expand-md">
 
-                    <div class="dropdown-menu dropdown-scrollable-lg wmin-lg-300 p-0">
-                        <div class="dropdown-content-body">
-                            <div class="row">
-                                <div class="col-md-3 mb-3 mb-md-0">
-                                    <div class="font-weight-bold border-bottom pb-2 mb-2">View Users</div>
-                                    <a asp-controller="Users" asp-action="Index" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-people"></i>
-                                        <span>Users</span>
-                                    </a>
+            <!-- Sidebar mobile toggler -->
+            <div class="sidebar-mobile-toggler text-center">
+                <a href="#" class="sidebar-mobile-main-toggle">
+                    <i class="icon-arrow-left8"></i>
+                </a>
+                <span class="font-weight-semibold">Navigation</span>
+                <a href="#" class="sidebar-mobile-expand">
+                    <i class="icon-screen-full"></i>
+                    <i class="icon-screen-normal"></i>
+                </a>
+            </div>
+            <!-- /sidebar mobile toggler -->
+            <!-- Sidebar content -->
+            <div class="sidebar-user-material">
+                <div class="sidebar-user-material-body" style="background:white !important;padding:0px;">
+                    <div class="card-body text-center" style="padding:10px !important;">
+                        <a>
+                            <img id="imglogo" name="imglogo" src="~/images/wipro-logo.png" class="img-fluid  shadow-0 " alt="" />
+                        </a>
+                        <h6 id="loginDtls" class="mb-0 text-white text-shadow-dark"> </h6>
+                        <span id="spnRole" class="font-size-sm text-white text-shadow-dark"> </span>
+                    </div>
 
-                                </div>
+                    <div class="sidebar-user-material-footer">
+                    </div>
+                </div>
 
-                                <div class="col-md-3 mb-3 mb-md-0">
-                                    <div class="font-weight-bold border-bottom pb-2 mb-2">Log CSO</div>
-                                    <a asp-controller="CSOLog" asp-action="Index" class="nav-link" title="CSO Log" id="CSOLog">
-                                        <i class="far fa-edit"></i>
-                                        <span>CSO Log</span>
-                                    </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Analysis and Solution" id="AnalysisandSolution">
+
+
+                <!-- /user menu -->
+                <!-- Main navigation -->
+                <div class="card card-sidebar-mobile" id="divMnu">
+                    <ul class="nav nav-sidebar" data-nav-type="accordion">
+                      
+                            <li class="nav-item">
+                                <a asp-controller="Dashboard" asp-action="Index" class="nav-link" id="Dashboard" title="Dashboard">
+                                    <i class="icon-home4"></i>
+                                    <span>
+                                        Dashboard
+                                    </span>
+                                </a>
+                            </li>
+                        <li class="nav-item">
+                            <a asp-controller="Users" asp-action="Index" class="nav-link" id="Account" title="User">
+                                <i class="icon-user"></i>
+                                <span>
+                                    User
+                                </span>
+                            </a>
+                        </li>
+
+                        
+                                <li class="nav-item">
+                            <a asp-controller="CSOLog" asp-action="Index" class="nav-link" id="Account" title="User">
+                                <i class="far fa-edit"></i>
+                                <span>
+                                    CSO Log
+                                </span>
+                            </a>
+                                    
+                                </li>
+                            
+                          
+
+
+                                <li class="nav-item">
+                                    <a asp-controller="CSOLogAnalysisSolution" asp-action="Index" class="nav-link" id="CSOLog" title="Analysis & Solution">
                                         <i class="fas fa-clipboard-list"></i>
-                                        <span>Analysis and Solution</span>
+                                        <span>
+                                            Analysis & Solution
+                                        </span>
                                     </a>
-                                </div>
+                                </li>
 
-                                <div class="col-md-3">
-                                    <div class="font-weight-bold border-bottom pb-2 mb-2">Report</div>
-                                    <a asp-controller="" asp-action="" class="nav-link" title="MIS" id="MIS">
-                                        <i class="fas fa-regular fa-folder-tree"></i>
-                                        <span>MIS</span>
-                                    </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="CSO Log Report" id="CSOLogReport">
-                                        <i class="fas fa-regular fa-rectangle-list"></i>
-                                        <span>CSO Log Report</span>
-                                    </a>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="font-weight-bold border-bottom pb-2 mb-2">Configration</div>
-                                    <a asp-controller="" asp-action="" class="nav-link" title="Mail Matrix" id="Mail Matrix">
-                                        <i class="fas fa-envelope-square"></i>
-                                        <span>Mail Matrix</span>
-                                    </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>Email/SMTP Setting</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="nav-item nav-item-dropdown-lg mega-menu-full">
-                    <a href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown">
-                        <i class="icon-indent-decrease2 mr-2"></i>
-                        Master
-                    </a>
+                        
+                      
+                            @* MIS Report *@
+                            <li class="nav-item nav-item-submenu">
+                                <a href="#" class="nav-link" title="Reports">
+                                    <i class="icon-file-eye"></i>
+                                    <span>
+                                        Reports
+                                    </span>
+                                </a>
+                                <ul class="nav nav-group-sub" data-submenu-title="Reports">
+                                    <li class="nav-item"><a asp-controller="MIS" asp-action="Index" class="nav-link" title="MIS">MIS</a></li>
+                                    <li class="nav-item"><a asp-controller="CSOLogReport" asp-action="Index" class="nav-link" title="Log">CSO Log Report</a></li>
+                                </ul>
+                            </li>
+                        
+                            <li class="nav-item">
+                                <a asp-controller="EmailConfiguration" asp-action="AddEditEmailConfiguration" class="nav-link" id="EmailConfiguration" title="Email/SMTP Setting">
+                                    <i class="fas fa-envelope-square"></i>
+                                    <span>
+                                        Email/SMTP Setting
+                                    </span>
+                                </a>
+                            </li>
 
-                    <div class="dropdown-menu dropdown-scrollable-lg wmin-lg-300 p-0">
-                        <div class="dropdown-content-body">
-                            <div class="row">
-                                <div class="col-md-3 mb-3 mb-md-0">
-                                    <div class="font-weight-semibold border-bottom pb-2 mb-2">Primary</div>
-                                    <a asp-controller="Division" asp-action="Division" class="nav-link" title="Division" id="Division">
-                                        <i class="icon-gear"></i>
-                                        <span>Division</span>
-                                    </a>
-                                    <a asp-controller="Category" asp-action="Index" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>Category</span>
-                                    </a>
-                                    <a asp-controller="ComplaintType" asp-action="ComplaintType" class="nav-link" title="Complaint Type" id="ComplaintType">
-                                        <i class="icon-gear"></i>
-                                        <span>Complain Type</span>
-                                    </a>
-                                    <a asp-controller="CsoClass" asp-action="CSOClass" class="nav-link" title="CSO Class" id="CsoClass">
-                                        <i class="icon-gear"></i>
-                                        <span>CSO Class</span>
-                                    </a>
-                                    <a asp-controller="Brand" asp-action="Brand" class="nav-link" title="Brand" id="Brand">
-                                        <i class="icon-gear"></i>
-                                        <span>Brand</span>
-                                    </a>
+                            <li class="nav-item nav-item-submenu">
+                                <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Utility</span></a>
+                                <ul class="nav nav-group-sub" data-submenu-title="Configuration">
+                                    <li class="nav-item nav-item-submenu">
+                                        <a href="#" class="nav-link">Masters</a>
+                                        <ul class="nav nav-group-sub">
+                                            @*<li class="nav-item"><a title="Email/ SMTP Setting" href="/EmailConfiguration/AddEditEmailConfiguration" class="nav-link">Email/ SMTP Setting</a></li>*@
+                                        <li class="nav-item"><a title="Division" asp-controller="Division" asp-action="Division" class="nav-link">Division</a></li>
+                                        <li class="nav-item"><a title="Category" asp-controller="Category" asp-action="Category" class="nav-link">Category</a></li>
+                                        <li class="nav-item"><a title="Complaint Type" asp-controller="ComplaintType" asp-action="ComplaintType" class="nav-link">Complaint Type</a></li>
+                                        <li class="nav-item"><a title="CSO Class" asp-controller="CSOClass" asp-action="CSOClass" class="nav-link">CSO Class</a></li>
+                                        <li class="nav-item"><a title="Brand" asp-controller="Brand" asp-action="Brand" class="nav-link">Brand</a></li>
+                                        <li class="nav-item"><a title="Product Type" asp-controller="ProductType" asp-action="ProductType" class="nav-link">Product Type</a></li>
+                                        <li class="nav-item"><a title="Plant" asp-controller="Plant" asp-action="Plant" class="nav-link">Plant</a></li>
+                                        <li class="nav-item"><a title="Nearest Plant" asp-controller="NearestPlant" asp-action="NearestPlant" class="nav-link">Nearest Plant</a></li>
+                                        <li class="nav-item"><a title="User Role" asp-controller="UserRole" asp-action="UserRole" class="nav-link">User Role</a></li>
+                                        <li class="nav-item"><a title="User Role" asp-controller="RecycleDay" asp-action="RecycleDay" class="nav-link">Recycle Days Configuration</a></li>
 
-                                </div>
+                                        </ul>
+                                    </li>
+                                </ul>
 
-                                <div class="col-md-3 mb-3 mb-md-0">
-                                    <div class="font-weight-semibold border-bottom pb-2 mb-2">Secondary</div>
-                                    <a asp-controller="ProductType" asp-action="ProductType" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>Product Type</span>
-                                    </a>
-                                    <a asp-controller="Plant" asp-action="Plant" class="nav-link" title="Plant" id="Plant">
-                                        <i class="icon-gear"></i>
-                                        <span>Plant</span>
-                                    </a>
-                                    <a asp-controller="NearestPlant" asp-action="NearestPlant" class="nav-link" title="Nearest Plant" id="NearestPlant">
-                                        <i class="icon-gear"></i>
-                                        <span>Nearest Plant</span>
-                                    </a>
-                                    <a asp-controller="" asp-action="User Detail" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>User Role</span>
-                                    </a>
-                                    <a asp-controller="RecycleDay" asp-action="RecycleDayConfiguration" class="nav-link" title="Dashboard" id="Dashboard">
-                                        <i class="icon-gear"></i>
-                                        <span>Recycle Days Configration</span>
-                                    </a>
-                                </div>
+                            </li>
+                       
+                            <li class="nav-item">
+                                <a asp-controller="MailMatrix" asp-action="Index" class="nav-link" id="EmailConfiguration" title="Email/SMTP Setting">
+                                    <i class="fas fa-envelope-square"></i>
+                                    <span>
+                                        Mail Matrix
+                                    </span>
+                                </a>
+                            </li>
+                        
+                    </ul>
+                </div>
+                <!-- /main navigation -->
 
-                            </div>
-                        </div>
-                    </div>
-                </li>
+            </div>
+            <!-- /sidebar content -->
+
+        </div>
+
+        <!-- Main content -->
+        <div class="content-wrapper">
+            <input id="hf_AccessDenied" type="hidden" value='@Url.Action("AccessDenied",  "Home")'>
+            @RenderBody()
+
+            <!-- Footer -->
+            @*<div class="navbar navbar-expand-lg navbar-light">
+            <div class="text-center d-lg-none w-100">
+            <button type="button" class="navbar-toggler dropdown-toggle" data-toggle="collapse" data-target="#navbar-footer">
+            <i class="icon-unfold mr-2"></i>
+            Footer
+            </button>
+            </div>
+
+            <div class="navbar-collapse collapse" id="navbar-footer">
+
+            <ul class="navbar-nav ml-lg-auto">
+            <li class="nav-item"><a href="#" class="navbar-nav-link" target="_blank"><i class="icon-lifebuoy mr-2"></i> Support :- 9892606006</a></li>
+            <li class="nav-item"><i class="icon-lifebuoy mr-2"></i></li>
+            <li class="nav-item"><a href="#" class="navbar-nav-link font-weight-semibold"><span class="text-pink-400">info@saibex.co.in</span></a></li>
             </ul>
+            </div>
+            </div>*@
+            <!-- /footer -->
+
+        </div>
+        <!-- /main content -->
+        <div id="cover-spin"></div>
+    </div>
+    <!-- /page content -->
+    <div id="myModal_Profile" class="modal fade myModalView" role="dialog">
+        <div class="modal-dialog modal-sm" id="modalProfile">
+            Modal content
+            <div class="modal-content" id="modalProfileContent">
+                <div class="modal-header">
+                    <h4 class="modal-title"><strong>@HttpContextAccessor.HttpContext.Session.GetString("FullName")</strong></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                </div>
+                <form id="frmUser">
+
+                    <div class="box box-default">
+                        <div class="box-body">
+                            <br />
+
+                            <label class="Profilelabel">Role:  @HttpContextAccessor.HttpContext.Session.GetString("RoleName")</label>
+                            <br />
+                            <label class="Profilelabel">Designation:  @HttpContextAccessor.HttpContext.Session.GetString("Designation")</label>
+
+
+                        </div>
+                    </div>
+
+                </form>
+            </div>
         </div>
     </div>
-    <div class="content-wrapper">
-        @RenderBody()
-    </div>
 
+    <script src="~/Scripts/Shared/master.js" asp-append-version="true"></script>
+    <script src="~/css/bootstrap-multiselect.js"></script>
+    @RenderSection("scripts", false)
 
-    <!-- /page content -->
-
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <!-- Core JS files -->
-    <script src="~/js/app.js" asp-append-version="true"></script>
-    <script src="~/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
-    <script src="~/js/noty.min.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js" asp-append-version="true"></script>
-    <script src="~/js/jquery.min.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/blockui.min.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/d3.min.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/d3_tooltip.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/switchery.min.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/moment.min.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/daterangepicker.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/echarts.min.js" asp-append-version="true"></script>
-    <script src="~/js/Dashboard/progress.js" asp-append-version="true"></script>
-    <script src="~/js/Dashboard/pie_basic.js" asp-append-version="true"></script>
-    <script src="~/js/Dashboard/columns_basic.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/noty.min.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/popupalert.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/pnotify.min.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/interactions.min.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/touch.min.js" asp-append-version="true"></script>
-    <script src="~/js/components_collapsible.js" asp-append-version="true"></script>
-    <!-- /core JS files -->
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
