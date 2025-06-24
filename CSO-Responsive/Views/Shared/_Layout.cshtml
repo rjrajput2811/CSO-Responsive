@@ -9,19 +9,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>CSO - @ViewData["Title"]</title>
     <link href="~/css/icomoon/styles.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/icons/fontawesome/styles.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/icons/fontawesome/styles.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/icons/material/styles.min.css" rel="stylesheet" type="text/css" />
-
+    <link href="~/css/icons/fontawesome/styles.min.css" rel="stylesheet" type="text/css" />
+    
+    <link href="~/css/icons/material/styles.min.css" rel="stylesheet" type="text/css" />
+    
     <link href="~/css/bootstrap.css" rel="stylesheet" type="text/css" />
     <link href="~/css/bootstrap_limitless.min.css" rel="stylesheet" type="text/css" />
     <link href="~/css/layout.css" rel="stylesheet" type="text/css" />
     <link href="~/css/components.min.css" rel="stylesheet" type="text/css" />
     <link href="~/css/colors.min.css" rel="stylesheet" type="text/css" />
     <link href="~/css/switch.css" rel="stylesheet" />
-
+  
+    <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
+  <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" /> 
     <script src="~/js/jquery.min.js" type="text/javascript"></script>
-    <script src="~/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+    <script src="~/js/bootstrap.bundle.min.js" type="tsext/javascript"></script>
     <script src="~/js/blockui.min.js" type="text/javascript"></script>
     <script src="~/js/ripple.min.js" type="text/javascript"></script>
     @* <script src="~/js/pnotify.min.js" type="text/javascript"></script>*@
@@ -58,7 +60,7 @@
 
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/lib/jquery.unobtrusive-ajax.js"></script>
+   @*  <script src="~/lib/jquery.unobtrusive-ajax.js"></script> *@
 
     <script src="~/js/pagination.js"></script>
     <script src="~/js/loadingoverlay.min.js"></script>
@@ -70,7 +72,7 @@
     <script src="~/js/plugins/tables/footable/footable.min.js"></script>
     <script src="~/js/jquery.validate.unobtrusive.js"></script>
     <script src="~/js/ellipsis.js"></script>
-    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+@*     <link rel="stylesheet" href="~/css/font-awesome.min.css"> *@
     <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.12.1/dataRender/ellipsis.js"></script>
 
     <script>
@@ -123,6 +125,10 @@
         margin-left: 12px;
         }
 
+        .custom-label {
+            font-weight: bold;
+            font-size: 16px;
+        }
         .loader {
         position: fixed;
         left: 0px;
@@ -327,7 +333,7 @@
                 <div class="sidebar-user-material-body" style="background:white !important;padding:0px;">
                     <div class="card-body text-center" style="padding:10px !important;">
                         <a>
-                            <img id="imglogo" name="imglogo" src="~/img/wipro-logo.png" class="img-fluid  shadow-0 " alt="" />
+                            <img id="imglogo" name="imglogo" src="~/images/wipro-logo.png" class="img-fluid  shadow-0 " alt="" />
                         </a>
                         <h6 id="loginDtls" class="mb-0 text-white text-shadow-dark"> </h6>
                         <span id="spnRole" class="font-size-sm text-white text-shadow-dark"> </span>
