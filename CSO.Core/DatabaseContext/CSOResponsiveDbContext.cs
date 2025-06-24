@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CSO.Core.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CSO.Core.DatabaseContext;
 

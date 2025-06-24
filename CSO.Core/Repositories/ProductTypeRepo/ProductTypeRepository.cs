@@ -39,6 +39,58 @@ public class ProductTypeRepository : SqlTableRepository, IProductTypeRepository
         }
     }
 
+    public async Task<List<ProductTypeViewModel>> GetProductTypeListByBrandAndUserAsync(int brandId, int userId)
+    {
+        try
+        {
+            // Get user's assigned ProductTypeId string, e.g., "1,2,3"
+            var userAssignedProductTypes = await _dbContext.Users
+                .Where(i => i.Id == userId)
+                .Select(x => x.ProductTypeId)
+                .FirstOrDefaultAsync();
+
+            if (string.IsNullOrWhiteSpace(userAssignedProductTypes))
+                return new List<ProductTypeViewModel>();
+
+            // Parse string to List<int>
+            var ProductTypeIdList = userAssignedProductTypes
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(id => int.TryParse(id, out var value) ? value : (int?)null)
+                .Where(id => id.HasValue)
+                .Select(id => id.Value)
+                .ToList();
+
+            // Early return if no valid IDs
+            if (ProductTypeIdList.Count == 0)
+                return new List<ProductTypeViewModel>();
+
+            string brandIdWrapped = $",{brandId},";
+
+            // Fetch all needed ProductTypes first (no filtering in SQL)
+            var allProductTypes = await _dbContext.ProductTypes
+                .Where(i => ("," + (i.BrandId ?? "") + ",").Contains(brandIdWrapped))
+                .Select(x => new ProductTypeViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                })
+                .ToListAsync();
+
+            // Filter in-memory (LINQ to Objects)
+            var list = allProductTypes
+                .Where(x => ProductTypeIdList.Contains(x.Id))
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            return list;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
     public async Task<List<ProductTypeViewModel>> GetProdTypeList()
     {
         try

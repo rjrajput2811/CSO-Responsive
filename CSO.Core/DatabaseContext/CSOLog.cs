@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CSO.Core.DatabaseContext;
 
-[Table("CSOLog")]
+[Table("CSOLogs")]
 public class CSOLog : SqlTable
 {
     public int UserId { get; set; }
@@ -77,11 +77,6 @@ public class CSOLog : SqlTable
     public string? SKUDetails { get; set; }
 
     public string? PKDDate { get; set; }
-    public string? UserName { get; set; }
-    public string? PlantName { get; set; }
-    public string? BrandName { get; set; }
-    public string? ProductTypeName { get; set; }
-    public string? ComplainTypeName { get; set; }
 
     [ForeignKey("UserId")]
     public virtual User? Users { get; set; }

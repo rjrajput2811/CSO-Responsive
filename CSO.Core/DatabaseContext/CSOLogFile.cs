@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CSO.Core.DatabaseContext;
 
-[Table("CSOLogFile")]
+[Table("CSOLogFiles")]
 public class CSOLogFile : SqlTable
 {
     public string? FilePath { get; set; }

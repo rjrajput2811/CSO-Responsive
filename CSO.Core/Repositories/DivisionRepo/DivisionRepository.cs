@@ -45,6 +45,56 @@ public class DivisionRepository : SqlTableRepository, IDivisionRepository
         }
     }
 
+    public async Task<List<DivisionViewModel>> GetDivisionListByUserAsync(int userId)
+    {
+        try
+        {
+            // Get user's assigned DivisionId string, e.g., "1,2,3"
+            var userAssignedDivisions = await _dbContext.Users
+                .Where(i => i.Id == userId)
+                .Select(x => x.DivisionId)
+                .FirstOrDefaultAsync();
+
+            if (string.IsNullOrWhiteSpace(userAssignedDivisions))
+                return new List<DivisionViewModel>();
+
+            // Parse string to List<int>
+            var divisionIdList = userAssignedDivisions
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(id => int.TryParse(id, out var value) ? value : (int?)null)
+                .Where(id => id.HasValue)
+                .Select(id => id.Value)
+                .ToList();
+
+            // Early return if no valid IDs
+            if (divisionIdList.Count == 0)
+                return new List<DivisionViewModel>();
+
+            // Fetch all needed divisions first (no filtering in SQL)
+            var allDivisions = await _dbContext.Divisions
+                .Select(x => new DivisionViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                })
+                .ToListAsync();
+
+            // Filter in-memory (LINQ to Objects)
+            var list = allDivisions
+                .Where(x => divisionIdList.Contains(x.Id))
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            return list;
+;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
     public async Task<Division?> GetByIdAsync(int Id)
     {
         try
