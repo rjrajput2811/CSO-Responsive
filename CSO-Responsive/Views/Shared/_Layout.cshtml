@@ -369,13 +369,13 @@
 
                         
                                 <li class="nav-item">
-                                    @*<a href="~/CSOLog/AddEdit?id=0" class="nav-link" id="CSOLog" title="Create a CSO">*@
-                                    <a href="@Url.Action("Index", "CSOLog")" class="nav-link" id="CSOLog" title="Create a CSO">
-                                        <i class="far fa-edit"></i>
-                                        <span>
-                                            Log CSO
-                                        </span>
-                                    </a>
+                            <a asp-controller="CSOLog" asp-action="Index" class="nav-link" id="Account" title="User">
+                                <i class="far fa-edit"></i>
+                                <span>
+                                    CSO Log
+                                </span>
+                            </a>
+                                    
                                 </li>
                             
                           
@@ -422,16 +422,16 @@
                                         <a href="#" class="nav-link">Masters</a>
                                         <ul class="nav nav-group-sub">
                                             @*<li class="nav-item"><a title="Email/ SMTP Setting" href="/EmailConfiguration/AddEditEmailConfiguration" class="nav-link">Email/ SMTP Setting</a></li>*@
-                                            <li class="nav-item"><a title="Division" asp-controller="Division" asp-action="Index" class="nav-link">Division</a></li>
-                                            <li class="nav-item"><a title="Category" asp-controller="Category" asp-action="Index" class="nav-link">Category</a></li>
-                                            <li class="nav-item"><a title="Complaint Type" asp-controller="ComplaintType" asp-action="Index" class="nav-link">Complaint Type</a></li>
-                                            <li class="nav-item"><a title="CSO Class" asp-controller="CSOClass" asp-action="Index" class="nav-link">CSO Class</a></li>
-                                            <li class="nav-item"><a title="Brand" asp-controller="Brand" asp-action="Index" class="nav-link">Brand</a></li>
-                                            <li class="nav-item"><a title="Product Type" asp-controller="ProductType" asp-action="Index" class="nav-link">Product Type</a></li>
-                                            <li class="nav-item"><a title="Plant" asp-controller="Plant" asp-action="Index" class="nav-link">Plant</a></li>
-                                            <li class="nav-item"><a title="Nearest Plant" asp-controller="NearestPlant" asp-action="Index" class="nav-link">Nearest Plant</a></li>
-                                            <li class="nav-item"><a title="User Role" asp-controller="UserRole" asp-action="Index" class="nav-link">User Role</a></li>
-                                            <li class="nav-item"><a title="User Role" asp-controller="RecycleDaysConfiguration" asp-action="Index" class="nav-link">Recycle Days Configuration</a></li>
+                                        <li class="nav-item"><a title="Division" asp-controller="Division" asp-action="Division" class="nav-link">Division</a></li>
+                                        <li class="nav-item"><a title="Category" asp-controller="Category" asp-action="Category" class="nav-link">Category</a></li>
+                                        <li class="nav-item"><a title="Complaint Type" asp-controller="ComplaintType" asp-action="ComplaintType" class="nav-link">Complaint Type</a></li>
+                                        <li class="nav-item"><a title="CSO Class" asp-controller="CSOClass" asp-action="CSOClass" class="nav-link">CSO Class</a></li>
+                                        <li class="nav-item"><a title="Brand" asp-controller="Brand" asp-action="Brand" class="nav-link">Brand</a></li>
+                                        <li class="nav-item"><a title="Product Type" asp-controller="ProductType" asp-action="ProductType" class="nav-link">Product Type</a></li>
+                                        <li class="nav-item"><a title="Plant" asp-controller="Plant" asp-action="Plant" class="nav-link">Plant</a></li>
+                                        <li class="nav-item"><a title="Nearest Plant" asp-controller="NearestPlant" asp-action="NearestPlant" class="nav-link">Nearest Plant</a></li>
+                                        <li class="nav-item"><a title="User Role" asp-controller="UserRole" asp-action="UserRole" class="nav-link">User Role</a></li>
+                                        <li class="nav-item"><a title="User Role" asp-controller="RecycleDay" asp-action="RecycleDay" class="nav-link">Recycle Days Configuration</a></li>
 
                                         </ul>
                                     </li>
