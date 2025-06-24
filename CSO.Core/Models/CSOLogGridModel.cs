@@ -47,4 +47,5 @@ public class CSOLogGridModel
 
     public string? ApproverRemarks { get; set; }
     public string? ClosureRemarks { get; set; }
+    public string? ComplainTypeName { get; set; }
 }

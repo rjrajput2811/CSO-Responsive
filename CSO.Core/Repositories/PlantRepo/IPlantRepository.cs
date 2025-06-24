@@ -6,7 +6,7 @@ namespace CSO.Core.Repositories.PlantRepo;
 public interface IPlantRepository
 {
     Task<List<PlantViewModel>> GetPlantListByDivisionIdAsync(int divisionId);
-
+    Task<List<PlantViewModel>> GetPlantListByDivisionAndUserAsync(int divisionId, int userId);
     Task<List<PlantViewModel>> GetPlantList();
     Task<List<PlantViewModel>> GetDrpPlantList();
     Task<Plant?> GetByIdAsync(int plantId);

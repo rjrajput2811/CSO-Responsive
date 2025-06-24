@@ -39,6 +39,58 @@ public class NearestPlantRepository : SqlTableRepository, INearestPlantRepositor
         }
     }
 
+    public async Task<List<NearestPlantViewModel>> GetNearestPlantListByPlantAndUserAsync(int plantId, int userId)
+    {
+        try
+        {
+            // Get user's assigned NearestPlantId string, e.g., "1,2,3"
+            var userAssignedNearestPlants = await _dbContext.Users
+                .Where(i => i.Id == userId)
+                .Select(x => x.NearestPlantId)
+                .FirstOrDefaultAsync();
+
+            if (string.IsNullOrWhiteSpace(userAssignedNearestPlants))
+                return new List<NearestPlantViewModel>();
+
+            // Parse string to List<int>
+            var NearestPlantIdList = userAssignedNearestPlants
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(id => int.TryParse(id, out var value) ? value : (int?)null)
+                .Where(id => id.HasValue)
+                .Select(id => id.Value)
+                .ToList();
+
+            // Early return if no valid IDs
+            if (NearestPlantIdList.Count == 0)
+                return new List<NearestPlantViewModel>();
+
+            string plantIdWrapped = $",{plantId},";
+
+            // Fetch all needed NearestPlants first (no filtering in SQL)
+            var allNearestPlants = await _dbContext.NearestPlants
+                .Where(i => ("," + (i.PlantId ?? "") + ",").Contains(plantIdWrapped))
+                .Select(x => new NearestPlantViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                })
+                .ToListAsync();
+
+            // Filter in-memory (LINQ to Objects)
+            var list = allNearestPlants
+                .Where(x => NearestPlantIdList.Contains(x.Id))
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            return list;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
     public async Task<List<NearestPlantViewModel>> GetNearestPlantList()
     {
         try

@@ -3,7 +3,9 @@ using CSO.Core.Models;
 using CSO.Core.Repositories.Shared;
 using CSO.Core.Security;
 using CSO.Core.Services.SystemLogs;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace CSO.Core.Repositories.CSOLogRepo;
 
@@ -11,20 +13,21 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
 {
     private new readonly CSOResponsiveDbContext _dbContext;
     private readonly ISystemLogService _systemLogService;
+    private readonly IDbConnection _dbConnection;
     public CSOLogRepository(CSOResponsiveDbContext dbContext,
-                            ISystemLogService systemLogService) : base(dbContext)
+                            ISystemLogService systemLogService,
+                            IDbConnection dbConnection) : base(dbContext)
     {
         _dbContext = dbContext;
         _systemLogService = systemLogService;
+        _dbConnection = dbConnection;
     }
 
     public async Task<List<CSOLogGridModel>> GetCSOLogListAsync()
     {
         try
         {
-           
-
-            var result = await _dbContext.CSOLogVieModel.FromSqlRaw("EXEC sp_Get_CSOLogs_Details").ToListAsync();
+            var result = await _dbConnection.QueryAsync<CSOLogViewModel>("sp_Get_CSOLogs_Details", commandType: CommandType.StoredProcedure);
 
             // Map results to ViewModel
             var csoLogList = result.Select(data => new CSOLogGridModel
@@ -65,6 +68,7 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
                 Description = model.Description,
                 SourceofComplaint = model.SourceofComplaint,
                 CSOClassId = 1,
+                DivisionId = model.DivisionId,
                 BrandId = model.BrandId,
                 ProductTypeId = model.ProductTypeId,
                 PlantId = model.PlantId,
@@ -81,7 +85,13 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
                 AddedBy = model.UserId,
                 AddedOn = DateTime.Now,
                 FinancialYear = model.FinancialYear,
-                SKUDetails = model.SKUDetails
+                SKUDetails = model.SKUDetails,
+                CorrectiveActionDescription = "",
+                MonitoringofCorrectiveActionDescription = "",
+                PreventiveActionDescription = "",
+                RootCauseAnalysisDescription = "",
+                Review1 = "",
+                Review2 = ""
             };
 
             var result = await base.CreateAsync<CSOLog>(csoLogData);
@@ -143,9 +153,50 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
         }
     }
 
-    public Task<CSOLogViewModel> GetCSOLogById(int id)
+    public async Task<CSOLogViewModel> GetCSOLogById(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var csoLogDetails = await base.GetByIdAsync<CSOLog>(id);
+            var result = new CSOLogViewModel
+            {
+                Id = csoLogDetails.Id,
+                UserId = csoLogDetails.UserId,
+                UserName = _dbContext.Users.Where(i => i.Id == csoLogDetails.UserId).Select(x => x.Name).FirstOrDefault(),
+                Logdate = csoLogDetails.Logdate,
+                CSONo = 100 + csoLogDetails.Id,
+                DivisionId = csoLogDetails.DivisionId,
+                CategoryId = csoLogDetails.CategoryId,
+                ComplaintTypeId = csoLogDetails.ComplaintTypeId,
+                Description = csoLogDetails.Description,
+                SourceofComplaint = csoLogDetails.SourceofComplaint,
+                CSOClassId = csoLogDetails.CSOClassId,
+                BrandId = csoLogDetails.BrandId,
+                ProductTypeId = csoLogDetails.ProductTypeId,
+                PlantId = csoLogDetails.PlantId,
+                NearestPlantId = csoLogDetails.NearestPlantId,
+                Batch = csoLogDetails.Batch,
+                PKDDate = csoLogDetails.PKDDate,
+                Quantity = csoLogDetails.Quantity,
+                SuppliedQuantity = csoLogDetails.SuppliedQuantity,
+                CatReference = csoLogDetails.CatReference,
+                IsSampleShipped = csoLogDetails.IsSampleShipped,
+                TrackingNo = csoLogDetails.TrackingNo,
+                Status1 = csoLogDetails.Status1,
+                Review1 = csoLogDetails.Review1,
+                Status2 = csoLogDetails.Status2,
+                Review2 = csoLogDetails.Review2,
+                AddedBy = csoLogDetails.AddedBy,
+                SKUDetails = csoLogDetails.SKUDetails,
+                FinancialYear = csoLogDetails.FinancialYear,
+            };
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
     }
 
 
