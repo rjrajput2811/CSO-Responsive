@@ -19,59 +19,23 @@
     <link href="~/css/components.min.css" rel="stylesheet" type="text/css" />
     <link href="~/css/colors.min.css" rel="stylesheet" type="text/css" />
     <link href="~/css/switch.css" rel="stylesheet" />
-  
+    <script src="~/Scripts/Shared/master.js" asp-append-version="true"></script>
     <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
   <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" /> 
-    <script src="~/js/jquery.min.js" type="text/javascript"></script>
-    <script src="~/js/bootstrap.bundle.min.js" type="tsext/javascript"></script>
-    <script src="~/js/blockui.min.js" type="text/javascript"></script>
-    <script src="~/js/ripple.min.js" type="text/javascript"></script>
-    @* <script src="~/js/pnotify.min.js" type="text/javascript"></script>*@
-    <script src="~/js/noty.min.js" type="text/javascript"></script>
-    <script src="~/js/form_checkboxes_radios.js" type="text/javascript"></script>
-    <script src="~/js/interactions.min.js" type="text/javascript"></script>
-    <script src="~/js/datatables.min.js" type="text/javascript"></script>
-
-    <script type="text/javascript" src="~/js/datatables.buttons.min.js"></script>
-    <script type="text/javascript" src="~/js/jszip.min.js"></script>
-    <script type="text/javascript" src="~/js/buttons.html5.min.js"></script>
-
-    <script src="~/js/switch.min.js" type="text/javascript"></script>
-    <script src="~/js/uniform.min.js" type="text/javascript"></script>
-    <script src="~/js/form_select2.js" type="text/javascript"></script>
-
-
-    <script src="~/js/app.js" type="text/javascript"></script>
-
-    <script src="~/js/select2.min.js" type="text/javascript"></script>
-
-    <script src="~/js/form_checkboxes_radios.js" type="text/javascript"></script>
-    <script src="~/js/echarts.min.js" type="text/javascript"></script>
-    <script src="~/js/PopupAlert.js" type="text/javascript"></script>
+    
 
     <link href="~/js/sweetalert/sweetalert.css" rel="stylesheet" />
-    <script src="~/js/sweetalert/sweetalert.js"></script>
 
     <link href="~/css/buttons.dataTables.min.css" rel="stylesheet" />
 
 
-    <script src="~/js/popper.min.js"></script>
-
-
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-   @*  <script src="~/lib/jquery.unobtrusive-ajax.js"></script> *@
-
-    <script src="~/js/pagination.js"></script>
-    <script src="~/js/loadingoverlay.min.js"></script>
+   
 
 
     <link href="~/css/site.css" rel="stylesheet" type="text/css" />
     @RenderSection("styles", false)
 
-    <script src="~/js/plugins/tables/footable/footable.min.js"></script>
-    <script src="~/js/jquery.validate.unobtrusive.js"></script>
-    <script src="~/js/ellipsis.js"></script>
+    
 @*     <link rel="stylesheet" href="~/css/font-awesome.min.css"> *@
     <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.12.1/dataRender/ellipsis.js"></script>
 
@@ -423,7 +387,7 @@
                                         <ul class="nav nav-group-sub">
                                             @*<li class="nav-item"><a title="Email/ SMTP Setting" href="/EmailConfiguration/AddEditEmailConfiguration" class="nav-link">Email/ SMTP Setting</a></li>*@
                                         <li class="nav-item"><a title="Division" asp-controller="Division" asp-action="Division" class="nav-link">Division</a></li>
-                                        <li class="nav-item"><a title="Category" asp-controller="Category" asp-action="Category" class="nav-link">Category</a></li>
+                                        <li class="nav-item"><a title="Category" asp-controller="Category" asp-action="Index" class="nav-link">Category</a></li>
                                         <li class="nav-item"><a title="Complaint Type" asp-controller="ComplaintType" asp-action="ComplaintType" class="nav-link">Complaint Type</a></li>
                                         <li class="nav-item"><a title="CSO Class" asp-controller="CSOClass" asp-action="CSOClass" class="nav-link">CSO Class</a></li>
                                         <li class="nav-item"><a title="Brand" asp-controller="Brand" asp-action="Brand" class="nav-link">Brand</a></li>
@@ -431,7 +395,7 @@
                                         <li class="nav-item"><a title="Plant" asp-controller="Plant" asp-action="Plant" class="nav-link">Plant</a></li>
                                         <li class="nav-item"><a title="Nearest Plant" asp-controller="NearestPlant" asp-action="NearestPlant" class="nav-link">Nearest Plant</a></li>
                                         <li class="nav-item"><a title="User Role" asp-controller="UserRole" asp-action="UserRole" class="nav-link">User Role</a></li>
-                                        <li class="nav-item"><a title="User Role" asp-controller="RecycleDay" asp-action="RecycleDay" class="nav-link">Recycle Days Configuration</a></li>
+                                        <li class="nav-item"><a title="Recycle Days" asp-controller="RecycleDay" asp-action="RecycleDay" class="nav-link">Recycle Days Configuration</a></li>
 
                                         </ul>
                                     </li>
@@ -514,8 +478,44 @@
             </div>
         </div>
     </div>
+    <script src="~/js/jquery.min.js" type="text/javascript"></script>
+    <script src="~/js/bootstrap.bundle.min.js" type="tsext/javascript"></script>
+    <script src="~/js/blockui.min.js" type="text/javascript"></script>
+    <script src="~/js/ripple.min.js" type="text/javascript"></script>
+    @* <script src="~/js/pnotify.min.js" type="text/javascript"></script>*@
+    <script src="~/js/noty.min.js" type="text/javascript"></script>
+    <script src="~/js/form_checkboxes_radios.js" type="text/javascript"></script>
+    <script src="~/js/interactions.min.js" type="text/javascript"></script>
+    <script src="~/js/datatables.min.js" type="text/javascript"></script>
 
-    <script src="~/Scripts/Shared/master.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/datatables.buttons.min.js"></script>
+    <script type="text/javascript" src="~/js/jszip.min.js"></script>
+    <script type="text/javascript" src="~/js/buttons.html5.min.js"></script>
+
+    <script src="~/js/switch.min.js" type="text/javascript"></script>
+    <script src="~/js/uniform.min.js" type="text/javascript"></script>
+    <script src="~/js/form_select2.js" type="text/javascript"></script>
+
+    <script src="~/js/sweetalert/sweetalert.js"></script>
+    <script src="~/js/popper.min.js"></script>
+
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+
+    <script src="~/js/pagination.js"></script>
+    <script src="~/js/loadingoverlay.min.js"></script>
+    <script src="~/js/app.js" type="text/javascript"></script>
+
+    <script src="~/js/select2.min.js" type="text/javascript"></script>
+    <script src="~/js/plugins/tables/footable/footable.min.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.js"></script>
+    <script src="~/js/ellipsis.js"></script>
+    <script src="~/js/form_checkboxes_radios.js" type="text/javascript"></script>
+    <script src="~/js/echarts.min.js" type="text/javascript"></script>
+    <script src="~/js/PopupAlert.js" type="text/javascript"></script>
+    
     <script src="~/css/bootstrap-multiselect.js"></script>
     @RenderSection("scripts", false)
 
