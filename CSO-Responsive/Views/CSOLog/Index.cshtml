@@ -15,7 +15,7 @@
 <script src="~/lib/bootstrap/dist/js/buttons.html5.min.js"></script>
 <script src="~/js/common.js"></script>
 <script src="~/js/xlsx.min.js"></script>
-<script src="~/js/tabulator.min.js"></script>
+@* <script src="~/js/tabulator.min.js"></script> *@
 <script src="~/js/aes.js"></script>
 
 <style>
@@ -161,7 +161,8 @@
 
 
 @section Scripts {
-    @* <script src="~/js/tabulator.js"></script> *@
+    <script src="~/js/tabulator.js"></script>
+    <script src="~/js/tabulator.min.js"></script>
     @* <script src="~/js/select2.min.js"></script> *@
     <script>
         var tabledata = [];
@@ -339,10 +340,10 @@
                             return `<span style="color: ${color}; font-weight: bold;">${status}</span>`;
                         }
                     },
-                    { title: "User", field: "CreatedBy", /* responsive: 9, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
-                    { title: "Create Date", field: "CreatedDate", /* responsive: 10, */  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
-                    { title: "Updated By", field: "UpdatedBy", /* responsive: 11, */  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
-                    { title: "Update Date", field: "UpdatedDate", /* responsive: 12, */  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "User", field: "CreatedBy", responsive: 11,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Create Date", field: "CreatedDate", responsive: 12,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Updated By", field: "UpdatedBy", responsive: 13,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Update Date", field: "UpdatedDate", responsive: 14,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
                 );
 
                 // // Initialize Tabulator
@@ -350,9 +351,9 @@
                     data: tabledata,
                     layout: "fitColumns",
                     responsiveLayout: "collapse",
-                    // responsiveLayoutCollapseFormatter: function (data) {
-                    //     return data.map(d => `<strong>${d.title}</strong>: ${d.value}`).join("<br>");
-                    // },
+                    responsiveLayoutCollapseFormatter: function (data) {
+                        return data.map(d => `<strong>${d.title}</strong>: ${d.value}`).join("<br>");
+                    },
                     renderHorizontal: "virtual",
                     movableColumns: true,
                     pagination: "local",
