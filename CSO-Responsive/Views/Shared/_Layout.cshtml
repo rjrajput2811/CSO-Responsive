@@ -6,13 +6,12 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CSO - @ViewData["Title"]</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/css/icomoon/styles.min.css" rel="stylesheet" type="text/css" />
     <link href="~/css/icons/fontawesome/styles.min.css" rel="stylesheet" type="text/css" />
-    
     <link href="~/css/icons/material/styles.min.css" rel="stylesheet" type="text/css" />
-    
     <link href="~/css/bootstrap.css" rel="stylesheet" type="text/css" />
     <link href="~/css/bootstrap_limitless.min.css" rel="stylesheet" type="text/css" />
     <link href="~/css/layout.css" rel="stylesheet" type="text/css" />
@@ -20,18 +19,12 @@
     <link href="~/css/colors.min.css" rel="stylesheet" type="text/css" />
     <link href="~/css/switch.css" rel="stylesheet" />
     <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
-  <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" /> 
-    
-
+    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" /> 
     <link href="~/js/sweetalert/sweetalert.css" rel="stylesheet" />
-
     <link href="~/css/buttons.dataTables.min.css" rel="stylesheet" />
-
-
-   
-
-
     <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+    <script src="~/js/jquery.min.js" type="text/javascript"></script>
+
     @RenderSection("styles", false)
 
     
@@ -65,73 +58,83 @@
     </script>
 
     <style>
-        .navbar-nav-link {
-        padding: 0 0 0 0 !important;
+        .navbar-nav-link 
+        {
+            padding: 0 0 0 0 !important;
         }
 
-        .fa-sign-out, .fa-user {
-        font-size: 24px;
+        .fa-sign-out, .fa-user 
+        {
+            font-size: 24px;
         }
 
         #modalProfileContent {
-        width: 75% !important;
+            width: 75% !important;
         }
 
-        #myModal_Profile {
-        width: 75% !important;
-        left: 51%;
-        top: 5%;
+        #myModal_Profile
+        {
+            width: 75% !important;
+            left: 51%;
+            top: 5%;
         }
 
-        .Profilelabel {
-        margin-left: 12px;
+        .Profilelabel 
+        {
+            margin-left: 12px;
         }
 
         .custom-label {
             font-weight: bold;
             font-size: 16px;
         }
-        .loader {
-        position: fixed;
-        left: 0px;
-        top: 0px;
-        width: 100%;
-        height: 100%;
-        z-index: 9999;
-        background: url('~/images/Rolling.gif') 50% 50% no-repeat rgb(249,249,249);
-        }
-        #cover-spin {
-        position:fixed;
-        width:100%;
-        left:0;right:0;top:0;bottom:0;
-        background-color: rgba(255,255,255,0.7);
-        z-index:9999;
-        display:none;
+
+        .loader
+        {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url('~/images/Rolling.gif') 50% 50% no-repeat rgb(249,249,249);
         }
 
-        -webkit-keyframes spin {
-        from {-webkit-transform:rotate(0deg);}
-        to {-webkit-transform:rotate(360deg);}
+        #cover-spin 
+        {
+            position:fixed;
+            width:100%;
+            left:0;right:0;top:0;bottom:0;
+            background-color: rgba(255,255,255,0.7);
+            z-index:9999;
+            display:none;
+        }
+
+        -webkit-keyframes spin 
+        {
+            from {-webkit-transform:rotate(0deg);}
+            to {-webkit-transform:rotate(360deg);}
         }
 
         keyframes spin {
-        from {transform:rotate(0deg);}
-        to {transform:rotate(360deg);}
+            from {transform:rotate(0deg);}
+            to {transform:rotate(360deg);}
         }
 
-        #cover-spin::after {
-        content:'';
-        display:block;
-        position:absolute;
-        left:48%;top:40%;
-        width:40px;height:40px;
-        border-style:solid;
-        border-color:black;
-        border-top-color:transparent;
-        border-width: 4px;
-        border-radius:50%;
-        -webkit-animation: spin .8s linear infinite;
-        animation: spin .8s linear infinite;
+        #cover-spin::after
+        {
+            content:'';
+            display:block;
+            position:absolute;
+            left:48%;top:40%;
+            width:40px;height:40px;
+            border-style:solid;
+            border-color:black;
+            border-top-color:transparent;
+            border-width: 4px;
+            border-radius:50%;
+            -webkit-animation: spin .8s linear infinite;
+            animation: spin .8s linear infinite;
         }
 
         .menu-active {
@@ -150,8 +153,6 @@
                 display: block; /* Show the submenu when it has the 'open' class */
             }
 
-        }
-        
     </style>
 
 </head>
@@ -476,7 +477,6 @@
             </div>
         </div>
     </div>
-    <script src="~/js/jquery.min.js" type="text/javascript"></script>
 
     <script src="~/js/bootstrap.bundle.min.js" type="text/javascript"></script>
 
