@@ -153,6 +153,21 @@
                 display: block; /* Show the submenu when it has the 'open' class */
             }
 
+        @@media (max-width: 768px) {
+            #ddlFinancialYear
+            {
+                font-size: 16px;
+                padding: 1px 5px;
+            }
+        }
+
+        @@media (min-width: 769px) {
+            #ddlFinancialYear
+            {
+                font-size: 14px;
+                padding: 1px 5px;
+            }
+        }
     </style>
 
 </head>
@@ -259,16 +274,15 @@
                         </a>
                     </li>
                 </ul>
-          
             
-                <ul class="navbar-nav ml-md-auto">
+                @* <ul class="navbar-nav ml-md-auto">
                     <li class="nav-item">
                         <a href="@Url.Action("Login", "Account")" class="navbar-nav-link">
                             <i class="icon-switch2"></i>
                             <span class="ml-2">Login</span>
                         </a>
                     </li>
-                </ul>
+                </ul> *@
             
         </div>
     </div>
@@ -314,7 +328,7 @@
                     <ul class="nav nav-sidebar" data-nav-type="accordion">
                       
                             <li class="nav-item">
-                                <a asp-controller="Dashboard" asp-action="Index" class="nav-link" id="Dashboard" title="Dashboard">
+                            <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-link" id="Dashboard" title="Dashboard">
                                     <i class="icon-home4"></i>
                                     <span>
                                         Dashboard
