@@ -12,7 +12,7 @@
 
 var App = function () {
 
-
+    var ii = 0;
     //
     // Setup module components
     //
@@ -21,8 +21,7 @@ var App = function () {
     // -------------------------
 
     // Disable all transitions
-    var _transitionsDisabled = function () {
-        $('body').addClass('sidebar-xs');
+    var _transitionsDisabled = function() {
         $('body').addClass('no-transitions');
     };
 
@@ -70,10 +69,16 @@ var App = function () {
 
         // Toggle min sidebar class
         $('.sidebar-main-toggle').on('click', function (e) {
-            e.preventDefault();
-
-            $('body').toggleClass('sidebar-xs').removeClass('sidebar-mobile-main');
-            revertBottomMenus();
+            //if (ii == 0) {
+                e.preventDefault();
+                ii = ii + 1;
+                $('body').toggleClass('sidebar-xs').removeClass('sidebar-mobile-main');
+                revertBottomMenus();
+            //}
+            //else
+            //{
+            //    ii = 0;
+            //}
         });
     };
 
@@ -527,8 +532,8 @@ var App = function () {
 
         // Initialize all components
         initComponents: function() {
-            //_componentTooltip();
-            //_componentPopover();
+            _componentTooltip();
+            _componentPopover();
         },
 
         // Initialize all card actions

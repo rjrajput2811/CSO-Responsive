@@ -65,42 +65,46 @@
 <input id="hf_SelectedProductTypeId" type="hidden" value='@Model.ProductTypeId'>
 <input id="hf_SelectedPlantId" type="hidden" value='@Model.PlantId'>
 <input id="hf_SelectedNearestPlantId" type="hidden" value='@Model.NearestPlantId'>
+<div class="content">
 
-<div class="page-content">
-    <div class="content-wrapper">
-        <div class="card">
-
-            <div class="card-header d-flex justify-content-between align-items-center" style="border-radius: 10px 10px 0px 0px;border-bottom-color:#4682B4;">
-                <h5 class="card-title" style="font-weight:640; color:#3f51b5;">CSO Log</h5>
-                <p class="text-muted">
-                    Logged By: <strong>
-                        @Html.LabelFor(m => m.UserName)
-                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
-                        @* <input type="text" class="form-control" disabled value="@Model.UserName" /> *@
-                        @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
-                    </strong>
-                        Log Date: <strong>
-                        @Html.LabelFor(m => m.Logdate)
-                        @Html.TextBoxFor(m => m.Logdate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control font-weight-bold", @disabled = "disabled" })
-                        @Html.ValidationMessageFor(m => m.Logdate, "", new { @class = "text-danger" })
-                    </strong>
-                </p>
-
-                <div>
-                    <button type="button" id="saveButton" onclick="InsertUpdateCSOLog()" class="btn btn-success">
-                        <i class="fas fa-floppy-disk mr-2"></i>Save
-                    </button>
-
-                    <button type="button" class="btn btn-warning" onclick="history.back()">
-                        <i class="fas fa-arrow-left mr-2"></i>Back
-                    </button>
+<div class="card" style="margin-top:10px;">
+    <div class="card-body d-flex justify-content-between align-items-center">
+        <div style="font-size:x-large">
+                CSO Log
+        </div>
+        
+            <div class="text-muted">
+                Logged By: <strong>
+                   
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
+                    @* <input type="text" class="form-control" disabled value="@Model.UserName" /> *@
+                    @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                </strong>
                 </div>
+
+                    <div class="text-muted">
+                Log Date: <strong>
+                
+                    @Html.TextBoxFor(m => m.Logdate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control font-weight-bold", @disabled = "disabled" })
+                    @Html.ValidationMessageFor(m => m.Logdate, "", new { @class = "text-danger" })
+                </strong>
             </div>
 
-            <div class="content">
+            <div>
+                <button type="button" id="saveButton" onclick="InsertUpdateCSOLog()" class="btn btn-success">
+                    <i class="fas fa-floppy-disk mr-2"></i>Save
+                </button>
+
+                <button type="button" class="btn btn-warning" onclick="history.back()">
+                    <i class="fas fa-arrow-left mr-2"></i>Back
+                </button>
+            </div>
+    </div>
+</div>
+
                 <form id="CSOLog-form" method="post" asp-action="InsertUpdateCSOLog" asp-controller="CSOLog">
             <div class="card">
-                <div class="card-header bg-light">
+                <div class="card-header bg-primary">
                     <label class="mb-0">General Details</label>
                 </div>
                 <div class="card-body">
@@ -121,15 +125,15 @@
                                     @Html.ValidationMessageFor(m => m.CSONo, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label required select2">Division/BU</label>
+                                  <label class=" required select2 custom-label">Division/BU</label>
 
-                                    @Html.DropDownListFor(m => m.DivisionId, (IEnumerable<SelectListItem>)ViewBag.DivisionList, "Select Division", new { @class = "form-control font-weight-bold" })
+                                    @Html.DropDownListFor(m => m.DivisionId, (IEnumerable<SelectListItem>)ViewBag.DivisionList, "Select Division", new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.DivisionId, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label required select2">Category / Function</label>
+                        <label class=" required select2 custom-label">Category / Function</label>
 
-                                    @Html.DropDownListFor(m => m.CategoryId, (IEnumerable<SelectListItem>)ViewBag.CategoryList, "Select Category", new { @class = "form-control font-weight-bold" })
+                                    @Html.DropDownListFor(m => m.CategoryId, (IEnumerable<SelectListItem>)ViewBag.CategoryList, "Select Category", new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.CategoryId, "", new { @class = "text-danger" })
                                 </div>
 
@@ -138,40 +142,40 @@
                     </div>
 
                     <div class="card">
-                        <div class="card-header bg-light">
+            <div class="card-header bg-primary">
                             <label class="mb-0">Product Information</label>
                         </div>
                         <div class="card-body">
                             <div class="row g-3">
                                 <div class="col-md-4">
-                                    <label class="form-label required select2">Brand</label>
+                        <label class=" required select2 custom-label">Brand</label>
 
-                                    @Html.DropDownListFor(m => m.BrandId, Enumerable.Empty<SelectListItem>(), "Select Brand", new { @class = "form-control font-weight-bold" })
+                                    @Html.DropDownListFor(m => m.BrandId, Enumerable.Empty<SelectListItem>(), "Select Brand", new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.BrandId, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label required select2">Product Type</label>
+                        <label class="required select2 custom-label">Product Type</label>
 
-                                    @Html.DropDownListFor(m => m.ProductTypeId, Enumerable.Empty<SelectListItem>(), "Select Product Type", new { @class = "form-control font-weight-bold" })
+                                    @Html.DropDownListFor(m => m.ProductTypeId, Enumerable.Empty<SelectListItem>(), "Select Product Type", new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.ProductTypeId, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label required select2">SKU Details<em>*</em></label>
+                        <label class=" required select2 custom-label">SKU Details<em>*</em></label>
 
                                     @Html.ValidationMessageFor(m => m.SKUDetails, "", new { @class = "text-danger" })
-                                    @Html.TextAreaFor(m => m.SKUDetails, 1, 40, new { @class = "form-control font-weight-bold" })
+                                    @Html.TextAreaFor(m => m.SKUDetails, 1, 40, new { @class = "form-control " })
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label required select2">Batch</label>
+                        <label class=" required select2 custom-label">Batch</label>
 
-                                    @Html.TextBoxFor(m => m.Batch, new { @class = "form-control font-weight-bold" })
+                                    @Html.TextBoxFor(m => m.Batch, new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.Batch, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label required select2">PKD Date</label>
+                        <label class=" required select2 custom-label">PKD Date</label>
 
                                     @Html.ValidationMessageFor(m => m.PKDDate, "", new { @class = "text-danger" })
-                                    @Html.TextBoxFor(m => m.PKDDate, new { @class = "form-control font-weight-bold" })
+                                    @Html.TextBoxFor(m => m.PKDDate, new { @class = "form-control " })
 
                                 </div>
                             </div>
@@ -179,39 +183,39 @@
                     </div>
 
                     <div class="card">
-                        <div class="card-header bg-light">
+                       <div class="card-header bg-primary">
                             <label class="mb-0">Plant & Supply Info</label>
                         </div>
                         <div class="card-body">
                             <div class="row g-3">
                                 <div class="col-md-4">
-                                    <label class="form-label required select2">Plant</label>
+                        <label class=" required select2 custom-label">Plant</label>
 
-                                    @Html.DropDownListFor(m => m.PlantId, Enumerable.Empty<SelectListItem>(), "Select Plant", new { @class = "form-control font-weight-bold" })
+                                    @Html.DropDownListFor(m => m.PlantId, Enumerable.Empty<SelectListItem>(), "Select Plant", new { @class = "form-control" })
                                     @Html.ValidationMessageFor(m => m.PlantId, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label required select2">Nearest Plant</label>
+                        <label class="required select2 custom-label">Nearest Plant</label>
 
-                                    @Html.DropDownListFor(m => m.NearestPlantId, Enumerable.Empty<SelectListItem>(), "Select Nearest Plant", new { @class = "form-control font-weight-bold", @disabled = "disabled" })
+                                    @Html.DropDownListFor(m => m.NearestPlantId, Enumerable.Empty<SelectListItem>(), "Select Nearest Plant", new { @class = "form-control ", @disabled = "disabled" })
                                     @Html.ValidationMessageFor(m => m.NearestPlantId, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label required select2">Defective Quantity</label>
+                        <label class="required select2 custom-label">Defective Quantity</label>
 
-                                    @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control font-weight-bold" })
+                                    @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.Quantity, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label required select2">Supplied Quantity</label>
+                        <label class="required select2 custom-label">Supplied Quantity</label>
 
-                                    @Html.TextBoxFor(m => m.SuppliedQuantity, new { @class = "form-control font-weight-bold" })
+                                    @Html.TextBoxFor(m => m.SuppliedQuantity, new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.SuppliedQuantity, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label required select2">Cat Reference</label>
+                        <label class="required select2 custom-label">Cat Reference</label>
 
-                                    @Html.TextBoxFor(m => m.CatReference, new { @class = "form-control font-weight-bold" })
+                                    @Html.TextBoxFor(m => m.CatReference, new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.CatReference, "", new { @class = "text-danger" })
                                 </div>
                             </div>
@@ -219,39 +223,40 @@
                     </div>
 
                     <div class="card">
-                        <div class="card-header bg-light">
+            <div class="card-header bg-primary">
                             <label class="mb-0">Complaint Details</label>
                         </div>
                         <div class="card-body">
                             <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label required select2">Description of Complaint</label>
-                                    @Html.TextAreaFor(m => m.Description, 2, 40, new { @class = "form-control font-weight-bold" })
+                                <div class="col-md-5">
+                        <label class="custom-label required select2">Description of Complaint</label>
+                                    @Html.TextAreaFor(m => m.Description, 2, 40, new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label required select2">Source of Complaint</label>
-                                    @Html.TextBoxFor(m => m.SourceofComplaint, new { @class = "form-control font-weight-bold" })
+                                <div class="col-md-5">
+                        <label class="custom-label required select2">Source of Complaint</label>
+                                    @Html.TextBoxFor(m => m.SourceofComplaint, new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.SourceofComplaint, "", new { @class = "text-danger" })
                                 </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Samples Shipped</label>
+                                <div class="col-md-2">
+                        <label class="custom-label">Samples Shipped
                                     <div class="form-check form-switch">
 
-                                        @Html.CheckBoxFor(m => m.IsSampleShipped, new { @class = "form-control font-weight-bold" })
+                                        @Html.CheckBoxFor(m => m.IsSampleShipped, new { @class = "form-control " })
                                     </div>
+                        </label>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="card">
-                        <div class="card-header bg-light">
+            <div class="card-header bg-primary">
                             <label class="mb-0">Attachments</label>
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
-                                <label for="images" class="form-label required">Upload Images</label>
+                    <label for="images" class="custom-label required">Upload Images</label>
 
                                 <input id="File" type="file" class="form-control" name="img" multiple />
                                 @* @Html.ValidationMessageFor(m => m.CSOLogFileName, "", new { @class = "text-danger" }) *@
@@ -279,9 +284,7 @@
 
                 </form>
             </div>
-        </div>
-    </div>
-</div>
+      
 @section Scripts {
     <script src="~/js/CSOLog/CSOLog.js" asp-append-version="true"></script>
     <script>

@@ -162,15 +162,15 @@
 
 @* ///////// Model Of Division  //////// *@
 
-<div class="modal fade" id="divisionModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="divisionModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header custom-header">
                 <h5 class="modal-title" id="formModalLabel">Add/Edit Division</h5>
             </div>
             <div class="modal-body">
                 <!-- Your Form Starts Here -->
-                <form>
+                <form id="divisionForm">
                     <div class="form-group">
                         <div class="row form-group align-items-center mb-2">
                             <input type="hidden" id="hdnId" name="Id" value="0" />
@@ -185,7 +185,7 @@
                 <div class="ml-auto">
                     <button type="button" class="btn btn-primary legitRipple" onclick="InsertUpdateDivision()">Submit</button>
                     <button type="button" class="btn btn-warning legitRipple" onclick="clearForm()">Clear</button>&nbsp;
-                    <button type="button" class="btn btn-secondary legitRipple" data-bs-dismiss="modal" onclick="">Close</button>
+                    <button type="button" class="btn btn-secondary legitRipple" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
