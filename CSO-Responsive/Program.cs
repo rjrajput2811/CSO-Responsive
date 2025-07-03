@@ -3,6 +3,7 @@ using CSO.Core.Repositories.BrandRepo;
 using CSO.Core.Repositories.CategoryRepo;
 using CSO.Core.Repositories.ComplaintTypeRepo;
 using CSO.Core.Repositories.CSOClassRepo;
+using CSO.Core.Repositories.CSOLogAnalysisRepo;
 using CSO.Core.Repositories.CSOLogFileRepo;
 using CSO.Core.Repositories.CSOLogRepo;
 using CSO.Core.Repositories.DivisionRepo;
@@ -44,6 +45,7 @@ builder.Services.AddTransient<INearestPlantRepository, NearestPlantRepository>()
 builder.Services.AddTransient<IRecycleDayRepository, RecycleDayRepository>();
 builder.Services.AddTransient<ICSOLogRepository, CSOLogRepository>();
 builder.Services.AddTransient<ICSOLogFileRepository, CSOLogFileRepository>();
+builder.Services.AddTransient<ICSOLogAnalysisRepository, CSOLogAnalysisRepository>();
 builder.Services.AddScoped<IDbConnection>(db => new SqlConnection(connstring));
 
 

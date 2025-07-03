@@ -59,6 +59,13 @@ public class CSOLogController : Controller
         return View();
     }
 
+    [HttpGet]
+    public async Task<JsonResult> GetCSOLogListAsync()
+    {
+        var csoList = await _csoLogRepository.GetCSOLogListAsync();
+        return Json(csoList);
+    }
+
     public async Task<IActionResult> CSOLogAsync(string id)
     {
         var userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -138,12 +145,7 @@ public class CSOLogController : Controller
         return reader.ReadToEnd(); // This will be the original ID as string
     }
 
-    [HttpGet]
-    public async Task<JsonResult> GetCSOLogListAsync()
-    {
-        var brandList = await _csoLogRepository.GetCSOLogListAsync();
-        return Json(brandList);
-    }
+    
 
     public async Task<ActionResult> GetBrandListAndPlantListByDivisinAndUserAsync(int divisionId)
     {
