@@ -4,7 +4,7 @@
 
 
 <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
-<link href="~/css/tabulator/tabulator.min.css" rel="stylesheet" />
+@* <link href="~/css/tabulator/tabulator.min.css" rel="stylesheet" /> *@
 <link href="~/css/tabulator/tabulator_bootstrap4.min.css" rel="stylesheet" />
 <script src="~/js/jquery.min.js"></script>
 <script src="~/js/jquery.datatables.js"></script>
@@ -124,6 +124,22 @@
             margin-top: 5px;
         }
     }
+
+    @@media (max-width: 768px) {
+        #div_CsoLogTable {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tabulator-table {
+            min-width: 800px !important;
+        }
+
+        .tabulator {
+            font-size: 13px;
+        }
+    }
+
 
 </style>
 
@@ -349,12 +365,15 @@
                 // // Initialize Tabulator
                 table = new Tabulator("#div_CsoLogTable", {
                     data: tabledata,
-                    layout: "fitColumns",
-                    responsiveLayout: "collapse",
-                    responsiveLayoutCollapseFormatter: function (data) {
-                        return data.map(d => `<strong>${d.title}</strong>: ${d.value}`).join("<br>");
-                    },
-                    renderHorizontal: "virtual",
+                    layout: "fitDataTable",
+                    responsiveLayout: false,
+                    height: "auto",
+                    // responsiveLayoutCollapseFormatter: function (data) {
+                    //     const wrapper = document.createElement("div");
+                    //     wrapper.innerHTML = data.map(col => `<div><strong>${col.title}:</strong> ${col.value ?? '-'}</div>`).join('');
+                    //     return wrapper;
+                    // },
+                    // renderHorizontal: "virtual",
                     movableColumns: true,
                     pagination: "local",
                     paginationSize: 10,

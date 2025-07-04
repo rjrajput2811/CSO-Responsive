@@ -8,7 +8,7 @@ public class CSOLogGridModel
 
     public string? UserName { get; set; }
 
-    public DateTime? Logdate { get; set; }
+    public DateTime Logdate { get; set; }
 
     public string? DivisionName { get; set; }
 
@@ -40,12 +40,21 @@ public class CSOLogGridModel
 
     public string? Status { get; set; }
 
+    public int Status1 { get; set; }
+
     //Newly added 
     public int DaysCompleted { get; set; }
+
+    public int FinancialYear { get; set; }
 
     public string? CSONoFYear { get; set; }
 
     public string? ApproverRemarks { get; set; }
     public string? ClosureRemarks { get; set; }
     public string? ComplainTypeName { get; set; }
+
+    public string? RootStatus { get; set; }
+    public string? MonitorStatus { get; set; }
+    public string? ApprovalStatus { get; set; }
+    public string? ClosureStatus { get; set; }
 }
