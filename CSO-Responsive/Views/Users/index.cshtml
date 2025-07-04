@@ -115,6 +115,21 @@
             margin-top: 5px;
         }
     }
+
+    @@media (max-width: 768px) {
+        #div_Table {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tabulator-table {
+            min-width: 800px !important;
+        }
+
+        .tabulator {
+            font-size: 13px;
+        }
+    }
 </style>
 
 <input id="hf_GetUsersList" type="hidden" value='@Url.Action("GetUsersList", "Users")'>
