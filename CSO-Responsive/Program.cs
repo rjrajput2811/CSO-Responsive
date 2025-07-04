@@ -7,6 +7,7 @@ using CSO.Core.Repositories.CSOLogAnalysisRepo;
 using CSO.Core.Repositories.CSOLogFileRepo;
 using CSO.Core.Repositories.CSOLogRepo;
 using CSO.Core.Repositories.DivisionRepo;
+using CSO.Core.Repositories.MailMatrixRepo;
 using CSO.Core.Repositories.NearestPlantRepo;
 using CSO.Core.Repositories.PlantRepo;
 using CSO.Core.Repositories.ProductTypeRepo;
@@ -46,6 +47,7 @@ builder.Services.AddTransient<IRecycleDayRepository, RecycleDayRepository>();
 builder.Services.AddTransient<ICSOLogRepository, CSOLogRepository>();
 builder.Services.AddTransient<ICSOLogFileRepository, CSOLogFileRepository>();
 builder.Services.AddTransient<ICSOLogAnalysisRepository, CSOLogAnalysisRepository>();
+builder.Services.AddTransient<IMailMatrixRepository, MailMatrixRepository>();
 builder.Services.AddScoped<IDbConnection>(db => new SqlConnection(connstring));
 
 

@@ -13,4 +13,8 @@ public interface IUserRepository
     Task<OperationResult> InsertUserAsync(UserViewModel user);
     Task<OperationResult> UpdateUserAsync(UserViewModel user);
     Task<OperationResult> DeleteUserAsync(int userId);
+
+    Task<int> SendEmailToForgotPassword(string username);
+    Task<int> SendOTPEmailToForgotPassword(string username, string OTP);
+    Task<int> ChangePassword(string username, string password);
 }

@@ -31,6 +31,10 @@
         background-color: transparent;
     }
 
+    .text-muted {
+        color: #005BAC !important;
+    }
+
     @@media (max-width: 576px) {
         h5 {
             font-size: 16px !important;
@@ -58,16 +62,18 @@
                     <img id="imglogo" name="imglogo" src="~/images/wipro-logo.png" class="img-fluid  shadow-0 " alt="" />
                 </a>
             </div>
+
             <div class="text-center bg-white">
                 <h5 style="font-weight:700;font-size:20px;color:#004080">Customer Satisfaction Opportunities</h5>
             </div>
+
             <div class="card-body">
                 <div class="form-group form-group-feedback form-group-feedback-left">
-                    <input asp-for="Username" class="form-control rounded-pill" placeholder="Username">
+                    <input asp-for="Email" class="form-control rounded-pill" placeholder="Email">
                     <div class="form-control-feedback">
                         <i class="icon-user text-muted"></i>
                     </div>
-                    <span asp-validation-for="Username" class="text-danger"></span>
+                    <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
                 <div class="form-group form-group-feedback form-group-feedback-left">
@@ -83,7 +89,7 @@
                 </div>
 
                 <div class="form-group d-flex align-items-center">
-                    <a href="#" class="ml-auto">Forgot password?</a>
+                    <a href="@Url.Action("ForgotPassword", "Account")" id="forgotpassword" class="ml-auto">Forgot password?</a>
                 </div>
             </div>
         </div>
@@ -92,3 +98,4 @@
 
 </div>
 <!-- /content area -->
+
