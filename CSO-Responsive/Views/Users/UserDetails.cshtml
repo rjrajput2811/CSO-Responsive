@@ -30,8 +30,8 @@
     }
 
     .card {
-       
-        box-shadow: 15px 10px 15px rgba(0, 0, 0, 0.05);
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(17, 122, 139, 0.4);
     }
 
     .form-label {
@@ -54,6 +54,15 @@
         margin-right: 0.5rem;
     }
 
+    .section-title {
+        background: #f8f9fa;
+        padding: 10px;
+        font-weight: 600;
+        border-left: 4px solid #007bff;
+        font-size:18px;
+        
+    }
+
 
 </style>
 
@@ -68,11 +77,11 @@
     
     <div class="card" style="margin-top:10px;">
         <div class="card-body d-flex justify-content-between align-items-center">
-            <div style="font-size:x-large">
+            <div style="font-size:18px; font-weight: 600;">
                 User Details
             </div>
             <div>
-                <button type="button" id="saveButton" onclick="InsertUpdateUser()" class="btn btn-success">
+                <button type="button" id="saveButton" onclick="InsertUpdateUser()" class="btn btn-primary">
                     <i class="fas fa-floppy-disk mr-2"></i>Save
                 </button>
 
@@ -83,49 +92,48 @@
         </div>
     </div>
 
-            <div class="content">
                 <form id="userForm" method="post" asp-action="InsertUpdateUser" asp-controller="Users">
 
                     <!-- Personal Information -->
-                    <div class="card">
-                        <div class="card-header bg-primary text-white">
+            <div class="card">
+                <div class="section-title">
                             <label class="mb-0"><i class="fas fa-user"></i>Personal Information</label>
                         </div>
                         <div class="card-body">
                             @Html.HiddenFor(m => m.Id)
                             <div class="row">
-                                <div class="col-lg-4 mb-3">
+                                <div class="col-lg-2 mb-3">
                                     @Html.LabelFor(m => m.ADid, new { @class = "custom-label" })<em>*</em>
                                     @Html.TextBoxFor(l => l.ADid, new { @id = "txtADid", @class = "form-control" })
                                     @Html.ValidationMessageFor(l => l.ADid, "", new { @class = "text-danger" })
                                 </div>
 
-                                <div class="col-lg-4 mb-3">
+                                <div class="col-lg-3 mb-3">
                                     @Html.LabelFor(m => m.Name, new { @class = "custom-label" })<em>*</em>
                                     @Html.TextBoxFor(l => l.Name, new { @id = "txtName", @class = "form-control" })
                                     @Html.ValidationMessageFor(l => l.Name, "", new { @class = "text-danger" })
                                 </div>
-                                <div class="col-lg-4 mb-3">
+                                <div class="col-lg-3 mb-3">
                                   @Html.LabelFor(m => m.Email, new { @class = "custom-label" })<em>*</em>
                                     @Html.TextBoxFor(l => l.Email, new { @id = "txtEmail", @class = "form-control" })
                                     @Html.ValidationMessageFor(l => l.Email, "", new { @class = "text-danger" })
                                 </div>
-                                <div class="col-lg-4 mb-3">
+                                <div class="col-lg-2 mb-3">
                                     @Html.LabelFor(m => m.MobileNo, new { @class = "custom-label" })<em>*</em>
                                     @Html.TextBoxFor(l => l.MobileNo, new { @id = "txtMobile", @class = "form-control" })
                                     @Html.ValidationMessageFor(l => l.MobileNo, "", new { @class = "text-danger" })
                                 </div>
-                                <div class="col-lg-4 mb-3">
+                                <div class="col-lg-2 mb-3">
                             @Html.LabelFor(m => m.Designation, new { @class = "custom-label" })<em>*</em>
                                     @Html.TextBoxFor(l => l.Designation, new { @id = "txtDesignation", @class = "form-control" })
                                     @Html.ValidationMessageFor(l => l.Designation, "", new { @class = "text-danger" })
                                 </div>
                             </div>
                         </div>
-                    </div>
+                   </div>
                     <!-- Access & Role -->
-                    <div class="card">
-                        <div class="card-header bg-primary text-white">
+        <div class="card">
+                <div class="section-title">
                             <label class="mb-0"><i class="fas fa-key"></i> Access & Role</label>
                         </div>
                         <div class="card-body">
@@ -151,12 +159,12 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+              </div>
 
 
                     <!-- Organization Details -->
-                    <div class="card">
-                        <div class="card-header bg-primary text-white">
+        <div class="card">
+                <div class="section-title">
                             <label class="mb-0"><i class="fas fa-building"></i> Organization Details</label>
                         </div>
                         <div class="card-body row">
@@ -177,11 +185,11 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                </div>
 
                     <!-- Product Preferences -->
-                    <div class="card">
-                        <div class="card-header bg-primary text-white">
+        <div class="card">
+                <div class="section-title">
                             <label class="mb-0"><i class="fas fa-boxes"></i> Product Preferences</label>
                         </div>
                         <div class="card-body row">
@@ -208,11 +216,12 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                </div>
+              
 
                 </form>
             </div>
-        </div>
+      
    
 @section Scripts {
     <script src="~/js/select2.min.js"></script>

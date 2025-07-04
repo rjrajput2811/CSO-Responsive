@@ -457,8 +457,9 @@ body {
   display: inline-block; }
 
 .sidebar-dark {
-  background-color: #263238;
-  color: #fff; }
+    background-color: #3f51b5;
+    color: #fff;
+}
   .sidebar-dark .sidebar-mobile-toggler {
     color: rgba(255, 255, 255, 0.9);
     border-bottom-color: rgba(255, 255, 255, 0.1); }

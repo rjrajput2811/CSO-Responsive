@@ -1548,13 +1548,13 @@ pre {
   height: calc(1.5385em + 0.875rem + 2px);
   padding: 0.4375rem 0.875rem;
   font-size: 0.8125rem;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.5385;
   color: #333;
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid #ddd;
-  border-radius: 0.1875rem;
+  border-radius: 0.1890rem;
   box-shadow: 0 0 0 0 transparent;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
   @media (prefers-reduced-motion: reduce) {
