@@ -1,5 +1,6 @@
 using CSO.Core.DatabaseContext;
 using CSO.Core.Models;
+using CSO.Core.Repositories.MailMatrixRepo;
 using CSO.Core.Repositories.Shared;
 using CSO.Core.Security;
 using CSO.Core.Services.SystemLogs;
@@ -12,18 +13,20 @@ public class UserRepository : SqlTableRepository, IUserRepository
 {
     private new readonly CSOResponsiveDbContext _dbContext;
     private readonly ISystemLogService _systemLogService;
+    private readonly IMailMatrixRepository _mailMatrixRepository;
     public UserRepository(CSOResponsiveDbContext dbContext,
-                              ISystemLogService systemLogService) : base(dbContext)
+                              ISystemLogService systemLogService,IMailMatrixRepository mailMatrixRepository) : base(dbContext)
     {
         _dbContext = dbContext;
         _systemLogService = systemLogService;
+        _mailMatrixRepository = mailMatrixRepository;
     }
 
     public async Task<User> Login(LoginViewModel loginViewModel)
     {
         try
         {
-            var result = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserName == loginViewModel.Username && x.Password == loginViewModel.Password);
+            var result = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == loginViewModel.Email && x.Password == loginViewModel.Password);
             return result;
         }
         catch (Exception ex)
@@ -300,4 +303,48 @@ public class UserRepository : SqlTableRepository, IUserRepository
     //        throw;
     //    }
     //}
+
+    public async Task<int> SendEmailToForgotPassword(string username)
+    {
+        var result = await _dbContext.Users.Where(x => x.Email == username).FirstOrDefaultAsync();
+
+        if (result != null)
+        {
+            var sendSubmissionEmail = await _mailMatrixRepository.SendForgotPassword(result.Password, result.Email);
+            return 1;
+        }
+       
+        return 0;
+    }
+
+    public async Task<int> SendOTPEmailToForgotPassword(string username, string OTP)
+    {
+        var result = await _dbContext.Users.Where(x => x.Email == username).FirstOrDefaultAsync();
+
+        if (result != null)
+        {
+            var sendSubmissionEmail = await _mailMatrixRepository.SendForgotPassword(OTP, result.Email);
+            return 1;
+        }
+
+        return 0;
+    }
+
+    public async Task<int> ChangePassword(string username, string password)
+    {
+        var user = await _dbContext.Users.Where(x => x.Email == username).FirstOrDefaultAsync();
+
+        if (user == null)
+        {
+            return 0; // User not found
+        }
+
+        user.Password = password;
+
+         _dbContext.Users.Update(user);
+
+        var result = await _dbContext.SaveChangesAsync();
+
+        return result > 0 ? 1 : -1;
+    }
 }

@@ -29,4 +29,8 @@
     <ProjectReference Include="..\CSO.Core\CSO.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\bootstrap5\" />
+  </ItemGroup>
+
 </Project>

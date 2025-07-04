@@ -225,12 +225,13 @@ function OnDivGridLoad(response) {
         // // Initialize Tabulator
         table = new Tabulator("#div_Table", {
             data: tabledata,
-            layout: "fitColumns",
-            responsiveLayout: "collapse",
-            responsiveLayoutCollapseFormatter: function (data) {
-                return data.map(d => `<strong>${d.title}</strong>: ${d.value}`).join("<br>");
-            },
-            renderHorizontal: "virtual",
+            layout: "fitDataTable",
+            responsiveLayout: false,
+            height: "auto",
+            //responsiveLayoutCollapseFormatter: function (data) {
+            //    return data.map(d => `<strong>${d.title}</strong>: ${d.value}`).join("<br>");
+            //},
+            //renderHorizontal: "virtual",
             movableColumns: true,
             pagination: "local",
             paginationSize: 10,

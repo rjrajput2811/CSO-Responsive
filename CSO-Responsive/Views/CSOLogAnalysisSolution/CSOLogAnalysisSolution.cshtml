@@ -92,6 +92,7 @@
         background-color: #ffffff;
         color: #495057;
         cursor: pointer;
+        margin-right: .3rem;
     }
 
         .tabulator-page.active {
@@ -112,6 +113,7 @@
         font-size: 14px;
         border: 1px solid #ced4da;
         border-radius: 4px;
+        margin-right: 1rem;
     }
 
     @@media (max-width: 576px) {
@@ -358,33 +360,34 @@
                 });
 
                 columns.push(
-                    { title: "SNo", field: "Sr_No", width: 50, responsive: 1,  sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left" },
-                    { title: "Date", field: "Date", responsive: 2, sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
-                    { title: "CSO No", field: "CSO_No", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
-                    { title: "Logged By", field: "Logged_By", responsive: 4,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
-                    { title: "Plant Name", field: "Plant_Name", responsive: 5,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
-                    { title: "Brand Name", field: "Brand_Name", responsive: 6,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
-                    { title: "ProductType", field: "ProductType", responsive: 7,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
-                    { title: "Root Cause", field: "RootCauseStatus", responsive: 8, headerMenu: headerMenu, headerFilter: "input",formatter: formatStatus, hozAlign: "center", width: 130 },
-                    { title: "Monitoring", field: "MonitorStatus", responsive: 9,headerMenu: headerMenu, headerFilter: "input", formatter: formatStatus, hozAlign: "center", width: 130 },
-                    { title: "Approval", field: "ApprovalStatus", responsive: 10, headerMenu: headerMenu, headerFilter: "input",formatter: formatStatus, hozAlign: "center", width: 120 },
-                    { title: "Closure", field: "ClosureStatus", responsive: 11, headerMenu: headerMenu, headerFilter: "input",formatter: formatStatus, hozAlign: "center", width: 120 },
-                    { title: "Days Remaining", field: "PendingDays", responsive: 12,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center" },
-                    { title: "User", field: "CreatedBy", responsive: 13,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
-                    { title: "Create Date", field: "CreatedDate", responsive: 14,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
-                    { title: "Updated By", field: "UpdatedBy", responsive: 15,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "SNo", field: "Sr_No", width: 50, responsive: 0,  sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left" },
+                    { title: "Date", field: "Date", responsive: 1, sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "CSO No", field: "CSO_No", responsive: 2,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "Logged By", field: "Logged_By", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "Plant Name", field: "Plant_Name", responsive: 4,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "Brand Name", field: "Brand_Name", responsive: 5,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "ProductType", field: "ProductType", responsive: 6,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left" },
+                    { title: "Root Cause", field: "RootCauseStatus", responsive: 7, headerMenu: headerMenu, headerFilter: "input",formatter: formatStatus, hozAlign: "center", width: 130 },
+                    { title: "Monitoring", field: "MonitorStatus", responsive: 8,headerMenu: headerMenu, headerFilter: "input", formatter: formatStatus, hozAlign: "center", width: 130 },
+                    { title: "Approval", field: "ApprovalStatus", responsive: 9, headerMenu: headerMenu, headerFilter: "input",formatter: formatStatus, hozAlign: "center", width: 120 },
+                    { title: "Closure", field: "ClosureStatus", responsive: 10, headerMenu: headerMenu, headerFilter: "input",formatter: formatStatus, hozAlign: "center", width: 120 },
+                    { title: "Days Remaining", field: "PendingDays", responsive: 11,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center" },
+                    { title: "User", field: "CreatedBy", responsive: 12,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Create Date", field: "CreatedDate", responsive: 13,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Updated By", field: "UpdatedBy", responsive: 14,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
                     { title: "Update Date", field: "UpdatedDate", responsive: 15,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
                 );
 
                 // // Initialize Tabulator
                 table = new Tabulator("#div_CsoLogAnalTable", {
                     data: tabledata,
-                    layout: "fitColumns",
-                    responsiveLayout: "collapse",
-                    responsiveLayoutCollapseFormatter: function (data) {
-                        return data.map(d => `<strong>${d.title}</strong>: ${d.value}`).join("<br>");
-                    },
-                    renderHorizontal: "virtual",
+                    layout: "fitDataTable",
+                    responsiveLayout: false,
+                    height: "auto",
+                    // responsiveLayoutCollapseFormatter: function (data) {
+                    //     return data.map(d => `<strong>${d.title}</strong>: ${d.value}`).join("<br>");
+                    // },
+                    // renderHorizontal: "virtual",
                     movableColumns: true,
                     pagination: "local",
                     paginationSize: 10,

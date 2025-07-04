@@ -15,7 +15,8 @@ function showSuccessAlert(Texts) {
         theme: ' alert alert-success alert-styled-left p-0 ',
         text: Texts,
         progressBar: true,
-        closeWith: ['button']
+        closeWith: ['button'],
+        timeout: 3000 // 3 seconds
     }).show();
  }
 
@@ -25,7 +26,8 @@ function showDangerAlert(Texts) {
          theme: ' alert alert-danger alert-styled-left p-0 ',
          text: Texts,
          progressBar: true,
-         closeWith: ['button']
+         closeWith: ['button'],
+         timeout: 3000 // 3 seconds
      }).show();
 }
 
@@ -34,7 +36,8 @@ function showWarningAlert(Texts) {
         theme: ' alert alert-warning alert-styled-left p-0 ',
         text: Texts,
         progressBar: true,
-        closeWith: ['button']
+        closeWith: ['button'],
+        timeout: 3000 // 3 seconds
     }).show();
 }
 
@@ -44,7 +47,8 @@ function showInfoAlert(Texts) {
         theme: ' alert alert-info alert-styled-left p-0 ',
         text: Texts,
         progressBar: true,
-        closeWith: ['button']
+        closeWith: ['button'],
+        timeout: 3000 // 3 seconds
     }).show();
 }
 
@@ -53,7 +57,8 @@ function showPrimaryAlert(Texts) {
         theme: ' alert alert-primary alert-styled-left p-0 ',
         text: Texts,  
         progressBar: true,
-        closeWith: ['button']
+        closeWith: ['button'],
+        timeout: 3000 // 3 seconds
     }).show();
 
 }
