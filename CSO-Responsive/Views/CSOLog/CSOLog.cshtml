@@ -26,7 +26,8 @@
     }
 
     .card {
-        box-shadow: 15px 10px 15px rgba(0, 0, 0, 0.05);
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(17, 122, 139, 0.4);
     }
 
     .form-label {
@@ -55,6 +56,15 @@
         color: red;
         margin-left: 4px;
     }
+
+    .section-title {
+        background: #f8f9fa;
+        padding: 10px;
+        font-weight: 600;
+        border-left: 4px solid #007bff;
+        font-size: 18px;
+    }
+
 </style>
 
 <input id="hf_GetBrandListAndPlantListByDivisinAndUser" type="hidden" value='@Url.Action("GetBrandListAndPlantListByDivisinAndUser", "CSOLog")'>
@@ -67,16 +77,13 @@
 <input id="hf_SelectedNearestPlantId" type="hidden" value='@Model.NearestPlantId'>
 <div class="content">
 
-    <div class="card mt-3">
-        <div class="card-body">
-            <div class="row align-items-center">
-                <!-- Title -->
-                <div class=" mb-2">
-                    <div style="font-size: x-large;">CSO Log</div>
-                </div>
-
+    <div class="card" style="margin-top:10px;">
+        <div class="card-body d-flex justify-content-between align-items-center" style="padding-top:8px;padding-bottom:0px;">
+            <div style="font-size:18px; font-weight: 600;">
+                CSO Log
+            </div>
                 <!-- Logged By -->
-                <div class="col-md-3 mb-2 text-muted">
+                <div class="col-md-2 mb-2 text-muted">
                     Logged By:
                     <strong>
                         @Html.TextBoxFor(m => m.UserName, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
@@ -85,7 +92,7 @@
                 </div>
 
                 <!-- Log Date -->
-                <div class=" col-md-3 mb-2 text-muted">
+                <div class=" col-md-2 mb-2 text-muted">
                     Log Date:
                     <strong>
                         @Html.TextBoxFor(m => m.Logdate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control font-weight-bold", @disabled = "disabled" })
@@ -94,31 +101,37 @@
                 </div>
 
                 <!-- Buttons -->
-                <div class="col-12 mt-2 text-end">
-                    <button type="button" id="saveButton" onclick="InsertUpdateCSOLog()" class="btn btn-success me-2 mb-2">
-                        <i class="fas fa-floppy-disk me-1"></i>Save
+                <div>
+                    <button type="button" id="saveButton" onclick="InsertUpdateCSOLog()" class="btn btn-primary">
+                        <i class="fas fa-floppy-disk mr-2"></i>Save
                     </button>
 
-                    <button type="button" class="btn btn-warning mb-2" onclick="history.back()">
-                        <i class="fas fa-arrow-left me-1"></i>Back
+                <button type="button" class="btn btn-warning" onclick="history.back()">
+                        <i class="fas fa-arrow-left mr-2"></i>Back
                     </button>
                 </div>
             </div>
         </div>
-    </div>
+   
+
+  
+
 
 
                 <form id="CSOLog-form" method="post" asp-action="InsertUpdateCSOLog" asp-controller="CSOLog">
             <div class="card">
-                <div class="card-header bg-primary">
-                    <label class="mb-0">General Details</label>
+            <div class=" section-title">
+
+                <label class="mb-0"><i class="fas fa-address-card mr-2 text-primary"></i>General Details</label>
                 </div>
+
+
                 <div class="card-body">
                     <div class="row g-3">
                                 @Html.HiddenFor(m => m.Id)
                                 @Html.HiddenFor(m => m.FinancialYear)
                                 <div class="col-md-2">
-                                    <label class="form-label required">CSO No.</label>
+                        <label class=" custom-label required">CSO No.</label>
                                     @{
                                         string CSONo = string.Empty;
                                         if (Model.CSONo > 0 && Model.FinancialYear > 0)
@@ -148,36 +161,36 @@
                     </div>
 
                     <div class="card">
-            <div class="card-header bg-primary">
-                            <label class="mb-0">Product Information</label>
+            <div class=" section-title">
+                <label class="mb-0"><i class="fas fa-box-open mr-2 text-info"></i>Product Information</label>
                         </div>
                         <div class="card-body">
                             <div class="row g-3">
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                         <label class=" required select2 custom-label">Brand</label>
 
                                     @Html.DropDownListFor(m => m.BrandId, Enumerable.Empty<SelectListItem>(), "Select Brand", new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.BrandId, "", new { @class = "text-danger" })
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                         <label class="required select2 custom-label">Product Type</label>
 
                                     @Html.DropDownListFor(m => m.ProductTypeId, Enumerable.Empty<SelectListItem>(), "Select Product Type", new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.ProductTypeId, "", new { @class = "text-danger" })
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                         <label class=" required select2 custom-label">SKU Details<em>*</em></label>
 
                                     @Html.ValidationMessageFor(m => m.SKUDetails, "", new { @class = "text-danger" })
                                     @Html.TextAreaFor(m => m.SKUDetails, 1, 40, new { @class = "form-control " })
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                         <label class=" required select2 custom-label">Batch</label>
 
                                     @Html.TextBoxFor(m => m.Batch, new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.Batch, "", new { @class = "text-danger" })
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                         <label class=" required select2 custom-label">PKD Date</label>
 
                                     @Html.ValidationMessageFor(m => m.PKDDate, "", new { @class = "text-danger" })
@@ -189,18 +202,18 @@
                     </div>
 
                     <div class="card">
-                       <div class="card-header bg-primary">
-                            <label class="mb-0">Plant & Supply Info</label>
+            <div class=" section-title">
+                <label class="mb-0">  <i class="fas fa-industry mr-2 text-success"></i>Plant & Supply Info</label>
                         </div>
                         <div class="card-body">
                             <div class="row g-3">
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                         <label class=" required select2 custom-label">Plant</label>
 
                                     @Html.DropDownListFor(m => m.PlantId, Enumerable.Empty<SelectListItem>(), "Select Plant", new { @class = "form-control" })
                                     @Html.ValidationMessageFor(m => m.PlantId, "", new { @class = "text-danger" })
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                         <label class="required select2 custom-label">Nearest Plant</label>
 
                                     @Html.DropDownListFor(m => m.NearestPlantId, Enumerable.Empty<SelectListItem>(), "Select Nearest Plant", new { @class = "form-control ", @disabled = "disabled" })
@@ -218,7 +231,7 @@
                                     @Html.TextBoxFor(m => m.SuppliedQuantity, new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.SuppliedQuantity, "", new { @class = "text-danger" })
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                         <label class="required select2 custom-label">Cat Reference</label>
 
                                     @Html.TextBoxFor(m => m.CatReference, new { @class = "form-control " })
@@ -229,17 +242,17 @@
                     </div>
 
                     <div class="card">
-            <div class="card-header bg-primary">
-                            <label class="mb-0">Complaint Details</label>
+            <div class=" section-title">
+                <label class="mb-0"><i class="fas fa-exclamation-circle mr-2 text-danger"></i> Complaint Details</label>
                         </div>
                         <div class="card-body">
                             <div class="row g-3">
-                                <div class="col-md-5">
+                                <div class="col-md-4">
                         <label class="custom-label required select2">Description of Complaint</label>
                                     @Html.TextAreaFor(m => m.Description, 2, 40, new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
                                 </div>
-                                <div class="col-md-5">
+                                <div class="col-md-4">
                         <label class="custom-label required select2">Source of Complaint</label>
                                     @Html.TextBoxFor(m => m.SourceofComplaint, new { @class = "form-control " })
                                     @Html.ValidationMessageFor(m => m.SourceofComplaint, "", new { @class = "text-danger" })
@@ -248,7 +261,7 @@
                         <label class="custom-label">Samples Shipped
                                     <div class="form-check form-switch">
 
-                                        @Html.CheckBoxFor(m => m.IsSampleShipped, new { @class = "form-control " })
+                                @Html.CheckBoxFor(m => m.IsSampleShipped, new { @class = "slider round " })
                                     </div>
                         </label>
                                 </div>
@@ -257,8 +270,8 @@
                     </div>
 
                     <div class="card">
-            <div class="card-header bg-primary">
-                            <label class="mb-0">Attachments</label>
+            <div class=" section-title">
+                <label class="mb-0"> <i class="fas fa-paperclip mr-2 text-primary"></i> Attachments</label>
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
