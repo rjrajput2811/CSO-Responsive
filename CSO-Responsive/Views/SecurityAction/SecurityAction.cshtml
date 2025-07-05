@@ -1,0 +1,691 @@
+﻿@* @{
+    ViewData["Title"] = "Security Action";
+}
+
+
+<link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
+<link href="~/css/tabulator/tabulator.min.css" rel="stylesheet" />
+<link href="~/css/tabulator/tabulator_bootstrap4.min.css" rel="stylesheet" />
+<script src="~/js/jquery.min.js"></script>
+<script src="~/js/jquery.datatables.js"></script>
+<link href="~/css/pnotify.css" rel="stylesheet" />
+<script src="~/js/pnotify.js"></script>
+<script src="~/js/pnotify.confirm.js"></script>
+<script src="~/lib/bootstrap/dist/js/popupAlert.js"></script>
+<script src="~/lib/bootstrap/dist/js/buttons.html5.min.js"></script>
+<script src="~/js/common.js"></script>
+<script src="~/js/xlsx.min.js"></script>
+<style>
+
+    .form-control {
+        padding: 0 10px !important;
+        border: 0;
+        border-bottom: 1px solid #cccccc;
+        border-radius: 0px;
+    }
+
+    label {
+        margin-bottom: 0;
+        margin-top: .3rem;
+    }
+
+    #scrollToTopBtn:hover {
+        background-color: #0056b3; /* Darker blue */
+    }
+
+    #scrollToTopBtn {
+        outline: none; /* Removes the focus border */
+    }
+
+    .child-row {
+        display: none;
+    }
+
+    .ps-4 {
+        padding-left: 2rem !important;
+    }
+
+    .form-group {
+        margin-bottom: 0.5rem; /* Reduce space between each input group */
+    }
+
+    .custom-header {
+        background-color: #bec6e1 !important; /* Attractive blue background */
+        color: black; /* White text */
+        border-radius: 4px 4px 0 0; /* Rounded corners */
+        font-weight: bold;
+    }
+
+    /* .permission-table td, .permission-table th {
+        vertical-align: middle;
+    }
+
+    .permission-table .form-check-input {
+        cursor: pointer;
+        transform: scale(1.2);
+    }
+
+    .permission-table tr:hover {
+        background-color: #f4f6fb;
+    }
+
+    .permission-table .parent-row {
+        background-color: #e8efff;
+        font-weight: 500;
+    }
+
+    .permission-table .expand-icon {
+        font-size: 16px;
+        cursor: pointer;
+        color: #007bff;
+    }
+
+    .permission-table input[type="checkbox"]:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    } */
+    .form-check-input {
+        cursor: pointer;
+        transform: scale(1.2);
+    }
+
+    .parent-row {
+        background-color: #e8efff;
+        font-weight: 500;
+    }
+
+    .expand-icon {
+        font-size: 16px;
+        cursor: pointer;
+        color: #007bff;
+    }
+
+    .permission-table tr:hover {
+        background-color: #f4f6fb;
+    }
+
+    .table td, .table th {
+        vertical-align: middle !important;
+    }
+</style>
+
+<div class="content">
+    <div class="card" style="margin-top:10px;">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div style="font-size:x-large">
+                Security Action
+            </div>
+            <div>
+                <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openDivisModal()">
+                    <i class="fas fa-plus mr-2 fa-1x"></i>Add
+                </button>
+                <button id="backButton" class="btn btn-outline-primary ">
+                    <i class="fas fa-arrow-left"></i>Back
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <label class="form-label">Role Name:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="roleName" placeholder="Enter role name">
+                            <button class="btn btn-primary" onclick="loadPermissions()">Load</button>
+                            <button class="btn btn-success" onclick="savePermissions()">Save</button>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered text-center permission-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Menu</th>
+                                <th>Mobile View</th>
+                                <th>Desktop View</th>
+                                <th>View</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                                <th>Update</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>User</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input user_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input user_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input user_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input user_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input user_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input user_update" type="checkbox"></div></td>
+                            </tr>
+                            <tr class="parent-row">
+                                <td><span class="expand-icon" onclick="toggleChildren('reports')"><i class="fas fa-chevron-right" id="icon-reports"></i> Reports</span></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('reports', 'mobile', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('reports', 'desktop', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('reports', 'view', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('reports', 'edit', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('reports', 'delete', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('reports', 'update', this.checked)"></div></td>
+                            </tr>
+                            <tr class="child-row reports">
+                                <td class="ps-4">MIS</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_update" type="checkbox"></div></td>
+                            </tr>
+                            <tr class="child-row reports">
+                                <td class="ps-4">CSO Log Report</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_update" type="checkbox"></div></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section Scripts {
+
+    <script>
+               function toggleChildren(section) {
+            $('.' + section).toggle();
+            let icon = $('#icon-' + section);
+            if (icon.hasClass('fa-chevron-right')) {
+                icon.removeClass('fa-chevron-right').addClass('fa-chevron-down');
+            } else {
+                icon.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+            }
+        }
+
+        function toggleParentChild(section, permission, isChecked) {
+            $('.' + section + '_' + permission).prop('checked', isChecked);
+        }
+
+        function loadPermissions() {
+            const roleName = $('#roleName').val();
+            alert('Loading permissions for: ' + roleName);
+        }
+
+        function savePermissions() {
+            const roleName = $('#roleName').val();
+            alert('Saving permissions for: ' + roleName);
+        }
+    </script>
+}
+ *@
+
+
+@{
+    ViewData["Title"] = "Security Action";
+}
+
+<link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
+<link href="~/css/tabulator/tabulator.min.css" rel="stylesheet" />
+<link href="~/css/tabulator/tabulator_bootstrap4.min.css" rel="stylesheet" />
+<script src="~/js/jquery.min.js"></script>
+<script src="~/js/jquery.datatables.js"></script>
+<link href="~/css/pnotify.css" rel="stylesheet" />
+<script src="~/js/pnotify.js"></script>
+<script src="~/js/pnotify.confirm.js"></script>
+<script src="~/lib/bootstrap/dist/js/popupAlert.js"></script>
+<script src="~/lib/bootstrap/dist/js/buttons.html5.min.js"></script>
+<script src="~/js/common.js"></script>
+<script src="~/js/xlsx.min.js"></script>
+<style>
+    .form-control {
+        padding: 0 10px !important;
+        border: 0;
+        border-bottom: 1px solid #cccccc;
+        border-radius: 0px;
+    }
+
+    label {
+        margin-bottom: 0;
+        margin-top: .3rem;
+    }
+
+    /* .child-row {
+            display: none;
+        }
+
+            .child-row.visible {
+                display: table-row;
+            }
+
+        .ps-4 {
+            padding-left: 2rem !important;
+        } */
+
+    .form-group {
+        margin-bottom: 0.5rem;
+    }
+
+    .custom-header {
+        background-color: #bec6e1 !important;
+        color: black;
+        border-radius: 4px 4px 0 0;
+        font-weight: bold;
+    }
+
+    /* .form-check-input {
+            cursor: pointer;
+            transform: scale(1.2);
+        } */
+
+    .parent-row {
+        background-color: #e8efff;
+        font-weight: 500;
+    }
+
+    .expand-icon {
+        font-size: 16px;
+        cursor: pointer;
+        color: #007bff;
+    }
+
+    /* .permission-table tr:hover {
+            background-color: #f4f6fb;
+        } */
+
+    .table td, .table th {
+        vertical-align: middle !important;
+    }
+
+    .permission-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+        .permission-table th,
+        .permission-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            vertical-align: middle !important;
+            background-color: white;
+        }
+
+        .permission-table thead th {
+            background-color: #D6E4F0;
+            border-bottom: 1px solid #ccc;
+        }
+
+            /* Rounded corners only on outer borders */
+            .permission-table thead th:first-child {
+                border-top-left-radius: 10px;
+            }
+
+            .permission-table thead th:last-child {
+                border-top-right-radius: 10px;
+            }
+
+        .permission-table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 10px;
+        }
+
+        .permission-table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 10px;
+        }
+
+    .form-check-input {
+        cursor: pointer;
+        transform: scale(1.2);
+    }
+
+    .child-row {
+        display: none;
+    }
+
+        .child-row.visible {
+            display: table-row;
+        }
+
+    .ps-4 {
+        padding-left: 2rem !important;
+    }
+</style>
+
+<div class="content">
+    <div class="card" style="margin-top:10px;">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div style="font-size:x-large">
+                Security Action
+            </div>
+            <div>
+                <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openDivisModal()">
+                    <i class="fas fa-plus mr-2 fa-1x"></i>Add
+                </button>
+                <button id="backButton" class="btn btn-outline-primary ">
+                    <i class="fas fa-arrow-left"></i>Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                <label for="RoleName" class="me-2 mb-0">Role Name :</label>
+                                <input type="text" class="form-control form-control-sm" id="RoleName" placeholder="Role Name" style="width: 200px;">
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm">Save</button>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered text-center permission-table">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Menu</th>
+                                <th>Mobile View</th>
+                                <th>Desktop View</th>
+                                <th>View</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                                <th>Update</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>User</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input user_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input user_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input user_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input user_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input user_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input user_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr>
+                                <td>CSO Log</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLog_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLog_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLog_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLog_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLog_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLog_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="parent-row">
+                                <td><span class="expand-icon" onclick="toggleChildren('csoLogAnal')"><i class="fas fa-chevron-right" id="icon-csoLogAnal"></i> CSO Log Analysis</span></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'mobile', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'desktop', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'view', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'edit', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'delete', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'update', this.checked)"></div></td>
+                            </tr>
+
+
+                            <tr class="child-row csoLogAnal">
+                                <td class="ps-4">Root Cause Analysis</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="child-row csoLogAnal">
+                                <td class="ps-4">Monitoring of Corrective Action</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="child-row csoLogAnal">
+                                <td class="ps-4">Approve / Reject</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="child-row csoLogAnal">
+                                <td class="ps-4">Closure</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input csoLogAnal_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr>
+                                <td>Emial / SMTP </td>
+                                <td><div class="form-check form-switch"><input class="form-check-input email_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input email_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input email_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input email_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input email_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input email_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="parent-row">
+                                <td><span class="expand-icon" onclick="toggleChildren('reports')"><i class="fas fa-chevron-right" id="icon-reports"></i> Reports</span></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('reports', 'mobile', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('reports', 'desktop', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('reports', 'view', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('reports', 'edit', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('reports', 'delete', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('reports', 'update', this.checked)"></div></td>
+                            </tr>
+
+                            <tr class="child-row reports">
+                                <td class="ps-4">MIS</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="child-row reports">
+                                <td class="ps-4">CSO Log Report</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input reports_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr>
+                                <td>Emial / SMTP </td>
+                                <td><div class="form-check form-switch"><input class="form-check-input email_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input email_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input email_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input email_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input email_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input email_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr>
+                                <td>Mail Matrix</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input mailMatrix_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input mailMatrix_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input mailMatrix_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input mailMatrix_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input mailMatrix_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input mailMatrix_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="parent-row">
+                                <td><span class="expand-icon" onclick="toggleChildren('utility')"><i class="fas fa-chevron-right" id="icon-utility"></i> Utility</span></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('utility', 'mobile', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('utility', 'desktop', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('utility', 'view', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('utility', 'edit', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('utility', 'delete', this.checked)"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" onchange="toggleParentChild('utility', 'update', this.checked)"></div></td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Division</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Category</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Complaint Type</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">CSO Class</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Brand</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Product Types</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Plant</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Nearest Plant</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">User Role</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_update" type="checkbox"></div></td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Recycle Days Configuration</td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_mobile" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_desktop" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_view" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_edit" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_delete" type="checkbox"></div></td>
+                                <td><div class="form-check form-switch"><input class="form-check-input utility_update" type="checkbox"></div></td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleChildren(section) {
+            $('.child-row.' + section).toggleClass('visible');
+            let icon = $('#icon-' + section);
+            if (icon.hasClass('fa-chevron-right')) {
+                icon.removeClass('fa-chevron-right').addClass('fa-chevron-down');
+            } else {
+                icon.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+            }
+        }
+
+        function toggleParentChild(section, permission, isChecked) {
+            $('.' + section + '_' + permission).prop('checked', isChecked);
+        }
+
+        function loadPermissions() {
+            const roleName = $('#roleName').val();
+            alert('Loading permissions for: ' + roleName);
+        }
+
+        function savePermissions() {
+            const roleName = $('#roleName').val();
+            alert('Saving permissions for: ' + roleName);
+        }
+    </script>
+}

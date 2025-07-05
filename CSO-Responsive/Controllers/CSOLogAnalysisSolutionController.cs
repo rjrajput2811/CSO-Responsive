@@ -32,7 +32,8 @@ namespace CSO_Responsive.Controllers
         [HttpGet]
         public async Task<JsonResult> GetCSOLogAnalListAsync()
         {
-            var csoList = await _csoLogAnalRepository.GetCSOLogListAsync();
+            string fYear = HttpContext.Session.GetString("FYear") ?? "";
+            var csoList = await _csoLogAnalRepository.GetCSOLogListAsync(fYear);
             return Json(csoList);
         }
 

@@ -28,5 +28,12 @@ namespace CSO_Responsive.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpPost]
+        public IActionResult SetFinancialYear(string fyear)
+        {
+            HttpContext.Session.SetString("FYear", fyear);
+            return Json(new { success = true });
+        }
     }
 }

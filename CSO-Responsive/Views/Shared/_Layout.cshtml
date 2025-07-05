@@ -55,6 +55,23 @@
                     $(this).addClass('open');
                 }
             });
+
+            $('#ddlFinancialYear').on('change', function () {
+                var selectedFY = $(this).val();
+
+                // Send the selected year to the server and refresh the page
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SetFinancialYear", "Home")', 
+                    data: { fyear: selectedFY },
+                    success: function (response) {
+                        location.reload(); 
+                    },
+                    error: function () {
+                        showDangerAlert("Something went wrong while setting Financial Year.");
+                    }
+                });
+            });
         });
     </script>
 
@@ -405,7 +422,7 @@
                                         <li class="nav-item"><a title="Product Type" asp-controller="ProductType" asp-action="ProductType" class="nav-link">Product Type</a></li>
                                         <li class="nav-item"><a title="Plant" asp-controller="Plant" asp-action="Plant" class="nav-link">Plant</a></li>
                                         <li class="nav-item"><a title="Nearest Plant" asp-controller="NearestPlant" asp-action="NearestPlant" class="nav-link">Nearest Plant</a></li>
-                                        <li class="nav-item"><a title="User Role" asp-controller="UserRole" asp-action="UserRole" class="nav-link">User Role</a></li>
+                                        <li class="nav-item"><a title="User Role" asp-controller="SecurityAction" asp-action="SecurityAction" class="nav-link">User Role</a></li>
                                         <li class="nav-item"><a title="Recycle Days" asp-controller="RecycleDay" asp-action="RecycleDay" class="nav-link">Recycle Days Configuration</a></li>
 
                                         </ul>

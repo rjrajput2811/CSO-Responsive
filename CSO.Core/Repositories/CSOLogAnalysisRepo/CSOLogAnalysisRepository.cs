@@ -28,11 +28,14 @@ namespace CSO.Core.Repositories.CSOLogAnalysisRepo
             _dbConnection = dbConnection;
         }
 
-        public async Task<List<CSOLogGridModel>> GetCSOLogListAsync()
+        public async Task<List<CSOLogGridModel>> GetCSOLogListAsync(string fYear)
         {
             try
             {
-                var result = await _dbConnection.QueryAsync<CSOLogGridModel>("sp_Get_CSOLogs_Details", commandType: CommandType.StoredProcedure);
+                var parameters = new DynamicParameters();
+                parameters.Add("@FinYear", fYear);
+
+                var result = await _dbConnection.QueryAsync<CSOLogGridModel>("sp_Get_CSOLogAnal_Details", parameters, commandType: CommandType.StoredProcedure);
 
                 // Map results to ViewModel
                 var csoLogList = result.Select(data => new CSOLogGridModel

@@ -9,6 +9,6 @@ namespace CSO.Core.Repositories.CSOLogAnalysisRepo
 {
     public interface ICSOLogAnalysisRepository
     {
-        Task<List<CSOLogGridModel>> GetCSOLogListAsync();
+        Task<List<CSOLogGridModel>> GetCSOLogListAsync(string fYear);
     }
 }

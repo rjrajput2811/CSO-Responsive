@@ -23,11 +23,15 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
         _dbConnection = dbConnection;
     }
 
-    public async Task<List<CSOLogGridModel>> GetCSOLogListAsync()
+    public async Task<List<CSOLogGridModel>> GetCSOLogListAsync(string fYear)
     {
         try
         {
-            var result = await _dbConnection.QueryAsync<CSOLogViewModel>("sp_Get_CSOLogs_Details", commandType: CommandType.StoredProcedure);
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@FinYear", fYear);
+
+            var result = await _dbConnection.QueryAsync<CSOLogViewModel>("sp_Get_CSOLogs_Details", parameters, commandType: CommandType.StoredProcedure);
 
             // Map results to ViewModel
             var csoLogList = result.Select(data => new CSOLogGridModel
