@@ -23,7 +23,7 @@ public class SecurityActionController : Controller
         return View();
     }
 
-    public async Task<IActionResult> SecurityActionDetailsAsync(int id)
+    public async Task<IActionResult> SecurityActionDetails(int id)
     {
         var model = new SecurityActionsPageViewModel();
         model.SecurityActionsViewModel = await _securityActionRepository.GetSecurityActionListBuRoleIdAsync(id);
