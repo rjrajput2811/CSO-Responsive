@@ -37,4 +37,19 @@ public class UsersRoleRepository : SqlTableRepository, IUsersRoleRepository
             throw;
         }
     }
+
+    public async Task<bool> CheckUserRoleNameExist(string rolename)
+    {
+        try
+        {
+            var result = await _dbContext.UserRoles
+                .AnyAsync(i => i.RoleName == rolename);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
 }

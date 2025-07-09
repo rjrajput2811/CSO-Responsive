@@ -15,7 +15,8 @@ public class UserRepository : SqlTableRepository, IUserRepository
     private readonly ISystemLogService _systemLogService;
     private readonly IMailMatrixRepository _mailMatrixRepository;
     public UserRepository(CSOResponsiveDbContext dbContext,
-                              ISystemLogService systemLogService,IMailMatrixRepository mailMatrixRepository) : base(dbContext)
+                          ISystemLogService systemLogService,
+                          IMailMatrixRepository mailMatrixRepository) : base(dbContext)
     {
         _dbContext = dbContext;
         _systemLogService = systemLogService;

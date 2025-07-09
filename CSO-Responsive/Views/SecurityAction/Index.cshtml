@@ -1,0 +1,411 @@
+﻿@{
+    ViewData["Title"] = "Security Actions";
+}
+
+
+<link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
+<link href="~/css/tabulator/tabulator.min.css" rel="stylesheet" />
+<link href="~/css/tabulator/tabulator_bootstrap4.min.css" rel="stylesheet" />
+<script src="~/js/jquery.min.js"></script>
+<script src="~/js/jquery.datatables.js"></script>
+<link href="~/css/pnotify.css" rel="stylesheet" />
+<script src="~/js/pnotify.js"></script>
+<script src="~/js/pnotify.confirm.js"></script>
+<script src="~/lib/bootstrap/dist/js/popupAlert.js"></script>
+<script src="~/lib/bootstrap/dist/js/buttons.html5.min.js"></script>
+<script src="~/js/common.js"></script>
+<script src="~/js/xlsx.min.js"></script>
+<style>
+
+    .form-control {
+        padding: 0 10px !important;
+        border: 0;
+        border-bottom: 1px solid #cccccc;
+        border-radius: 0px;
+    }
+
+    label {
+        margin-bottom: 0;
+        margin-top: .3rem;
+    }
+
+    #scrollToTopBtn:hover {
+        background-color: #0056b3; /* Darker blue */
+    }
+
+    #scrollToTopBtn {
+        outline: none; /* Removes the focus border */
+    }
+
+
+    .tabulator .tabulator-header .tabulator-col {
+        font-size: 14px;
+        background-color: #D6E4F0;
+        font-weight: 600;
+        border-right: 1px solid #ccc;
+    }
+
+    .tabulator-row .tabulator-cell {
+        padding: 5px 5px;
+        font-size: 14px;
+        height: 30px;
+    }
+
+    .tabulator-cell:hover {
+        color: #4682B4 !important;
+        cursor: pointer !important;
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 0.5rem; /* Reduce space between each input group */
+    }
+
+    .custom-header {
+        background-color: #bec6e1 !important; /* Attractive blue background */
+        color: black; /* White text */
+        border-radius: 4px 4px 0 0; /* Rounded corners */
+        font-weight: bold;
+    }
+
+    /* Responsive pagination styling */
+    .tabulator-paginator {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 10px 15px;
+        background: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        font-size: 14px;
+    }
+
+    .tabulator-page,
+    .tabulator-page.active,
+    .tabulator-page.disabled {
+        padding: 6px 12px;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        background-color: #ffffff;
+        color: #495057;
+        cursor: pointer;
+    }
+
+        .tabulator-page.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .tabulator-page.disabled {
+            color: #adb5bd;
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+
+    .tabulator-page-size {
+        height: 32px;
+        padding: 4px 8px;
+        font-size: 14px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
+
+    @@media (max-width: 576px) {
+        .tabulator-paginator {
+            justify-content: center;
+        }
+
+        .tabulator-page-size {
+            width: 100%;
+            margin-top: 5px;
+        }
+    }
+</style>
+
+<div class="content">
+    <div class="card" style="margin-top:10px;">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div style="font-size:x-large">
+                Security Actions
+            </div>
+            <div>
+                <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openSecurityActionPage()">
+                    <i class="fas fa-plus mr-2 fa-1x"></i>Add
+                </button>
+                <button id="backButton" class="btn btn-outline-primary ">
+                    <i class="fas fa-arrow-left"></i>Back
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="form-group row">
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <div id="div_SecurityActionsTable"></div>
+                            </div>
+                            <div id="pager" class="mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/tabulator.js"></script>
+    <script src="~/js/tabulator.min.js"></script>
+    <script src="~/js/select2.min.js"></script>
+    <script>
+        var tabledata = [];
+        var table = '';
+        const searchTerms = {};
+        $(document).ready(function () {
+
+            $('.select2').select2({
+                placeholder: "", // Placeholder text
+                allowClear: true,
+                width: '100%'
+            });
+
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('backButton').addEventListener('click', function () {
+                    window.history.back();
+                });
+            });
+
+            loadSecurityActionData();
+        });
+
+        function loadSecurityActionData() {
+            Blockloadershow();
+            $.ajax({
+                url: '@Url.Action("GetRoleList", "SecurityAction")',
+                type: 'GET',
+                success: function (data) {
+                    Blockloaderhide();
+                    if (data && Array.isArray(data)) {
+                        OnSecurityActionGridLoad(data);
+                    }
+                    else {
+                        showDangerAlert('No data available to load.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showDangerAlert('Error retrieving data: ' + error);
+                    Blockloaderhide();
+                }
+            });
+        }
+
+                //define column header menu as column visibility toggle
+        var headerMenu = function () {
+            var menu = [];
+            var columns = this.getColumns();
+
+            for (let column of columns) {
+
+                //create checkbox element using font awesome icons
+                let icon = document.createElement("i");
+                icon.classList.add("fas");
+                icon.classList.add(column.isVisible() ? "fa-check-square" : "fa-square");
+
+                //build label
+                let label = document.createElement("span");
+                let title = document.createElement("span");
+
+                title.textContent = " " + column.getDefinition().title;
+
+                label.appendChild(icon);
+                label.appendChild(title);
+
+                //create menu item
+                menu.push({
+                    label: label,
+                    action: function (e) {
+                        //prevent menu closing
+                        e.stopPropagation();
+
+                        //toggle current column visibility
+                        column.toggle();
+
+                        //change menu item icon
+                        if (column.isVisible()) {
+                            icon.classList.remove("fa-square");
+                            icon.classList.add("fa-check-square");
+                        } else {
+                            icon.classList.remove("fa-check-square");
+                            icon.classList.add("fa-square");
+                        }
+                    }
+                });
+            }
+
+            return menu;
+        };
+
+        function OnSecurityActionGridLoad(response) {
+            debugger;
+            Blockloadershow();
+
+            tabledata = [];
+            let columns = [];
+
+            // Map the response to the table format
+            if (response.length > 0) {
+                $.each(response, function (index, item) {
+
+                    let formattedDate = "";
+                    let updatedDate = "";
+                    if (item.addedOn) {
+                        const dateObj = new Date(item.addedOn);
+                        formattedDate = dateObj.toLocaleDateString("en-GB");
+                    }
+
+                    tabledata.push({
+                        Sr_No: index + 1,
+                        Id: item.id,
+                        Name: item.roleName,
+                        CreatedDate: formattedDate,
+                        CreatedBy: item.addedBy,
+                    });
+                });
+
+                columns.push(
+                    {
+                        title: "Action",
+                        field: "Action",
+                        responsive: 0,
+                        width: 50,
+                        headerMenu: headerMenu,
+                        hozAlign: "center",
+                        headerHozAlign: "center",
+                        formatter: function (cell, formatterParams) {
+                            const rowData = cell.getRow().getData();
+                            if (rowData.Id > 7) {
+                                let actionButtons = "";
+
+                                actionButtons += `<i data-toggle="modal" onclick="delConfirm(${rowData.Id})" class="fas fa-trash-alt mr-2 fa-1x" title="Delete" style="color:red;cursor:pointer;margin-left: 5px;"></i>`
+
+                                return actionButtons;
+                            }
+                        }
+                    },
+                    {
+                                title: "SNo", field: "Sr_No", width: 50, responsive: 1,  sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
+                    },
+                    { title: "Role", field: "Name", responsive: 2,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
+                    { title: "User", field: "CreatedBy", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Create Date", field: "CreatedDate", responsive: 4,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false }
+                );
+
+                // // Initialize Tabulator
+                table = new Tabulator("#div_SecurityActionsTable", {
+                    data: tabledata,
+                    layout: "fitColumns",
+                    responsiveLayout: "collapse",
+                    responsiveLayoutCollapseFormatter: function (data) {
+                        return data.map(d => `<strong>${d.title}</strong>: ${d.value}`).join("<br>");
+                    },
+                    renderHorizontal: "virtual",
+                    movableColumns: true,
+                    pagination: "local",
+                    paginationSize: 10,
+                    paginationSizeSelector: [50, 100, 500, 1500, 2000],
+                    paginationCounter: "rows",
+                        paginationElement: document.getElementById("pager"),
+                    dataEmpty: "<div style='text-align: center; font-size: 1rem; color: gray;'>No data available</div>", // Placeholder message
+                    columns: columns
+                });
+
+                 table.on("cellClick", function (e, cell) {
+                    let columnField = cell.getColumn().getField();
+
+                    if (columnField !== "Action") {
+                        let rowData = cell.getRow().getData();
+                        var url = '@Url.Action("SecurityActionDetails", "SecurityAction")' + "/" + rowData.Id;
+                        window.open(url, '_self');
+                    }
+                });
+
+                // table.on("cellClick", function (e, cell) {
+                //     let columnField = cell.getColumn().getField();
+
+                //     if (columnField !== "Action") {
+                //         let rowData = cell.getRow().getData();
+                //         showEditVendor(rowData.Id);
+                //     }
+                // });
+
+                // Export to Excel on button click
+                // document.getElementById("exportExcel").addEventListener("click", function () {
+                //     table.download("xlsx", "ProductCode_Data.xlsx", { sheetName: "Product Code Data" });
+                // });
+            }
+            else {
+                showDangerAlert('No data available.');
+            }
+
+            // Hide loader
+            Blockloaderhide();
+        }
+
+
+        function openSecurityActionPage() {
+            var url = '@Url.Action("SecurityActionDetails", "SecurityAction")';
+            window.open(url, '_self');
+        }
+
+        function delConfirm(recid) {
+            PNotify.prototype.options.styling = "bootstrap3";
+            (new PNotify({
+                title: 'Confirmation Needed',
+                text: 'Are you sure to delete? It will not delete if this record is used in transactions.',
+                icon: 'glyphicon glyphicon-question-sign',
+                hide: false,
+                confirm: {
+                    confirm: true
+                },
+                buttons: {
+                    closer: false,
+                    sticker: false
+                },
+                history: {
+                    history: false
+                },
+            })).get().on('pnotify.confirm', function () {
+                $.ajax({
+                    url: '@Url.Action("DeleteSecurityActoion", "SecurityAction")',
+                    type: 'POST',
+                    data: { id: recid },
+                    success: function (data) {
+                        if (data.success == true) {
+                            showSuccessAlert("Role Deleted successfully.");
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2500);
+                        }
+                        else {
+                            showDangerAlert(data.message);
+                        }
+                    },
+                    error: function () {
+                        showDangerAlert('Error retrieving data.');
+                    }
+                });
+            }).on('pnotify.cancel', function () {
+                loadData();
+            });
+        }
+
+    </script>
+}
+
