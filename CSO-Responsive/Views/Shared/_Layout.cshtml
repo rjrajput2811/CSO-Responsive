@@ -1,5 +1,132 @@
-﻿@using Microsoft.AspNetCore.Http
+﻿@using CSO.Core.Security
+@using Microsoft.AspNetCore.Http
+@using CSO.Core.Repositories.SecurityActionRepo
 @inject IHttpContextAccessor HttpContextAccessor
+@inject ISecurityActionRepository _securityActionRepository
+
+@{
+    var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
+
+    // Detect device
+    var ua = Context.Request.Headers["User-Agent"].ToString();
+    var isMobile = ua.Contains("Mobi") || ua.Contains("Android") || ua.Contains("iPhone");
+
+    // === Dashboard ===
+    var canDashboardShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_DASHBOARD, (int)userRoleId);
+    var canDashboardShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_DASHBOARD, (int)userRoleId);
+    var canViewDashboard = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_DASHBOARD, (int)userRoleId);
+
+    // === Users ===
+    var canUsersShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_USERS, (int)userRoleId);
+    var canUsersShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_USERS, (int)userRoleId);
+    var canViewUsers = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_USERS, (int)userRoleId);
+
+    // === CSOLOG ===
+    var canCSOLogShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CSOLOG, (int)userRoleId);
+    var canCSOLogShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CSOLOG, (int)userRoleId);
+    var canViewCSOLog = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CSOLOG, (int)userRoleId);
+
+    // === ROOTCAUSE ===
+    var canRootCauseShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_ROOTCAUSE, (int)userRoleId);
+    var canRootCauseShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_ROOTCAUSE, (int)userRoleId);
+    var canViewRootCause = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_ROOTCAUSE, (int)userRoleId);
+
+    // === MONITOR ===
+    var canMonitorShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_MONITOR, (int)userRoleId);
+    var canMonitorShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_MONITOR, (int)userRoleId);
+    var canViewMonitor = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_MONITOR, (int)userRoleId);
+
+    // === APPROVE ===
+    var canApproveShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_APPROVE, (int)userRoleId);
+    var canApproveShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_APPROVE, (int)userRoleId);
+    var canViewApprove = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_APPROVE, (int)userRoleId);
+
+    // === CLOSURE ===
+    var canClosureShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CLOSURE, (int)userRoleId);
+    var canClosureShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CLOSURE, (int)userRoleId);
+    var canViewClosure = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CLOSURE, (int)userRoleId);
+
+    // === MIS ===
+    var canMISShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_MIS, (int)userRoleId);
+    var canMISShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_MIS, (int)userRoleId);
+    var canViewMIS = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_MIS, (int)userRoleId);
+
+    // === CSOLOG_REPORT ===
+    var canCSOLogReportShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CSOLOG_REPORT, (int)userRoleId);
+    var canCSOLogReportShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CSOLOG_REPORT, (int)userRoleId);
+    var canViewCSOLogReport = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CSOLOG_REPORT, (int)userRoleId);
+
+    // === MAILMATRIX ===
+    var canMailMatrixShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_MAILMATRIX, (int)userRoleId);
+    var canMailMatrixShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_MAILMATRIX, (int)userRoleId);
+    var canViewMailMatrix = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_MAILMATRIX, (int)userRoleId);
+
+    // === EMAIL_SMTP_SETTINGS ===
+    var canEmailSmtpSettingsShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_EMAIL_SMTP_SETTINGS, (int)userRoleId);
+    var canEmailSmtpSettingsShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_EMAIL_SMTP_SETTINGS, (int)userRoleId);
+    var canViewEmailSmtpSettings = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_EMAIL_SMTP_SETTINGS, (int)userRoleId);
+
+    // === DIVISION ===
+    var canDivisionShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_DIVISION, (int)userRoleId);
+    var canDivisionShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_DIVISION, (int)userRoleId);
+    var canViewDivision = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_DIVISION, (int)userRoleId);
+
+    // === CATEGORY ===
+    var canCategoryShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CATEGORY, (int)userRoleId);
+    var canCategoryShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CATEGORY, (int)userRoleId);
+    var canViewCategory = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CATEGORY, (int)userRoleId);
+
+    // === COMPLAIN_TYPE ===
+    var canComplainTypeShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_COMPLAIN_TYPE, (int)userRoleId);
+    var canComplainTypeShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_COMPLAIN_TYPE, (int)userRoleId);
+    var canViewComplainType = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_COMPLAIN_TYPE, (int)userRoleId);
+
+    // === CSO_CLASS ===
+    var canCSOClassShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CSO_CLASS, (int)userRoleId);
+    var canCSOClassShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CSO_CLASS, (int)userRoleId);
+    var canViewCSOClass = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CSO_CLASS, (int)userRoleId);
+
+    // === BRAND ===
+    var canBrandShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_BRAND, (int)userRoleId);
+    var canBrandShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_BRAND, (int)userRoleId);
+    var canViewBrand = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_BRAND, (int)userRoleId);
+
+    // === PRODUCT_TYPE ===
+    var canProductTypeShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_PRODUCT_TYPE, (int)userRoleId);
+    var canProductTypeShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_PRODUCT_TYPE, (int)userRoleId);
+    var canViewProductType = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_PRODUCT_TYPE, (int)userRoleId);
+
+    // === PLANT ===
+    var canPlantShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_PLANT, (int)userRoleId);
+    var canPlantShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_PLANT, (int)userRoleId);
+    var canViewPlant = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_PLANT, (int)userRoleId);
+
+    // === NEAREST_PLANT ===
+    var canNearestPlantShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_NEAREST_PLANT, (int)userRoleId);
+    var canNearestPlantShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_NEAREST_PLANT, (int)userRoleId);
+    var canViewNearestPlant = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_NEAREST_PLANT, (int)userRoleId);
+
+    // === RECYCLE_DAYS_CONFIGURATION ===
+    var canRecycleDaysConfigurationShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_RECYCLE_DAYS_CONFIGURATION, (int)userRoleId);
+    var canRecycleDaysConfigurationShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_RECYCLE_DAYS_CONFIGURATION, (int)userRoleId);
+    var canViewRecycleDaysConfiguration = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_RECYCLE_DAYS_CONFIGURATION, (int)userRoleId);
+
+    // === SECURITY_ACTIONS ===
+    var canSecurityActionsShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_SECURITY_ACTIONS, (int)userRoleId);
+    var canSecurityActionsShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_SECURITY_ACTIONS, (int)userRoleId);
+    var canViewSecurityActions = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_SECURITY_ACTIONS, (int)userRoleId);
+
+    var canShowCSOLogAnalysisAndSolutions = ((canRootCauseShowOnMobile || canRootCauseShowOnDesktop) || (canMonitorShowOnMobile || canMonitorShowOnDesktop) 
+                                             || (canApproveShowOnMobile || canApproveShowOnDesktop) || (canClosureShowOnMobile || canClosureShowOnDesktop)) 
+                                             && (canViewRootCause || canViewMonitor || canViewApprove || canViewClosure);
+    var canShowReports = ((canMISShowOnMobile || canMISShowOnDesktop) || (canCSOLogReportShowOnMobile || canCSOLogReportShowOnDesktop)) && (canViewMIS || canViewCSOLogReport);
+    var canShowMasters = ((canDivisionShowOnMobile || canDivisionShowOnDesktop) || (canCategoryShowOnMobile || canCategoryShowOnDesktop) || (canComplainTypeShowOnMobile || canComplainTypeShowOnDesktop) 
+                          || (canCSOClassShowOnMobile || canCSOClassShowOnDesktop) || (canBrandShowOnMobile || canBrandShowOnDesktop) || (canProductTypeShowOnMobile || canProductTypeShowOnDesktop)
+                          || (canPlantShowOnMobile || canPlantShowOnDesktop) || (canNearestPlantShowOnMobile || canNearestPlantShowOnDesktop) || (canRecycleDaysConfigurationShowOnMobile || canRecycleDaysConfigurationShowOnDesktop)
+                          || (canSecurityActionsShowOnMobile || canSecurityActionsShowOnDesktop)) 
+                          && (canViewDivision || canViewCategory || canViewComplainType || canViewCSOClass || canViewBrand || canViewProductType || canViewPlant || canViewNearestPlant
+                          || canViewRecycleDaysConfiguration || canViewSecurityActions);
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -340,96 +467,141 @@
                 <!-- Main navigation -->
                 <div class="card card-sidebar-mobile" id="divMnu">
                     <ul class="nav nav-sidebar" data-nav-type="accordion">
-                      
-                            <li class="nav-item">
-                            <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-link" id="Dashboard" title="Dashboard">
-                                    <i class="icon-home4"></i>
-                                    <span>
-                                        Dashboard
-                                    </span>
-                                </a>
-                            </li>
-
+                    @if((canDashboardShowOnMobile || canDashboardShowOnDesktop) && canViewDashboard)
+                    {
                         <li class="nav-item">
-                            <a asp-controller="Users" asp-action="Index" class="nav-link" id="Account" title="User">
+                            <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-link" id="Dashboard" title="Dashboard">
+                                <i class="icon-home4"></i>
+                                <span>
+                                    Dashboard
+                                </span>
+                            </a>
+                        </li>
+                    }
+                    @if((canUsersShowOnMobile || canUsersShowOnDesktop) && canViewUsers)
+                    {
+                        <li class="nav-item">
+                                <a asp-controller="Users" asp-action="Index" class="nav-link" id="Users" title="User">
                                 <i class="icon-user"></i>
                                 <span>
                                     User
                                 </span>
                             </a>
                         </li>
-
-                        
-                                <li class="nav-item">
-                            <a asp-controller="CSOLog" asp-action="Index" class="nav-link" id="Account" title="User">
+                    } 
+                    @if((canCSOLogShowOnMobile || canCSOLogShowOnDesktop) && canViewCSOLog)
+                    {
+                        <li class="nav-item">
+                            <a asp-controller="CSOLog" asp-action="Index" class="nav-link" id="CSOLog" title="CSO Log">
                                 <i class="far fa-edit"></i>
                                 <span>
                                     CSO Log
                                 </span>
                             </a>
-                                    
-                                </li>
-                            
-                          
 
-
-                                <li class="nav-item">
-                            <a asp-controller="CSOLogAnalysisSolution" asp-action="CSOLogAnalysisSolution" class="nav-link" id="CSOLog" title="Analysis & Solution">
-                                        <i class="fas fa-clipboard-list"></i>
-                                        <span>
-                                            Analysis & Solution
-                                        </span>
-                                    </a>
-                                </li>
-
-                        
-                      
-                            @* MIS Report *@
-                            <li class="nav-item nav-item-submenu">
-                                <a href="#" class="nav-link" title="Reports">
-                                    <i class="icon-file-eye"></i>
-                                    <span>
-                                        Reports
-                                    </span>
-                                </a>
-                                <ul class="nav nav-group-sub" data-submenu-title="Reports">
-                                    <li class="nav-item"><a asp-controller="MIS" asp-action="Index" class="nav-link" title="MIS">MIS</a></li>
-                                    <li class="nav-item"><a asp-controller="CSOLogReport" asp-action="Index" class="nav-link" title="Log">CSO Log Report</a></li>
-                                </ul>
-                            </li>
-                        
-                            <li class="nav-item">
-                                <a asp-controller="EmailConfiguration" asp-action="AddEditEmailConfiguration" class="nav-link" id="EmailConfiguration" title="Email/SMTP Setting">
-                                    <i class="fas fa-envelope-square"></i>
-                                    <span>
-                                        Email/SMTP Setting
-                                    </span>
-                                </a>
-                            </li>
-
-                            <li class="nav-item nav-item-submenu">
-                                <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Utility</span></a>
-                                <ul class="nav nav-group-sub" data-submenu-title="Configuration">
-                                    <li class="nav-item nav-item-submenu">
-                                        <a href="#" class="nav-link">Masters</a>
-                                        <ul class="nav nav-group-sub">
-                                            @*<li class="nav-item"><a title="Email/ SMTP Setting" href="/EmailConfiguration/AddEditEmailConfiguration" class="nav-link">Email/ SMTP Setting</a></li>*@
+                        </li>
+                    }
+                    @if (canShowCSOLogAnalysisAndSolutions)
+                    {
+                        <li class="nav-item">
+                            <a asp-controller="CSOLogAnalysisSolution" asp-action="CSOLogAnalysisSolution" class="nav-link" id="CSOLogAnalysisSolution" title="Analysis & Solution">
+                                <i class="fas fa-clipboard-list"></i>
+                                <span>
+                                    Analysis & Solution
+                                </span>
+                            </a>
+                        </li>
+                    }
+                    @if(canShowReports)
+                    {
+                        <li class="nav-item nav-item-submenu">
+                            <a href="#" class="nav-link" title="Reports">
+                                <i class="icon-file-eye"></i>
+                                <span>
+                                    Reports
+                                </span>
+                            </a>
+                            <ul class="nav nav-group-sub" data-submenu-title="Reports">
+                            @if((canMISShowOnMobile || canMISShowOnDesktop) && canViewMIS)
+                            {
+                                <li class="nav-item"><a asp-controller="MIS" asp-action="Index" class="nav-link" title="MIS">MIS</a></li>
+                            }
+                            @if((canCSOLogReportShowOnMobile || canCSOLogReportShowOnDesktop) && canViewCSOLogReport)
+                            {
+                                <li class="nav-item"><a asp-controller="CSOLogReport" asp-action="Index" class="nav-link" title="CSO Log Report">CSO Log Report</a></li>
+                            }                                    
+                            </ul>
+                        </li>
+                    }
+                    @if((canEmailSmtpSettingsShowOnMobile || canEmailSmtpSettingsShowOnDesktop) && canViewEmailSmtpSettings)
+                    {
+                        <li class="nav-item">
+                            <a asp-controller="EmailConfiguration" asp-action="AddEditEmailConfiguration" class="nav-link" id="EmailConfiguration" title="Email/SMTP Setting">
+                                <i class="fas fa-envelope-square"></i>
+                                <span>
+                                    Email/SMTP Setting
+                                </span>
+                            </a>
+                        </li>
+                    }
+                    @if(canShowMasters)
+                    {
+                        <li class="nav-item nav-item-submenu">
+                            <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Utility</span></a>
+                            <ul class="nav nav-group-sub" data-submenu-title="Configuration">
+                                <li class="nav-item nav-item-submenu">
+                                    <a href="#" class="nav-link">Masters</a>
+                                    <ul class="nav nav-group-sub">
+                                    @if((canDivisionShowOnMobile || canDivisionShowOnDesktop) && canViewDivision)
+                                    {
                                         <li class="nav-item"><a title="Division" asp-controller="Division" asp-action="Division" class="nav-link">Division</a></li>
+                                    }
+                                    @if((canCategoryShowOnMobile || canCategoryShowOnDesktop) && canViewCategory)
+                                    {
                                         <li class="nav-item"><a title="Category" asp-controller="Category" asp-action="Index" class="nav-link">Category</a></li>
+                                    }
+                                    @if((canComplainTypeShowOnMobile || canComplainTypeShowOnDesktop) && canViewComplainType)
+                                    {
                                         <li class="nav-item"><a title="Complaint Type" asp-controller="ComplaintType" asp-action="ComplaintType" class="nav-link">Complaint Type</a></li>
+                                    }
+                                    @if((canCSOClassShowOnMobile || canCSOClassShowOnDesktop) && canViewCSOClass)
+                                    {
                                         <li class="nav-item"><a title="CSO Class" asp-controller="CSOClass" asp-action="CSOClass" class="nav-link">CSO Class</a></li>
+                                    }
+                                    @if((canBrandShowOnMobile || canBrandShowOnDesktop) && canViewBrand)
+                                    {
                                         <li class="nav-item"><a title="Brand" asp-controller="Brand" asp-action="Brand" class="nav-link">Brand</a></li>
+                                    }
+                                    @if((canProductTypeShowOnMobile || canProductTypeShowOnDesktop) && canViewProductType)
+                                    {
                                         <li class="nav-item"><a title="Product Type" asp-controller="ProductType" asp-action="ProductType" class="nav-link">Product Type</a></li>
+                                    }
+                                    @if((canPlantShowOnMobile || canPlantShowOnDesktop) && canViewPlant)
+                                    {
                                         <li class="nav-item"><a title="Plant" asp-controller="Plant" asp-action="Plant" class="nav-link">Plant</a></li>
+                                    }
+                                    @if((canNearestPlantShowOnMobile || canNearestPlantShowOnDesktop) && canViewNearestPlant)
+                                    {
                                         <li class="nav-item"><a title="Nearest Plant" asp-controller="NearestPlant" asp-action="NearestPlant" class="nav-link">Nearest Plant</a></li>
+                                    }
+                                    @if((canRecycleDaysConfigurationShowOnMobile || canRecycleDaysConfigurationShowOnDesktop) && canViewRecycleDaysConfiguration)
+                                    {
                                         <li class="nav-item"><a title="Recycle Days" asp-controller="RecycleDay" asp-action="RecycleDay" class="nav-link">Recycle Days Configuration</a></li>
+                                    }
+                                    @if((canSecurityActionsShowOnMobile || canSecurityActionsShowOnDesktop) && canViewSecurityActions)
+                                    {
                                         <li class="nav-item"><a title="Security Action" asp-controller="SecurityAction" asp-action="Index" class="nav-link">Security Action</a></li>
+                                    }
+                                    </ul>
+                                </li>
+                            </ul>
 
-                                        </ul>
-                                    </li>
-                                </ul>
+                        </li>
+                    }
+                        
+                            
 
-                            </li>
+                            
                        
                             <li class="nav-item">
                                 <a asp-controller="MailMatrix" asp-action="Index" class="nav-link" id="EmailConfiguration" title="Email/SMTP Setting">

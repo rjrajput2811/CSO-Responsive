@@ -42,7 +42,7 @@ public class SecurityActionRepository : SqlTableRepository, ISecurityActionRepos
         }
     }
 
-    public async Task<List<SecurityActionViewModel>> GetSecurityActionListBuRoleIdAsync(int roleId)
+    public async Task<List<SecurityActionViewModel>> GetSecurityActionListByRoleIdAsync(int roleId)
     {
         try
         {
@@ -94,7 +94,7 @@ public class SecurityActionRepository : SqlTableRepository, ISecurityActionRepos
         }
     }
 
-    public async Task<OperationResult> DeleteSecurityActionAsync(int RoleId)
+    public async Task<OperationResult> DeleteSecurityActionAsync(int RoleId, bool deleteUserRole = false)
     {
         try
         {
@@ -109,7 +109,10 @@ public class SecurityActionRepository : SqlTableRepository, ISecurityActionRepos
                 if (!result.Success) { return result; }
             }
 
-            result = await base.DeleteAsync<UsersRole>(RoleId);
+            if (deleteUserRole)
+            {
+                result = await base.DeleteAsync<UsersRole>(RoleId);
+            }
             return result;
         }
         catch (Exception ex)
@@ -123,6 +126,11 @@ public class SecurityActionRepository : SqlTableRepository, ISecurityActionRepos
     {
         try
         {
+            if (roleId == 7)
+            {
+                return true;
+            }
+
             var result = await _dbContext.SecurityActions.AnyAsync(i => i.UserRoleId == roleId && i.Action == (int)securityAction);
             return result;
         }

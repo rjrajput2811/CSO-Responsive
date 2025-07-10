@@ -1,4 +1,5 @@
-﻿using CSO.Core.Models;
+﻿using CSO.Core.DatabaseContext;
+using CSO.Core.Models;
 using CSO.Core.Repositories.SecurityActionRepo;
 using CSO.Core.Repositories.UsersRoleRepo;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,13 @@ public class SecurityActionController : Controller
     public async Task<IActionResult> SecurityActionDetails(int id)
     {
         var model = new SecurityActionsPageViewModel();
-        model.SecurityActionsViewModel = await _securityActionRepository.GetSecurityActionListBuRoleIdAsync(id);
+        if(id > 0)
+        {
+            var userRole = await _usersRoleRepository.GetUserRoleByIdAsync(id);
+            model.UserRoleId = userRole.Id;
+            model.UserRoleName = userRole.RoleName;
+        }
+        model.SecurityActionsViewModel = await _securityActionRepository.GetSecurityActionListByRoleIdAsync(id);
         return View(model);
     }
 
@@ -36,17 +43,10 @@ public class SecurityActionController : Controller
         return Json(list);
     }
 
-    public async Task<ActionResult> InsertUpdateSecurityActoionAsync(List<SecurityActionViewModel> model, int roleId, string roleName)
+    public async Task<ActionResult> InsertUpdateSecurityActoionAsync([FromBody] List<SecurityActionViewModel> model)
     {
-        var response = await _usersRoleRepository.CheckUserRoleNameExist(roleName);
-        if (!response)
-        {
-            return Json(new OperationResult
-            {
-                Success = false,
-                Message = "Role already exist. Please enter unique role."
-            });
-        }
+        var roleName = model.Select(x => x.UserRoleName).FirstOrDefault();
+        var roleId = model.Select(x => x.UserRoleId).FirstOrDefault();
 
         foreach (var item in model)
         {
@@ -56,8 +56,53 @@ public class SecurityActionController : Controller
 
         if (roleId > 0)
         {
+            var userRole = await _usersRoleRepository.GetUserRoleByIdAsync(roleId);
+
+            if(userRole.RoleName != roleName)
+            {
+                var userRoleToUpdate = new UsersRoleViewModel
+                {
+                    RoleName = roleName,
+                    UpdatedBy = HttpContext.Session.GetInt32("UserId") ?? 0,
+                    UpdatedOn = DateTime.Now
+                };
+
+                var response = await _usersRoleRepository.UpdateUserRoleAsync(userRoleToUpdate);
+                if (!response.Success) { return Json(response); }
+            }
+
             var result = await _securityActionRepository.DeleteSecurityActionAsync(roleId);
             if(!result.Success) { return Json(result); }
+        }
+        else
+        {
+
+            var response = await _usersRoleRepository.CheckUserRoleNameExist(roleName);
+            if (response)
+            {
+                return Json(new OperationResult
+                {
+                    Success = false,
+                    Message = "Role already exist. Please enter unique role."
+                });
+            }
+
+            var userRoleToCreate = new UsersRoleViewModel
+            {
+                RoleName = roleName,
+                AddedBy = HttpContext.Session.GetInt32("UserId") ?? 0,
+                AddedOn = DateTime.Now
+            };
+
+            var result = await _usersRoleRepository.CreateUserRoleAsync(userRoleToCreate, true);
+            if (!result.Success) { return Json(result); }
+
+            var userRole = result.Payload as UsersRole;
+
+            foreach (var item in model)
+            {
+                item.UserRoleId = userRole.Id; 
+            }
         }
 
         var insertUpdateResult = await _securityActionRepository.CreateSecurityActionAsync(model);
@@ -67,7 +112,7 @@ public class SecurityActionController : Controller
 
     public async Task<ActionResult> DeleteSecurityActoionAsync(int roleId)
     {
-        var result = await _securityActionRepository.DeleteSecurityActionAsync(roleId);
+        var result = await _securityActionRepository.DeleteSecurityActionAsync(roleId, true);
         return Json(result);
     }
 }
