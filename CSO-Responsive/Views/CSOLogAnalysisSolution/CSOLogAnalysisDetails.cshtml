@@ -279,50 +279,49 @@
 
 
 <div class="content">
-    <form id="CSOLogAnay-form" method="post" asp-action="InsertUpdateCSOLogAnay" asp-controller="CSOLogAnalysisSolution">
 
-        <div class="card" style="margin-top:10px;">
-            <div class="card-body d-flex justify-content-between align-items-center" style="padding-top:8px;padding-bottom:8px;">
-                <div style="font-size:18px; font-weight: 600;">
-                    CSO Analysis and Solution
-                </div>
+    <div class="card" style="margin-top:10px;">
+        <div class="card-body d-flex justify-content-between align-items-center" style="padding-top:8px;padding-bottom:8px;">
+            <div style="font-size:18px; font-weight: 600;">
+                CSO Analysis and Solution
+            </div>
 
-                <div class="col-md-2 mb-2 text-muted">
-                    CSO No. :
-                    @{
-                        string CSONo = string.Empty;
-                        if (Model.CSONo > 0 && Model.FinancialYear > 0)
-                        {
-                            CSONo = Model.CSONo + "/" + Model.FinancialYear;
-                        }
+            <div class="col-md-2 mb-2 text-muted">
+                CSO No. :
+                @{
+                    string CSONo = string.Empty;
+                    if (Model.CSONo > 0 && Model.FinancialYear > 0)
+                    {
+                        CSONo = Model.CSONo + "/" + Model.FinancialYear;
                     }
-                    <strong>
-                        @Html.TextBox("CSONo", CSONo, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
-                    </strong>
-                </div>
+                }
+                <strong>
+                    @Html.TextBox("CSONo", CSONo, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
+                </strong>
+            </div>
 
-                <div class="col-md-2 mb-2 text-muted">
-                    Logged By:
-                    <strong>
-                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
-                    </strong>
-                </div>
+            <div class="col-md-2 mb-2 text-muted">
+                Logged By:
+                <strong>
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
+                </strong>
+            </div>
 
-                <div class=" col-md-2 mb-2 text-muted">
-                    Log Date:
-                    <strong>
-                        @Html.TextBoxFor(m => m.Logdate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control font-weight-bold", @disabled = "disabled" })
-                    </strong>
-                </div>
+            <div class=" col-md-2 mb-2 text-muted">
+                Log Date:
+                <strong>
+                    @Html.TextBoxFor(m => m.Logdate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control font-weight-bold", @disabled = "disabled" })
+                </strong>
+            </div>
 
-                <div>
-                    <button id="backButton" class="btn btn-outline-danger" onclick="history.back()">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </button>
-                </div>
+            <div>
+                <button id="backButton" class="btn btn-outline-danger" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
             </div>
         </div>
-
+    </div>
+    <form id="CSOLogAnay-form" method="post" asp-action="InsertUpdateCSOLogAnay" asp-controller="CSOLogAnalysisSolution">
         <div class="card" style="margin-top:10px;">
             <div class="section">
                 <div class="table-responsive-timeline">
@@ -590,7 +589,7 @@
                             </div>
 
                             <div class="text-end mt-4">
-                                <button class="btn btn-primary" onclick="InsertUpdateCSOLogAnay()">Save</button>
+                                <button type="button" id="saveButton" class="btn btn-primary" onclick="InsertUpdateCSOLogAnay()">Save</button>
                                 <button class="btn btn-primary">Submit</button>
                                 <button class="btn btn-danger">Cancel</button>
                             </div>
