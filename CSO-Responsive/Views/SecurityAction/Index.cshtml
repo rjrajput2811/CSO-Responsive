@@ -382,11 +382,13 @@
                     history: false
                 },
             })).get().on('pnotify.confirm', function () {
+                Blockloadershow();
                 $.ajax({
                     url: '@Url.Action("DeleteSecurityActoion", "SecurityAction")',
                     type: 'POST',
-                    data: { id: recid },
+                    data: { roleId: recid },
                     success: function (data) {
+                        Blockloaderhide();
                         if (data.success == true) {
                             showSuccessAlert("Role Deleted successfully.");
                             setTimeout(function () {
