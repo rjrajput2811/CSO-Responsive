@@ -274,99 +274,100 @@
 <input id="hf_SelectedProductTypeId" type="hidden" value='@Model.ProductTypeId'>
 <input id="hf_SelectedPlantId" type="hidden" value='@Model.PlantId'>
 <input id="hf_SelectedNearestPlantId" type="hidden" value='@Model.NearestPlantId'>
-
+<input id="hf_CSOSaveAddEdit" type="hidden" value='@Url.Action("AddEdit", "CSOLogAnalysisSolution")'>
+<input id="hf_CSOAddEdit" type="hidden" value='@Url.Action("AddEdit", "CSOLogAnalysisSolution")'>
 
 
 <div class="content">
+    <form id="CSOLogAnay-form" method="post" asp-action="InsertUpdateCSOLogAnay" asp-controller="CSOLogAnalysisSolution">
 
-    <div class="card" style="margin-top:10px;">
-        <div class="card-body d-flex justify-content-between align-items-center" style="padding-top:8px;padding-bottom:8px;">
-            <div style="font-size:18px; font-weight: 600;">
-                CSO Analysis and Solution
-            </div>
+        <div class="card" style="margin-top:10px;">
+            <div class="card-body d-flex justify-content-between align-items-center" style="padding-top:8px;padding-bottom:8px;">
+                <div style="font-size:18px; font-weight: 600;">
+                    CSO Analysis and Solution
+                </div>
 
-            <div class="col-md-2 mb-2 text-muted">
-                CSO No. :
-                @{
-                    string CSONo = string.Empty;
-                    if (Model.CSONo > 0 && Model.FinancialYear > 0)
-                    {
-                        CSONo = Model.CSONo + "/" + Model.FinancialYear;
+                <div class="col-md-2 mb-2 text-muted">
+                    CSO No. :
+                    @{
+                        string CSONo = string.Empty;
+                        if (Model.CSONo > 0 && Model.FinancialYear > 0)
+                        {
+                            CSONo = Model.CSONo + "/" + Model.FinancialYear;
+                        }
                     }
-                }
-                <strong>
-                    @Html.TextBox("CSONo", CSONo, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
-                </strong>
-            </div>
+                    <strong>
+                        @Html.TextBox("CSONo", CSONo, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
+                    </strong>
+                </div>
 
-            <div class="col-md-2 mb-2 text-muted">
-                Logged By:
-                <strong>
-                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
-                </strong>
-            </div>
+                <div class="col-md-2 mb-2 text-muted">
+                    Logged By:
+                    <strong>
+                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
+                    </strong>
+                </div>
 
-            <div class=" col-md-2 mb-2 text-muted">
-                Log Date:
-                <strong>
-                    @Html.TextBoxFor(m => m.Logdate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control font-weight-bold", @disabled = "disabled" })
-                </strong>
-            </div>
+                <div class=" col-md-2 mb-2 text-muted">
+                    Log Date:
+                    <strong>
+                        @Html.TextBoxFor(m => m.Logdate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control font-weight-bold", @disabled = "disabled" })
+                    </strong>
+                </div>
 
-            <div>
-                <button id="backButton" class="btn btn-outline-danger">
-                    <i class="fas fa-arrow-left"></i> Back
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div class="card" style="margin-top:10px;">
-        <div class="section">
-            <div class="table-responsive-timeline">
-                <table class="timeline-table">
-                    <thead>
-                        <tr>
-                            <th>CSO Logged</th>
-                            <th>Root Cause Analysis</th>
-                            <th>Monitoring and CA</th>
-                            <th>Approved</th>
-                            <th>Closure</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-
-                            <td class="complete"><i class="fas fa-check-circle"></i>Complete<br><span style="color:#333; font-weight:normal;">15/02/2025<br>Admin<br>Day 2 of 45</span></td>
-                            <td class="progressed"><i class="fas fa-hourglass-half"></i>In Progress<br><span style="color:#333; font-weight:normal;">Day 6 of 45</span></td>
-                            <td class="pending"><i class="fas fa-times-circle"></i>Pending<br><span style="color:#555; font-weight:normal;">Not Started</span></td>
-                            <td class="pending"><i class="fas fa-times-circle"></i>Pending<br><span style="color:#555; font-weight:normal;">Not Started</span></td>
-                            <td class="pending"><i class="fas fa-times-circle"></i>Pending<br><span style="color:#555; font-weight:normal;">Not Started</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div>
+                    <button id="backButton" class="btn btn-outline-danger">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Tabs -->
-    <ul class="nav nav-tabs nav-tabs-highlight mb-3">
-        <li class="nav-item"><a href="#csoLog" class="nav-link active" data-bs-toggle="tab">CSO Log</a></li>
-        <li class="nav-item"><a href="#root" class="nav-link" data-bs-toggle="tab">Root Cause</a></li>
-        <li class="nav-item"><a href="#monitor" class="nav-link" data-bs-toggle="tab">Monitoring</a></li>
-        <li class="nav-item"><a href="#approve" class="nav-link" data-bs-toggle="tab">Approve / Reject</a></li>
-        <li class="nav-item"><a href="#closure" class="nav-link" data-bs-toggle="tab">Closure</a></li>
-    </ul>
+        <div class="card" style="margin-top:10px;">
+            <div class="section">
+                <div class="table-responsive-timeline">
+                    <table class="timeline-table">
+                        <thead>
+                            <tr>
+                                <th>CSO Logged</th>
+                                <th>Root Cause Analysis</th>
+                                <th>Monitoring and CA</th>
+                                <th>Approved</th>
+                                <th>Closure</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
 
-    <!-- Tab Content -->
-    <div class="tab-content">
+                                <td class="complete"><i class="fas fa-check-circle"></i>Complete<br><span style="color:#333; font-weight:normal;">15/02/2025<br>Admin<br>Day 2 of 45</span></td>
+                                <td class="progressed"><i class="fas fa-hourglass-half"></i>In Progress<br><span style="color:#333; font-weight:normal;">Day 6 of 45</span></td>
+                                <td class="pending"><i class="fas fa-times-circle"></i>Pending<br><span style="color:#555; font-weight:normal;">Not Started</span></td>
+                                <td class="pending"><i class="fas fa-times-circle"></i>Pending<br><span style="color:#555; font-weight:normal;">Not Started</span></td>
+                                <td class="pending"><i class="fas fa-times-circle"></i>Pending<br><span style="color:#555; font-weight:normal;">Not Started</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs nav-tabs-highlight mb-3">
+            <li class="nav-item"><a href="#csoLog" class="nav-link active" data-bs-toggle="tab">CSO Log</a></li>
+            <li class="nav-item"><a href="#root" class="nav-link" data-bs-toggle="tab">Root Cause</a></li>
+            <li class="nav-item"><a href="#monitor" class="nav-link" data-bs-toggle="tab">Monitoring</a></li>
+            <li class="nav-item"><a href="#approve" class="nav-link" data-bs-toggle="tab">Approve / Reject</a></li>
+            <li class="nav-item"><a href="#closure" class="nav-link" data-bs-toggle="tab">Closure</a></li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
 
 
-        <div class="tab-pane fade show active" id="csoLog">
-            <div class="row g-4">
-                <div class="col-lg-12">
-                    <div class="card p-4">
-                        <form id="CSOLog-form" method="post" asp-action="InsertUpdateCSOLog" asp-controller="CSOLog">
+            <div class="tab-pane fade show active" id="csoLog">
+                <div class="row g-4">
+                    <div class="col-lg-12">
+                        <div class="card p-4">
                             <div class="card">
                                 <div class=" section-title">
 
@@ -380,27 +381,39 @@
                                         <div class="col-md-2">
                                             <label class=" custom-label required">CSO No.</label>
                                             @{
-                                                string CSONo = string.Empty;
+                                                string cSONo = string.Empty;
                                                 if (Model.CSONo > 0 && Model.FinancialYear > 0)
                                                 {
-                                                    CSONo = Model.CSONo + "/" + Model.FinancialYear;
+                                                    cSONo = Model.CSONo + "/" + Model.FinancialYear;
                                                 }
                                             }
 
-                                            @Html.TextBox("CSONo", CSONo, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
+                                            @Html.TextBox("CSONo", cSONo, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
                                             @Html.ValidationMessageFor(m => m.CSONo, "", new { @class = "text-danger" })
                                         </div>
+
                                         <div class="col-md-4">
+                                            <label class=" required select2 custom-label">Complaint Type*</label>
+                                            @Html.DropDownListFor(m => m.ComplaintTypeId, (IEnumerable<SelectListItem>)ViewBag.ComplainTypeList, "Select ComplaintType", new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.ComplaintTypeId, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-2">
                                             <label class=" required select2 custom-label">Division/BU</label>
 
                                             @Html.DropDownListFor(m => m.DivisionId, (IEnumerable<SelectListItem>)ViewBag.DivisionList, "Select Division", new { @class = "form-control " })
                                             @Html.ValidationMessageFor(m => m.DivisionId, "", new { @class = "text-danger" })
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-2">
                                             <label class=" required select2 custom-label">Category / Function</label>
 
                                             @Html.DropDownListFor(m => m.CategoryId, (IEnumerable<SelectListItem>)ViewBag.CategoryList, "Select Category", new { @class = "form-control " })
                                             @Html.ValidationMessageFor(m => m.CategoryId, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class=" required select2 custom-label">CSO Class*</label>
+
+                                            @Html.DropDownListFor(m => m.CSOClassId, (IEnumerable<SelectListItem>)ViewBag.CSOClassList, "Select CSOClass", new { @class = "form-control " })
+                                            @Html.ValidationMessageFor(m => m.CSOClassId, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 </div>
@@ -545,126 +558,136 @@
                                     </div>
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Root Cause Tab -->
-        <div class="tab-pane fade" id="root">
-            <div class="row g-4">
-                <div class="col-lg-8">
-                    <div class="card p-4">
-                        <div class="d-flex justify-content-between mb-3">
-                            <h5 class="section-label">Root Cause Analysis</h5>
-                            <span class="badge bg-success badge-status">Submitted</span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="section-label">Root Cause Description</label>
-                            <textarea class="form-control readonly" rows="3" readonly>Sample received. Looseness in banding found. Packing date: April 24. Could be due to shrinkage. Weight loss: 15g/soap.</textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="section-label">Corrective Action</label>
-                            <textarea class="form-control readonly" rows="3" readonly>During packing, wrapping and banding are satisfactory. No looseness observed.</textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="section-label">Preventive Action</label>
-                            <textarea class="form-control readonly" rows="3" readonly>Banding will be rechecked in the next run of 150g to ensure no looseness remains.</textarea>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-lg-4">
-                    <div class="card p-4">
-                        <h6 class="section-label mb-3">Supporting Attachments</h6>
-                        <input type="file" class="form-control mb-2">
-                        <div class="file-note">Max file size: 5 MB</div>
-                        <hr>
-                        <p class="mb-0">Attached: <a href="#">rca_image_apr24.jpg</a></p>
-                    </div>
-                </div>
             </div>
-        </div>
 
-        <!-- Monitoring Tab -->
-        <div class="tab-pane fade" id="monitor">
-            <div class="card p-4">
-                <h5 class="section-label mb-3">Monitoring of Corrective Action</h5>
-                <textarea class="form-control" rows="4" placeholder="Enter monitoring notes...">Checked again on 05-July, no looseness found. Process satisfactory.</textarea>
-                <div class="mt-3">
-                    <label class="section-label">Attach File</label>
-                    <input type="file" class="form-control">
-                    <div class="file-note mt-1">Max file size: 5 MB</div>
-                </div>
-                <div class="text-end mt-4">
-                    <button class="btn btn-outline-info">Save</button>
-                    <button class="btn btn-primary">Submit</button>
-                    <button class="btn btn-danger">Cancel</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Approve / Reject Tab -->
-        <div class="tab-pane fade" id="approve">
-            <div class="card p-4">
-                <div class="d-flex justify-content-between mb-3">
-                    <h5 class="section-label">Final Review - Approve / Reject</h5>
-                    <span class="badge bg-warning text-dark badge-status">Pending Review</span>
-                </div>
+            <!-- Root Cause Tab -->
+            <div class="tab-pane fade" id="root">
                 <div class="row g-4">
-                    <div class="col-md-8">
-                        <label class="section-label">Review Comments</label>
-                        <textarea class="form-control" rows="4" placeholder="Add remarks for approval or rejection..."></textarea>
+                    <div class="col-lg-8">
+                        <div class="card p-4">
+                            <div class="d-flex justify-content-between mb-3">
+                                <h5 class="section-label">Root Cause Analysis</h5>
+                                <span class="badge bg-success badge-status">Submitted</span>
+                            </div>
+
+                            <div class="mb-3">
+                                @Html.Label("Root Cause Analysis")
+                                @Html.TextAreaFor(m => m.RootCauseAnalysisDescription, 3, 40, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.RootCauseAnalysisDescription, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="mb-3">
+                                @Html.Label("Corrective Action")
+                                @Html.TextAreaFor(m => m.CorrectiveActionDescription, 3, 40, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.CorrectiveActionDescription, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="mb-3">
+                                @Html.Label("Preventive Action")
+                                @Html.TextAreaFor(m => m.PreventiveActionDescription, 3, 40, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.PreventiveActionDescription, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="text-end mt-4">
+                                <button class="btn btn-primary" onclick="InsertUpdateCSOLogAnay()">Save</button>
+                                <button class="btn btn-primary">Submit</button>
+                                <button class="btn btn-danger">Cancel</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <label class="section-label">If Rejected, Revert To</label>
-                        <select id="revertStatus" class="form-select" disabled>
-                            <option selected disabled>Select status...</option>
-                            <option value="root">Root Cause Analysis</option>
-                            <option value="monitor">Monitoring</option>
-                            <option value="log">Log CSO</option>
-                        </select>
+
+                    <div class="col-lg-4">
+                        <div class="card p-4">
+                            <h6 class="section-label mb-3">Supporting Attachments</h6>
+                            <input type="file" class="form-control mb-2">
+                            <div class="file-note">Max file size: 5 MB</div>
+                            <hr>
+                            <p class="mb-0">Attached: <a href="#">rca_image_apr24.jpg</a></p>
+                        </div>
                     </div>
-                </div>
-                <div class="text-end mt-4">
-                    <button id="btnReject" class="btn btn-outline-danger me-2">Reject</button>
-                    <button class="btn btn-success me-2">Approve</button>
-                    <button class="btn btn-secondary">Cancel</button>
                 </div>
             </div>
-        </div>
 
-        <!-- Closure Tab -->
-        <div class="tab-pane fade" id="closure">
-            <div class="card p-4">
-                <div class="d-flex justify-content-between mb-3">
-                    <h5 class="section-label">Log Closure</h5>
-                    <span class="badge bg-secondary badge-status">Final Step</span>
-                </div>
-                <div class="mb-3">
-                    <label class="section-label">Closure Comments</label>
-                    <textarea class="form-control" rows="4" placeholder="Enter final closure remarks..."></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="section-label">Closure Date</label>
-                    <input type="date" class="form-control">
-                </div>
-                <div class="text-end">
-                    <button class="btn btn-outline-info">Save</button>
-                    <button class="btn btn-success">Close Log</button>
+            <!-- Monitoring Tab -->
+            <div class="tab-pane fade" id="monitor">
+                <div class="card p-4">
+                    <h5 class="section-label mb-3">Monitoring of Corrective Action</h5>
+                    <textarea class="form-control" rows="4" placeholder="Enter monitoring notes...">Checked again on 05-July, no looseness found. Process satisfactory.</textarea>
+                    <div class="mt-3">
+                        <label class="section-label">Attach File</label>
+                        <input type="file" class="form-control">
+                        <div class="file-note mt-1">Max file size: 5 MB</div>
+                    </div>
+                    <div class="text-end mt-4">
+                        <button class="btn btn-outline-info">Save</button>
+                        <button class="btn btn-success">Submit</button>
+                        <button class="btn btn-danger">Cancel</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-    </div>
+            <!-- Approve / Reject Tab -->
+            <div class="tab-pane fade" id="approve">
+                <div class="card p-4">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5 class="section-label">Final Review - Approve / Reject</h5>
+                        <span class="badge bg-warning text-dark badge-status">Pending Review</span>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-md-8">
+                            <label class="section-label">Review Comments</label>
+                            <textarea class="form-control" rows="4" placeholder="Add remarks for approval or rejection..."></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="section-label">If Rejected, Revert To</label>
+                            <select id="revertStatus" class="form-select" disabled>
+                                <option selected disabled>Select status...</option>
+                                <option value="root">Root Cause Analysis</option>
+                                <option value="monitor">Monitoring</option>
+                                <option value="log">Log CSO</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-end mt-4">
+                        <button id="btnReject" class="btn btn-outline-danger me-2">Reject</button>
+                        <button class="btn btn-success me-2">Approve</button>
+                        <button class="btn btn-secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Closure Tab -->
+            <div class="tab-pane fade" id="closure">
+                <div class="card p-4">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5 class="section-label">Log Closure</h5>
+                        <span class="badge bg-secondary badge-status">Final Step</span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="section-label">Closure Comments</label>
+                        <textarea class="form-control" rows="4" placeholder="Enter final closure remarks..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="section-label">Closure Date</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="text-end">
+                        <button class="btn btn-outline-info">Save</button>
+                        <button class="btn btn-success">Close Log</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="~/js/CSOLog/CSOLog.js" asp-append-version="true"></script>
+    @* <script src="~/js/CSOLog/CSOLog.js" asp-append-version="true"></script> *@
+    <script src="~/js/csologanalysis/csoanalysis.js" asp-append-version="true"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
              const rejectBtn = document.getElementById("btnReject");

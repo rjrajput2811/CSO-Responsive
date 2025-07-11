@@ -57,11 +57,101 @@ namespace CSO.Core.Repositories.CSOLogAnalysisRepo
                     RootStatus = data.RootStatus,
                     MonitorStatus = data.MonitorStatus,
                     ApprovalStatus = data.ApprovalStatus,
-                    ClosureStatus = data.ClosureStatus                    
+                    ClosureStatus = data.ClosureStatus
 
                 }).ToList();
 
                 return csoLogList;
+            }
+            catch (Exception ex)
+            {
+                _systemLogService.WriteLog(ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<OperationResult> CreateCSOLogAnyaAsync(CSOLogViewModel model)
+        {
+            try
+            {
+                var csoLogData = new CSOLog
+                {
+                    UserId = model.UserId,
+                    Logdate = DateTime.Now,
+                    CategoryId = model.CategoryId,
+                    ComplaintTypeId = model.ComplaintTypeId,
+                    Description = model.Description,
+                    SourceofComplaint = model.SourceofComplaint,
+                    CSOClassId = model.CSOClassId,
+                    DivisionId = model.DivisionId,
+                    BrandId = model.BrandId,
+                    ProductTypeId = model.ProductTypeId,
+                    PlantId = model.PlantId,
+                    NearestPlantId = model.NearestPlantId,
+                    Batch = model.Batch,
+                    Date = DateTime.Now,
+                    PKDDate = model.PKDDate,
+                    Quantity = model.Quantity,
+                    SuppliedQuantity = model.SuppliedQuantity,
+                    CatReference = model.CatReference,
+                    IsSampleShipped = model.IsSampleShipped,
+                    TrackingNo = model.IsSampleShipped == true ? model.TrackingNo : "",
+                    Status1 = (int)Status.Open,
+                    AddedBy = model.UserId,
+                    AddedOn = DateTime.Now,
+                    FinancialYear = model.FinancialYear,
+                    SKUDetails = model.SKUDetails,
+                    CorrectiveActionDescription = model.CorrectiveActionDescription,
+                    MonitoringofCorrectiveActionDescription = model.MonitoringofCorrectiveActionDescription,
+                    PreventiveActionDescription = model.PreventiveActionDescription,
+                    RootCauseAnalysisDescription = model.RootCauseAnalysisDescription,
+                    Review1 = "",
+                    Review2 = ""
+                };
+
+                var result = await base.CreateAsync<CSOLog>(csoLogData);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _systemLogService.WriteLog(ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<OperationResult> UpdateCSOLogAnyaAsync(CSOLogViewModel model)
+        {
+            try
+            {
+                var csoLogData = await base.GetByIdAsync<CSOLog>(model.Id);
+
+                csoLogData.ComplaintTypeId = model.ComplaintTypeId;
+                csoLogData.CSOClassId = model.CSOClassId;                
+                csoLogData.DivisionId = model.DivisionId;
+                csoLogData.CategoryId = model.CategoryId;
+                csoLogData.Description = model.Description;
+                csoLogData.SourceofComplaint = model.SourceofComplaint;
+                csoLogData.BrandId = model.BrandId;
+                csoLogData.ProductTypeId = model.ProductTypeId;
+                csoLogData.PlantId = model.PlantId;
+                csoLogData.NearestPlantId = model.NearestPlantId;
+                csoLogData.Batch = model.Batch;
+                csoLogData.PKDDate = model.PKDDate;
+                csoLogData.Quantity = model.Quantity;
+                csoLogData.SuppliedQuantity = model.SuppliedQuantity;
+                csoLogData.CatReference = model.CatReference;
+                csoLogData.IsSampleShipped = model.IsSampleShipped;
+                csoLogData.TrackingNo = model.IsSampleShipped == true ? model.TrackingNo : "";
+                csoLogData.UpdatedBy = model.UserId;
+                csoLogData.UpdatedOn = DateTime.Now;
+                csoLogData.SKUDetails = model.SKUDetails;
+                csoLogData.CorrectiveActionDescription = model.CorrectiveActionDescription;
+                csoLogData.MonitoringofCorrectiveActionDescription = model.MonitoringofCorrectiveActionDescription;
+                csoLogData.PreventiveActionDescription = model.PreventiveActionDescription;
+                csoLogData.RootCauseAnalysisDescription = model.RootCauseAnalysisDescription;
+
+                var result = await base.UpdateAsync<CSOLog>(csoLogData);
+                return result;
             }
             catch (Exception ex)
             {
