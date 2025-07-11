@@ -142,7 +142,7 @@
                 Security Action Details
             </div>
             <div>
-                <button id="backButton" class="btn btn-outline-primary ">
+                <button id="backButton" class="btn btn-outline-primary " onclick="history.back()">
                     <i class="fas fa-arrow-left"></i>Back
                 </button>
             </div>
@@ -737,7 +737,7 @@
                                                @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_CATEGORY) ? "checked" : "") />
                                     </div>
                                 </td>
-                                <td><div class="form-check form-switch">utility_edit
+                                <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Category_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_CATEGORY))"
                                                @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_CATEGORY) ? "checked" : "") />
