@@ -1,5 +1,17 @@
-﻿@{
+﻿@using CSO.Core.Security
+@using Microsoft.AspNetCore.Http
+@using CSO.Core.Repositories.SecurityActionRepo
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ISecurityActionRepository _securityActionRepository
+
+@{
     ViewData["Title"] = "Brand";
+
+    var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
+
+    var canAddBrand = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_BRAND, (int)userRoleId);
+    var canEditBrand = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_BRAND, (int)userRoleId);
+    var canDeleteBrand = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DELETE_BRAND, (int)userRoleId);
 }
 
 
@@ -131,9 +143,12 @@
                 Brand
             </div>
             <div>
-                <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openBrandModal()">
-                    <i class="fas fa-plus mr-2 fa-1x"></i>Add
-                </button>
+                @if (canAddBrand)
+                {
+                    <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openBrandModal()">
+                        <i class="fas fa-plus mr-2 fa-1x"></i>Add
+                    </button>
+                }
                 <button id="backButton" class="btn btn-outline-primary ">
                     <i class="fas fa-arrow-left"></i>Back
                 </button>
@@ -216,6 +231,9 @@
         var tabledata = [];
         var table = '';
         const searchTerms = {};
+        var canEditBrand = @(canEditBrand.ToString().ToLower());
+        var canDeleteBrand = @(canDeleteBrand.ToString().ToLower());
+
         $(document).ready(function () {
 
             $('.select2').select2({
@@ -336,8 +354,8 @@
                     });
                 });
 
-                columns.push(
-                    {
+                if (canDeleteBrand) {
+                    columns.push({
                         title: "Action",
                         field: "Action",
                         responsive: 0,
@@ -353,9 +371,12 @@
 
                             return actionButtons;
                         }
-                    },
+                    });
+                }
+
+                columns.push(
                     {
-                                title: "SNo", field: "Sr_No", width: 50, responsive: 1,  sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
+                      title: "SNo", field: "Sr_No", width: 50, responsive: 1,  sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
                     },
                     { title: "Name", field: "Name", responsive: 2,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
                     { title: "Division", field: "DivisionName", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },

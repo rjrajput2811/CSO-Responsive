@@ -1,6 +1,8 @@
 ﻿using CSO.Core.Models;
 using CSO.Core.Repositories.BrandRepo;
 using CSO.Core.Repositories.CategoryRepo;
+using CSO.Core.Repositories.ComplaintTypeRepo;
+using CSO.Core.Repositories.CSOClassRepo;
 using CSO.Core.Repositories.CSOLogAnalysisRepo;
 using CSO.Core.Repositories.CSOLogFileRepo;
 using CSO.Core.Repositories.CSOLogRepo;
@@ -9,6 +11,7 @@ using CSO.Core.Repositories.NearestPlantRepo;
 using CSO.Core.Repositories.PlantRepo;
 using CSO.Core.Repositories.ProductTypeRepo;
 using CSO.Core.Repositories.UserRepo;
+using CSO.Core.Security;
 using CSO.Core.Services.SystemLogs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -30,6 +33,8 @@ namespace CSO_Responsive.Controllers
         private readonly IProductTypeRepository _productTypeRepository;
         private readonly IUserRepository _userRepository;
         private readonly ICSOLogFileRepository _csoLogFileRepository;
+        private readonly IComplaintTypeRepository _complaintTypeRepository;
+        private readonly ICSOClassRepository _cSOClassRepository;
 
         public CSOLogAnalysisSolutionController(ICSOLogAnalysisRepository csoLogAnalRepository,
                                 ISystemLogService systemLogService, IDivisionRepository divisionRepository,
@@ -39,7 +44,8 @@ namespace CSO_Responsive.Controllers
                             INearestPlantRepository nearestPlantRepository,
                             IProductTypeRepository productTypeRepository,
                             IUserRepository userRepository,
-                            ICSOLogFileRepository csoLogFileRepository, ICSOLogRepository csoLogRepository)
+                            ICSOLogFileRepository csoLogFileRepository, ICSOLogRepository csoLogRepository,
+                            IComplaintTypeRepository complaintTypeRepository,ICSOClassRepository cSOClassRepository)
         {
             _csoLogAnalRepository = csoLogAnalRepository;
             _systemLogService = systemLogService;
@@ -52,6 +58,8 @@ namespace CSO_Responsive.Controllers
             _productTypeRepository = productTypeRepository;
             _userRepository = userRepository;
             _csoLogFileRepository = csoLogFileRepository;
+            _complaintTypeRepository = complaintTypeRepository;
+            _cSOClassRepository = cSOClassRepository;
         }
         public IActionResult CSOLogAnalysisSolution()
         {
@@ -108,6 +116,26 @@ namespace CSO_Responsive.Controllers
             .ToList();
 
             ViewBag.CategoryList = categoryList;
+
+            var csoClass = await _cSOClassRepository.GetCsoClassList();
+            var csoClassList = csoClass.Select(x => new SelectListItem
+            {
+                Value = x.Id.ToString(),
+                Text = x.Name
+            })
+            .ToList();
+
+            ViewBag.CSOClassList = csoClassList;
+
+            var complainType = await _complaintTypeRepository.GetComTypeList();
+            var complainTypeList = complainType.Select(x => new SelectListItem
+            {
+                Value = x.Id.ToString(),
+                Text = x.Name
+            })
+            .ToList();
+
+            ViewBag.ComplainTypeList = complainTypeList;
 
             var model = new CSOLogViewModel();
             if (!string.IsNullOrEmpty(id))
@@ -200,6 +228,59 @@ namespace CSO_Responsive.Controllers
             })
             .ToList();
             return Json(list);
+        }
+
+        public async Task<ActionResult> InsertUpdateCSOLogAnayAsync(CSOLogViewModel model)
+        {
+            var result = new OperationResult();
+            if (model.Id > 0)
+            {
+                model.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                result = await _csoLogAnalRepository.UpdateCSOLogAnyaAsync(model);
+            }
+            else
+            {
+                model.AddedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
+                model.UserId = HttpContext.Session.GetInt32("UserId") ?? 0;
+                result = await _csoLogAnalRepository.CreateCSOLogAnyaAsync(model);
+            }
+
+            if (!result.Success) { return Json(result); }
+
+            var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var uploadFolder = "CSOLogandAnalysisSolutionFiles";
+            var uploadPath = Path.Combine(wwwRootPath, uploadFolder);
+
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            foreach (var file in model.files)
+            {
+                var originalFileNameWithoutExt = Path.GetFileNameWithoutExtension(file.FileName);
+                var extension = Path.GetExtension(file.FileName);
+                var dateStamp = DateTime.Now.ToString("ddMMyyyyHHmmss");
+
+                var uniqueFileName = $"{originalFileNameWithoutExt}_{dateStamp}{extension}";
+                var filePath = Path.Combine(uploadPath, uniqueFileName);
+
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await file.CopyToAsync(stream);
+
+                var csoLogFilesModel = new CSOLogFileViewModel
+                {
+                    FilePath = filePath,
+                    FileName = uniqueFileName,
+                    Type = (int)CSOLogFileType.CSOLOg,
+                    CSOLogId = result.ObjectId ?? 0,
+                    AddedBy = HttpContext.Session.GetInt32("UserId") ?? 0,
+                    AddedOn = DateTime.Now
+                };
+
+                result = await _csoLogFileRepository.InsertCSOLogFileInfoAsync(csoLogFilesModel);
+                if (!result.Success) { return Json(result); }
+            }
+
+            return Json(result);
         }
     }
 }
