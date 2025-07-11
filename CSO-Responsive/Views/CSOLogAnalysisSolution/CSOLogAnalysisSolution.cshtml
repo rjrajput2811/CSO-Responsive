@@ -398,14 +398,14 @@
                     columns: columns
                 });
 
-                // table.on("cellClick", function (e, cell) {
-                //     let columnField = cell.getColumn().getField();
+                table.on("cellClick", function (e, cell) {
+                    let columnField = cell.getColumn().getField();
 
-                //     if (columnField !== "Action") {
-                //         let rowData = cell.getRow().getData();
-                //         editCSOLog(rowData.Id);
-                //     }
-                // });
+                    if (columnField !== "Action") {
+                        let rowData = cell.getRow().getData();
+                        editCSOLogAnal(rowData.Id);
+                    }
+                });
 
                 // table.on("cellClick", function (e, cell) {
                 //     let columnField = cell.getColumn().getField();
@@ -496,20 +496,20 @@
         //     });
         // }
 
-        // function csoLogPage() {
-        //     var url = "@Url.Action("CSOLog", "CSOLog")";
-        //     window.open(url, '_self');
-        // }
+        function csoLogPage() {
+            var url = "@Url.Action("CSOLogAnalysisDetails", "CSOLogAnalysisSolution")";
+            window.open(url, '_self');
+        }
 
-        // function editCSOLog(recid) {
-        //     var key = CryptoJS.enc.Utf8.parse('8080808080808080');
-        //     var iv = CryptoJS.enc.Utf8.parse('8080808080808080');
-        //     var encryptedId = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(recid.toString()), key,
-        //     { keySize: 256 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
-        //     var encryptedBase64 = encryptedId.toString();
-        //     var urlSafe = encryptedBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-        //     var url = "@Url.Action("CSOLog", "CSOLog")" + "/" + urlSafe;
-        //     window.open(url, '_self');
-        // }
+        function editCSOLogAnal(recid) {
+            var key = CryptoJS.enc.Utf8.parse('8080808080808080');
+            var iv = CryptoJS.enc.Utf8.parse('8080808080808080');
+            var encryptedId = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(recid.toString()), key,
+            { keySize: 256 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+            var encryptedBase64 = encryptedId.toString();
+            var urlSafe = encryptedBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            var url = "@Url.Action("CSOLogAnalysisDetails", "CSOLogAnalysisSolution")" + "/" + urlSafe;
+            window.open(url, '_self');
+        }
     </script>
 }

@@ -1,0 +1,1145 @@
+﻿@using CSO.Core.Models
+@using CSO.Core.Security
+
+@model SecurityActionsPageViewModel
+
+@{
+    ViewData["Title"] = "Security Action";
+}
+
+<link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
+<link href="~/css/tabulator/tabulator.min.css" rel="stylesheet" />
+<link href="~/css/tabulator/tabulator_bootstrap4.min.css" rel="stylesheet" />
+<script src="~/js/jquery.min.js"></script>
+<script src="~/js/jquery.datatables.js"></script>
+<link href="~/css/pnotify.css" rel="stylesheet" />
+<script src="~/js/pnotify.js"></script>
+<script src="~/js/pnotify.confirm.js"></script>
+<script src="~/lib/bootstrap/dist/js/popupAlert.js"></script>
+<script src="~/lib/bootstrap/dist/js/buttons.html5.min.js"></script>
+<script src="~/js/common.js"></script>
+<script src="~/js/xlsx.min.js"></script>
+<style>
+    .form-control {
+        padding: 0 10px !important;
+        border: 0;
+        border-bottom: 1px solid #cccccc;
+        border-radius: 0px;
+    }
+
+    label {
+        margin-bottom: 0;
+        margin-top: .3rem;
+    }
+
+    /* .child-row {
+            display: none;
+        }
+
+            .child-row.visible {
+                display: table-row;
+            }
+
+        .ps-4 {
+            padding-left: 2rem !important;
+        } */
+
+    .form-group {
+        margin-bottom: 0.5rem;
+    }
+
+    .custom-header {
+        background-color: #bec6e1 !important;
+        color: black;
+        border-radius: 4px 4px 0 0;
+        font-weight: bold;
+    }
+
+    /* .form-check-input {
+            cursor: pointer;
+            transform: scale(1.2);
+        } */
+
+    .parent-row {
+        background-color: #e8efff;
+        font-weight: 500;
+    }
+
+    .expand-icon {
+        font-size: 16px;
+        cursor: pointer;
+        color: #007bff;
+    }
+
+    /* .permission-table tr:hover {
+            background-color: #f4f6fb;
+        } */
+
+    .table td, .table th {
+        vertical-align: middle !important;
+    }
+
+    .permission-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+        .permission-table th,
+        .permission-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            vertical-align: middle !important;
+            background-color: white;
+        }
+
+        .permission-table thead th {
+            background-color: #D6E4F0;
+            border-bottom: 1px solid #ccc;
+        }
+
+            /* Rounded corners only on outer borders */
+            .permission-table thead th:first-child {
+                border-top-left-radius: 10px;
+            }
+
+            .permission-table thead th:last-child {
+                border-top-right-radius: 10px;
+            }
+
+        .permission-table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 10px;
+        }
+
+        .permission-table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 10px;
+        }
+
+    .form-check-input {
+        cursor: pointer;
+        transform: scale(1.2);
+    }
+
+    .child-row {
+        display: none;
+    }
+
+        .child-row.visible {
+            display: table-row;
+        }
+
+    .ps-4 {
+        padding-left: 2rem !important;
+    }
+</style>
+
+<div class="content">
+    <div class="card" style="margin-top:10px;">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div style="font-size:x-large">
+                Security Action Details
+            </div>
+            <div>
+                <button id="backButton" class="btn btn-outline-primary ">
+                    <i class="fas fa-arrow-left"></i>Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                @Html.HiddenFor(m => m.UserRoleId)
+                                <label for="RoleName" class="me-2 mb-0">Role Name :</label>
+                                @Html.TextBoxFor(m => m.UserRoleName, new { @class = "form-control form-control-sm", placeholder = "Role Name", style = "width: 200px;" })
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="savePermissions()">Save</button>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered text-center permission-table">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Menu</th>
+                                <th>Mobile View</th>
+                                <th>Desktop View</th>
+                                <th>View</th>
+                                <th>Add</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>Dashboard</td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox action-checkbox dashboard_mobile" type="checkbox" id="dashboard_mobile"
+                                               value = "@((int)SecurityActionsEnum.SEC_MOBILE_DASHBOARD)"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_DASHBOARD) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox dashboard_desktop" type="checkbox" id="dashboard_desktop"
+                                               value = "@((int)SecurityActionsEnum.SEC_DESKTOP_DASHBOARD))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_DASHBOARD) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox dashboard_view" type="checkbox" id="dashboard_view"
+                                               value = "@((int)SecurityActionsEnum.SEC_VIEW_DASHBOARD))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_DASHBOARD) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+
+                            <tr>
+                                <td>User</td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox user_mobile" type="checkbox" id="user_mobile"
+                                               value = "@((int)SecurityActionsEnum.SEC_MOBILE_USERS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_USERS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox user_desktop" type="checkbox" id="user_desktop"
+                                               value = "@((int)SecurityActionsEnum.SEC_DESKTOP_USERS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_USERS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox user_view" type="checkbox" id="user_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_USERS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_USERS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox user_add" type="checkbox" id="user_add"
+                                               value = "@((int)SecurityActionsEnum.SEC_ADD_USERS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_USERS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox user_edit" type="checkbox" id="user_edit"
+                                               value = "@((int)SecurityActionsEnum.SEC_EDIT_USERS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_USERS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox user_delete" type="checkbox" id="user_delete"
+                                               value = "@((int)SecurityActionsEnum.SEC_DELETE_USERS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_USERS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>CSO Log</td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLog_mobile" type="checkbox" id="csoLog_mobile"
+                                               value = "@((int)SecurityActionsEnum.SEC_MOBILE_CSOLOG))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CSOLOG) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLog_desktop" type="checkbox" id="csoLog_desktop"
+                                               value = "@((int)SecurityActionsEnum.SEC_DESKTOP_CSOLOG))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CSOLOG) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLog_view" type="checkbox" id="csoLog_view"
+                                               value = "@((int)SecurityActionsEnum.SEC_VIEW_CSOLOG))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CSOLOG) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLog_add" type="checkbox" id="csoLog_add"
+                                               value = "@((int)SecurityActionsEnum.SEC_ADD_CSOLOG))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_CSOLOG) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLog_edit" type="checkbox" id="csoLog_edit"
+                                               value = "@((int)SecurityActionsEnum.SEC_EDIT_CSOLOG))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_CSOLOG) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLog_delete" type="checkbox" id="csoLog_delete"
+                                               value = "@((int)SecurityActionsEnum.SEC_DELETE_CSOLOG))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_CSOLOG) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="parent-row">
+                                <td><span class="expand-icon" onclick="toggleChildren('csoLogAnal')"><i class="fas fa-chevron-right" id="icon-csoLogAnal"></i> CSO Log Analysis</span></td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" id="csoLogAnal_mobile_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'mobile', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" id="csoLogAnal_desktop_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'desktop', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" id="csoLogAnal_view_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'view', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" id="csoLogAnal_add_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'add', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" id="csoLogAnal_edit_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'edit', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" id="csoLogAnal_delete_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'delete', this.checked)" />
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <tr class="child-row csoLogAnal">
+                                <td class="ps-4">Root Cause Analysis</td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_mobile" type="checkbox" id="csoLogAnal_Root_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_ROOTCAUSE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_ROOTCAUSE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_desktop" type="checkbox" id="csoLogAnal_Root_desktop"
+                                           value="@((int)SecurityActionsEnum.SEC_DESKTOP_ROOTCAUSE))"
+                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_ROOTCAUSE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_view" type="checkbox" id="csoLogAnal_Root_view"
+                                           value = "@((int)SecurityActionsEnum.SEC_VIEW_ROOTCAUSE))"
+                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_ROOTCAUSE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_add" type="checkbox" id="csoLogAnal_Root_add"
+                                           value = "@((int)SecurityActionsEnum.SEC_ADD_ROOTCAUSE))"
+                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_ROOTCAUSE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_edit" type="checkbox" id="csoLogAnal_Root_edit"
+                                           value = "@((int)SecurityActionsEnum.SEC_EDIT_ROOTCAUSE))"
+                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_ROOTCAUSE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_delete" type="checkbox" id="csoLogAnal_Root_delete"
+                                           value = "@((int)SecurityActionsEnum.SEC_DELETE_ROOTCAUSE))"
+                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_ROOTCAUSE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row csoLogAnal">
+                                <td class="ps-4">Monitoring of Corrective Action</td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_mobile" type="checkbox" id="csoLogAnal_Monitor_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_MONITOR))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_MONITOR) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_desktop" type="checkbox" id="csoLogAnal_Monitor_desktop"
+                                               value = "@((int)SecurityActionsEnum.SEC_DESKTOP_MONITOR))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_MONITOR) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_view" type="checkbox" id="csoLogAnal_Monitor_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_MONITOR))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_MONITOR) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_add" type="checkbox" id="csoLogAnal_Monitor_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_MONITOR))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_MONITOR) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_edit" type="checkbox" id="csoLogAnal_Monitor_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_MONITOR))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_MONITOR) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_delete" type="checkbox" id="csoLogAnal_Monitor_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_MONITOR))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_MONITOR) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row csoLogAnal">
+                                <td class="ps-4">Approve / Reject</td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_mobile" type="checkbox" id="csoLogAnal_Approve_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_APPROVE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_APPROVE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_desktop" type="checkbox" id="csoLogAnal_Approve_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_APPROVE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_APPROVE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_view" type="checkbox" id="csoLogAnal_Approve_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_APPROVE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_APPROVE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_add" type="checkbox" id="csoLogAnal_Approve_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_APPROVE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_APPROVE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_edit" type="checkbox" id="csoLogAnal_Approve_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_APPROVE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_APPROVE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_delete" type="checkbox" id="csoLogAnal_Approve_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_APPROVE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_APPROVE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row csoLogAnal">
+                                <td class="ps-4">Closure</td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_mobile" type="checkbox" id="csoLogAnal_Close_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_CLOSURE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CLOSURE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_desktop" type="checkbox" id="csoLogAnal_Close_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_CLOSURE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CLOSURE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_view" type="checkbox" id="csoLogAnal_Close_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_CLOSURE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CLOSURE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_add" type="checkbox" id="csoLogAnal_Close_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_CLOSURE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_CLOSURE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_edit" type="checkbox" id="csoLogAnal_Close_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_CLOSURE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_CLOSURE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox csoLogAnal_delete" type="checkbox" id="csoLogAnal_Close_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_CLOSURE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_CLOSURE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="parent-row">
+                                <td><span class="expand-icon" onclick="toggleChildren('reports')"><i class="fas fa-chevron-right" id="icon-reports"></i> Reports</span></td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="report_mobile_parent" onchange="toggleParentChild('reports', 'mobile', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="report_desktop_parent" onchange="toggleParentChild('reports', 'desktop', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="report_view_parent" onchange="toggleParentChild('reports', 'view', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="report_add_parent" onchange="toggleParentChild('reports', 'add', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="report_edit_parent" onchange="toggleParentChild('reports', 'edit', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="report_delete_parent" onchange="toggleParentChild('reports', 'delete', this.checked)" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row reports">
+                                <td class="ps-4">MIS</td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox reports_mobile" type="checkbox" id="reports_Mis_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_MIS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_MIS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox reports_desktop" type="checkbox" id="reports_Mis_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_MIS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_MIS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox reports_view" type="checkbox" id="reports_Mis_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_MIS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_MIS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+
+                            <tr class="child-row reports">
+                                <td class="ps-4">CSO Log Report</td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox reports_mobile" type="checkbox" id="reports_Cso_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_CSOLOG_REPORT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CSOLOG_REPORT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox reports_desktop" type="checkbox" id="reports_Cso_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_CSOLOG_REPORT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CSOLOG_REPORT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox reports_view" type="checkbox" id="reports_Cso_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_CSOLOG_REPORT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CSOLOG_REPORT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+
+                            <tr>
+                                <td>Emial / SMTP </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox email_mobile" type="checkbox" id="email_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_EMAIL_SMTP_SETTINGS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_EMAIL_SMTP_SETTINGS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox email_desktop" type="checkbox" id="email_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_EMAIL_SMTP_SETTINGS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_EMAIL_SMTP_SETTINGS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox email_view" type="checkbox" id="email_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_EMAIL_SMTP_SETTINGS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_EMAIL_SMTP_SETTINGS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox email_add" type="checkbox" id="email_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_EMAIL_SMTP_SETTINGS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_EMAIL_SMTP_SETTINGS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox email_edit" type="checkbox" id="email_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_EMAIL_SMTP_SETTINGS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_EMAIL_SMTP_SETTINGS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox email_delete" type="checkbox" id="email_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_EMAIL_SMTP_SETTINGS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_EMAIL_SMTP_SETTINGS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Mail Matrix</td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox mailMatrix_mobile" type="checkbox" id="mailMatrix_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_MAILMATRIX))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_MAILMATRIX) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox mailMatrix_desktop" type="checkbox" id="mailMatrix_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_MAILMATRIX))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_MAILMATRIX) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox mailMatrix_view" type="checkbox" id="mailMatrix_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_MAILMATRIX))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_MAILMATRIX) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox mailMatrix_add" type="checkbox" id="mailMatrix_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_MAILMATRIX))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_MAILMATRIX) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox mailMatrix_edit" type="checkbox" id="mailMatrix_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_MAILMATRIX))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_MAILMATRIX) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox mailMatrix_delete" type="checkbox" id="mailMatrix_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_MAILMATRIX))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_MAILMATRIX) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="parent-row">
+                                <td><span class="expand-icon" onclick="toggleChildren('utility')"><i class="fas fa-chevron-right" id="icon-utility"></i> Utility</span></td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="utility_mobile_parent" onchange="toggleParentChild('utility', 'mobile', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="utility_desktop_parent" onchange="toggleParentChild('utility', 'desktop', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="utility_view_parent" onchange="toggleParentChild('utility', 'view', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="utility_add_parent" onchange="toggleParentChild('utility', 'add', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="utility_edit_parent" onchange="toggleParentChild('utility', 'edit', this.checked)" />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="utility_delete_parent" onchange="toggleParentChild('utility', 'delete', this.checked)" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Division</td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Division_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_DIVISION))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_DIVISION) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Division_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_DIVISION))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_DIVISION) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Division_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_DIVISION))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_DIVISION) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Division_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_DIVISION))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_DIVISION) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Division_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_DIVISION))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_DIVISION) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Division_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_DIVISION))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_DIVISION) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Category</td>
+                                <td><div class="form-check form-switch">
+                                        <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Category_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_CATEGORY))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CATEGORY) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Category_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_CATEGORY))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CATEGORY) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Category_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_CATEGORY))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CATEGORY) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Category_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_CATEGORY))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_CATEGORY) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">utility_edit
+                                    <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Category_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_CATEGORY))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_CATEGORY) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Category_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_CATEGORY))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_CATEGORY) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Complaint Type</td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_CompType_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_COMPLAIN_TYPE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_COMPLAIN_TYPE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_CompType_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_COMPLAIN_TYPE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_COMPLAIN_TYPE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_CompType_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_COMPLAIN_TYPE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_COMPLAIN_TYPE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_CompType_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_COMPLAIN_TYPE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_COMPLAIN_TYPE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_CompType_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_COMPLAIN_TYPE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_COMPLAIN_TYPE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_CompType_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_COMPLAIN_TYPE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_COMPLAIN_TYPE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">CSO Class</td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Cso_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_CSO_CLASS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CSO_CLASS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Cso_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_CSO_CLASS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CSO_CLASS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Cso_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_CSO_CLASS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CSO_CLASS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Cso_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_CSO_CLASS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_CSO_CLASS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Cso_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_CSO_CLASS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_CSO_CLASS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Cso_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_CSO_CLASS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_CSO_CLASS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Brand</td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Brand_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_BRAND))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_BRAND) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Brand_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_BRAND))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_BRAND) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Brand_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_BRAND))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_BRAND) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Brand_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_BRAND))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_BRAND) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Brand_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_BRAND))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_BRAND) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Brand_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_BRAND))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_BRAND) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Product Types</td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Prod_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_PRODUCT_TYPE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_PRODUCT_TYPE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Prod_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_PRODUCT_TYPE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_PRODUCT_TYPE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Prod_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_PRODUCT_TYPE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_PRODUCT_TYPE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Prod_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_PRODUCT_TYPE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_PRODUCT_TYPE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Prod_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_PRODUCT_TYPE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_PRODUCT_TYPE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Prod_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_PRODUCT_TYPE))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_PRODUCT_TYPE) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Plant</td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Plant_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_PLANT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_PLANT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Plant_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_PLANT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_PLANT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Plant_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_PLANT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_PLANT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Plant_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_PLANT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_PLANT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Plant_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_PLANT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_PLANT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Plant_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_PLANT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_PLANT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Nearest Plant</td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Nearest_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_NEAREST_PLANT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_NEAREST_PLANT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Nearest_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_NEAREST_PLANT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_NEAREST_PLANT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Nearest_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_NEAREST_PLANT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_NEAREST_PLANT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Nearest_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_NEAREST_PLANT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_NEAREST_PLANT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Nearest_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_NEAREST_PLANT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_NEAREST_PLANT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Nearest_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_NEAREST_PLANT))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_NEAREST_PLANT) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Recycle Days Configuration</td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Recycle_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_RECYCLE_DAYS_CONFIGURATION))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Recycle_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_RECYCLE_DAYS_CONFIGURATION))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Recycle_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_RECYCLE_DAYS_CONFIGURATION))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Recycle_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_RECYCLE_DAYS_CONFIGURATION))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Recycle_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_RECYCLE_DAYS_CONFIGURATION))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Recycle_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_RECYCLE_DAYS_CONFIGURATION))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="child-row utility">
+                                <td class="ps-4">Security Action</td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Security_mobile"
+                                               value="@((int)SecurityActionsEnum.SEC_MOBILE_SECURITY_ACTIONS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_SECURITY_ACTIONS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Security_desktop"
+                                               value="@((int)SecurityActionsEnum.SEC_DESKTOP_SECURITY_ACTIONS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_SECURITY_ACTIONS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Security_view"
+                                               value="@((int)SecurityActionsEnum.SEC_VIEW_SECURITY_ACTIONS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_SECURITY_ACTIONS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Security_add"
+                                               value="@((int)SecurityActionsEnum.SEC_ADD_SECURITY_ACTIONS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_SECURITY_ACTIONS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Security_edit"
+                                               value="@((int)SecurityActionsEnum.SEC_EDIT_SECURITY_ACTIONS))"
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_SECURITY_ACTIONS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                                <td><div class="form-check form-switch">
+                                    <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Security_delete"
+                                               value="@((int)SecurityActionsEnum.SEC_DELETE_SECURITY_ACTIONS))"
+                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_SECURITY_ACTIONS) ? "checked" : "") />
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleChildren(section) {
+            $('.child-row.' + section).toggleClass('visible');
+            let icon = $('#icon-' + section);
+            if (icon.hasClass('fa-chevron-right')) {
+                icon.removeClass('fa-chevron-right').addClass('fa-chevron-down');
+            } else {
+                icon.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+            }
+        }
+
+        function toggleParentChild(section, permission, isChecked) {
+            $('.' + section + '_' + permission).prop('checked', isChecked);
+        }
+
+        function loadPermissions() {
+            const roleName = $('#roleName').val();
+            alert('Loading permissions for: ' + roleName);
+        }
+
+        function savePermissions() {
+            Blockloadershow();
+            var model = [];
+
+            $('.action-checkbox:checked').each(function () {
+                model.push({
+                    UserRoleId: @Model.UserRoleId,
+                    UserRoleName: $("#UserRoleName").val(),
+                    Action: parseInt($(this).val())
+                });
+            });
+
+            if (model.length === 0) {
+                model.push({
+                    UserRoleId: @Model.UserRoleId,
+                    UserRoleName: $("#UserRoleName").val()
+                });
+            }
+
+            $.ajax({
+                url: '@Url.Action("InsertUpdateSecurityActoion", "SecurityAction")',
+                type: 'POST',
+                data: JSON.stringify(model),
+                contentType: 'application/json',
+                success: function (response) {
+                    Blockloaderhide();
+                    if (!response.success) {
+                        showDangerAlert(response.message);
+                    }
+                    else{
+                        showSuccessAlert("Security Actions Saved successfully.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Blockloaderhide();
+                    showDangerAlert('Error saving data: ' + error);
+                }
+            });
+        }
+    </script>
+}

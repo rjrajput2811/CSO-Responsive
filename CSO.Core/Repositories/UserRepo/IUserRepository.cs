@@ -1,5 +1,6 @@
 using CSO.Core.DatabaseContext;
 using CSO.Core.Models;
+using CSO.Core.Security;
 
 namespace CSO.Core.Repositories.UserRepo;
 

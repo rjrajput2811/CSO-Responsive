@@ -12,6 +12,7 @@ using CSO.Core.Repositories.NearestPlantRepo;
 using CSO.Core.Repositories.PlantRepo;
 using CSO.Core.Repositories.ProductTypeRepo;
 using CSO.Core.Repositories.RecycleDayRepo;
+using CSO.Core.Repositories.SecurityActionRepo;
 using CSO.Core.Repositories.UserRepo;
 using CSO.Core.Repositories.UsersRoleRepo;
 using CSO.Core.Services.SystemLogs;
@@ -48,6 +49,7 @@ builder.Services.AddTransient<ICSOLogRepository, CSOLogRepository>();
 builder.Services.AddTransient<ICSOLogFileRepository, CSOLogFileRepository>();
 builder.Services.AddTransient<ICSOLogAnalysisRepository, CSOLogAnalysisRepository>();
 builder.Services.AddTransient<IMailMatrixRepository, MailMatrixRepository>();
+builder.Services.AddTransient<ISecurityActionRepository, SecurityActionRepository>();
 builder.Services.AddScoped<IDbConnection>(db => new SqlConnection(connstring));
 
 
