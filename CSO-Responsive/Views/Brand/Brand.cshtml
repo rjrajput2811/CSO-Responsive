@@ -406,14 +406,17 @@
                     columns: columns
                 });
 
-                 table.on("cellClick", function (e, cell) {
-                    let columnField = cell.getColumn().getField();
+                if(canEditBrand)
+                {
+                    table.on("cellClick", function (e, cell) {
+                        let columnField = cell.getColumn().getField();
 
-                    if (columnField !== "Action") {
-                        let rowData = cell.getRow().getData();
-                        showEditCard(rowData.Id);
-                    }
-                });
+                        if (columnField !== "Action") {
+                            let rowData = cell.getRow().getData();
+                            showEditCard(rowData.Id);
+                        }
+                    });
+                }
 
                 // table.on("cellClick", function (e, cell) {
                 //     let columnField = cell.getColumn().getField();
