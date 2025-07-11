@@ -103,6 +103,12 @@ public class SecurityActionRepository : SqlTableRepository, ISecurityActionRepos
                 .Where(i => i.UserRoleId == RoleId)
                 .ToListAsync();
 
+            if(securityActionToDeleteList.Count == 0)
+            {
+                result.Success = true;
+                return result;
+            }
+
             foreach(var securityActionToDelete in securityActionToDeleteList)
             {
                 result = await base.DeleteAsync<SecurityAction>(securityActionToDelete.Id);
