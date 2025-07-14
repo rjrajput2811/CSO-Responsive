@@ -1,5 +1,17 @@
-﻿@{
+﻿@using CSO.Core.Security
+@using Microsoft.AspNetCore.Http
+@using CSO.Core.Repositories.SecurityActionRepo
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ISecurityActionRepository _securityActionRepository
+
+@{
     ViewData["Title"] = "Product Type";
+
+    var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
+
+    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_PRODUCT_TYPE, (int)userRoleId);
+    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_PRODUCT_TYPE, (int)userRoleId);
+    var canDelete = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DELETE_PRODUCT_TYPE, (int)userRoleId);
 }
 
 
@@ -131,9 +143,12 @@
                 Product Type
             </div>
             <div>
-                <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openProdTypeModal()">
-                    <i class="fas fa-plus mr-2 fa-1x"></i>Add
-                </button>
+                @if (canAdd)
+                {
+                    <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openProdTypeModal()">
+                        <i class="fas fa-plus mr-2 fa-1x"></i>Add
+                    </button>
+                }
                 <button id="backButton" class="btn btn-outline-primary ">
                     <i class="fas fa-arrow-left"></i>Back
                 </button>
@@ -207,6 +222,9 @@
         var tabledata = [];
         var table = '';
         const searchTerms = {};
+        var canEdit = @(canEdit.ToString().ToLower());
+        var canDelete = @(canDelete.ToString().ToLower());
+
         $(document).ready(function () {
 
             $('.select2').select2({
@@ -327,8 +345,8 @@
                     });
                 });
 
-                columns.push(
-                    {
+                if (canDelete) {
+                    columns.push({
                         title: "Action",
                         field: "Action",
                         responsive: 0,
@@ -344,7 +362,10 @@
 
                             return actionButtons;
                         }
-                    },
+                    });
+                }
+
+                columns.push(
                     {
                                 title: "SNo", field: "Sr_No", width: 50, responsive: 1,  sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
                     },
@@ -376,14 +397,16 @@
                     columns: columns
                 });
 
-                 table.on("cellClick", function (e, cell) {
-                    let columnField = cell.getColumn().getField();
+                if (canEdit) {
+                    table.on("cellClick", function (e, cell) {
+                        let columnField = cell.getColumn().getField();
 
-                    if (columnField !== "Action") {
-                        let rowData = cell.getRow().getData();
-                        showEditCard(rowData.Id);
-                    }
-                });
+                        if (columnField !== "Action") {
+                            let rowData = cell.getRow().getData();
+                            showEditCard(rowData.Id);
+                        }
+                    });
+                }
 
                 // table.on("cellClick", function (e, cell) {
                 //     let columnField = cell.getColumn().getField();

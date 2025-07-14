@@ -9,9 +9,9 @@
 
     var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
 
-    var canAddBrand = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_BRAND, (int)userRoleId);
-    var canEditBrand = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_BRAND, (int)userRoleId);
-    var canDeleteBrand = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DELETE_BRAND, (int)userRoleId);
+    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_BRAND, (int)userRoleId);
+    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_BRAND, (int)userRoleId);
+    var canDelete = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DELETE_BRAND, (int)userRoleId);
 }
 
 
@@ -143,7 +143,7 @@
                 Brand
             </div>
             <div>
-                @if (canAddBrand)
+                @if (canAdd)
                 {
                     <button id="addButton" type="button" class="btn btn-outline-success legitRipple mr-2" onclick="openBrandModal()">
                         <i class="fas fa-plus mr-2 fa-1x"></i>Add
@@ -231,8 +231,8 @@
         var tabledata = [];
         var table = '';
         const searchTerms = {};
-        var canEditBrand = @(canEditBrand.ToString().ToLower());
-        var canDeleteBrand = @(canDeleteBrand.ToString().ToLower());
+        var canEdit = @(canEdit.ToString().ToLower());
+        var canDelete = @(canDelete.ToString().ToLower());
 
         $(document).ready(function () {
 
@@ -354,7 +354,7 @@
                     });
                 });
 
-                if (canDeleteBrand) {
+                if (canDelete) {
                     columns.push({
                         title: "Action",
                         field: "Action",
@@ -406,7 +406,7 @@
                     columns: columns
                 });
 
-                if(canEditBrand)
+                if(canEdit)
                 {
                     table.on("cellClick", function (e, cell) {
                         let columnField = cell.getColumn().getField();
