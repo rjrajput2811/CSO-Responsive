@@ -1,10 +1,22 @@
 ﻿@using CSO.Core.Models
 @using CSO.Core.Security
+@using Microsoft.AspNetCore.Http
+@using CSO.Core.Repositories.SecurityActionRepo
 
 @model SecurityActionsPageViewModel
 
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ISecurityActionRepository _securityActionRepository
+
 @{
     ViewData["Title"] = "Security Action";
+
+    var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
+
+    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_USERS, (int)userRoleId);
+    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_USERS, (int)userRoleId);
+    var isNew = Model.UserRoleId == 0;
+    var disableCheck = ((canEdit && !isNew) || Model.UserRoleId == 7) ? "disabled=\"disabled\"" : "";
 }
 
 <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
@@ -160,7 +172,10 @@
                                 <label for="RoleName" class="me-2 mb-0">Role Name :</label>
                                 @Html.TextBoxFor(m => m.UserRoleName, new { @class = "form-control form-control-sm", placeholder = "Role Name", style = "width: 200px;" })
                             </div>
-                            <button type="button" class="btn btn-primary btn-sm" onclick="savePermissions()">Save</button>
+                            @if ((canAdd && isNew) || (canEdit && !isNew && Model.UserRoleId != 7))
+                            {
+                                <button type="button" class="btn btn-primary btn-sm" onclick="savePermissions()">Save</button>
+                            }
                         </div>
                     </div>
 
@@ -185,21 +200,21 @@
                                     <div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox action-checkbox dashboard_mobile" type="checkbox" id="dashboard_mobile"
                                                value = "@((int)SecurityActionsEnum.SEC_MOBILE_DASHBOARD)"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_DASHBOARD) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_DASHBOARD) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox dashboard_desktop" type="checkbox" id="dashboard_desktop"
                                                value = "@((int)SecurityActionsEnum.SEC_DESKTOP_DASHBOARD))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_DASHBOARD) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_DASHBOARD) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox dashboard_view" type="checkbox" id="dashboard_view"
                                                value = "@((int)SecurityActionsEnum.SEC_VIEW_DASHBOARD))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_DASHBOARD) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_DASHBOARD) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td></td>
@@ -213,42 +228,42 @@
                                     <div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox user_mobile" type="checkbox" id="user_mobile"
                                                value = "@((int)SecurityActionsEnum.SEC_MOBILE_USERS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_USERS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_USERS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox user_desktop" type="checkbox" id="user_desktop"
                                                value = "@((int)SecurityActionsEnum.SEC_DESKTOP_USERS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_USERS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_USERS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox user_view" type="checkbox" id="user_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_USERS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_USERS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_USERS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox user_add" type="checkbox" id="user_add"
                                                value = "@((int)SecurityActionsEnum.SEC_ADD_USERS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_USERS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_USERS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox user_edit" type="checkbox" id="user_edit"
                                                value = "@((int)SecurityActionsEnum.SEC_EDIT_USERS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_USERS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_USERS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox user_delete" type="checkbox" id="user_delete"
                                                value = "@((int)SecurityActionsEnum.SEC_DELETE_USERS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_USERS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_USERS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -258,37 +273,37 @@
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLog_mobile" type="checkbox" id="csoLog_mobile"
                                                value = "@((int)SecurityActionsEnum.SEC_MOBILE_CSOLOG))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CSOLOG) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CSOLOG) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLog_desktop" type="checkbox" id="csoLog_desktop"
                                                value = "@((int)SecurityActionsEnum.SEC_DESKTOP_CSOLOG))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CSOLOG) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CSOLOG) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLog_view" type="checkbox" id="csoLog_view"
                                                value = "@((int)SecurityActionsEnum.SEC_VIEW_CSOLOG))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CSOLOG) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CSOLOG) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLog_add" type="checkbox" id="csoLog_add"
                                                value = "@((int)SecurityActionsEnum.SEC_ADD_CSOLOG))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_CSOLOG) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_CSOLOG) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLog_edit" type="checkbox" id="csoLog_edit"
                                                value = "@((int)SecurityActionsEnum.SEC_EDIT_CSOLOG))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_CSOLOG) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_CSOLOG) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLog_delete" type="checkbox" id="csoLog_delete"
                                                value = "@((int)SecurityActionsEnum.SEC_DELETE_CSOLOG))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_CSOLOG) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_CSOLOG) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -296,27 +311,27 @@
                             <tr class="parent-row">
                                 <td><span class="expand-icon" onclick="toggleChildren('csoLogAnal')"><i class="fas fa-chevron-right" id="icon-csoLogAnal"></i> CSO Log Analysis</span></td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" id="csoLogAnal_mobile_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'mobile', this.checked)" />
+                                        <input class="form-check-input" id="csoLogAnal_mobile_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'mobile', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" id="csoLogAnal_desktop_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'desktop', this.checked)" />
+                                        <input class="form-check-input" id="csoLogAnal_desktop_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'desktop', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" id="csoLogAnal_view_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'view', this.checked)" />
+                                        <input class="form-check-input" id="csoLogAnal_view_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'view', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" id="csoLogAnal_add_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'add', this.checked)" />
+                                        <input class="form-check-input" id="csoLogAnal_add_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'add', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" id="csoLogAnal_edit_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'edit', this.checked)" />
+                                        <input class="form-check-input" id="csoLogAnal_edit_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'edit', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" id="csoLogAnal_delete_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'delete', this.checked)" />
+                                        <input class="form-check-input" id="csoLogAnal_delete_parent" type="checkbox" onchange="toggleParentChild('csoLogAnal', 'delete', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -327,37 +342,37 @@
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_mobile" type="checkbox" id="csoLogAnal_Root_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_ROOTCAUSE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_ROOTCAUSE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_ROOTCAUSE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_desktop" type="checkbox" id="csoLogAnal_Root_desktop"
                                            value="@((int)SecurityActionsEnum.SEC_DESKTOP_ROOTCAUSE))"
-                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_ROOTCAUSE) ? "checked" : "") />
+                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_ROOTCAUSE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_view" type="checkbox" id="csoLogAnal_Root_view"
                                            value = "@((int)SecurityActionsEnum.SEC_VIEW_ROOTCAUSE))"
-                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_ROOTCAUSE) ? "checked" : "") />
+                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_ROOTCAUSE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_add" type="checkbox" id="csoLogAnal_Root_add"
                                            value = "@((int)SecurityActionsEnum.SEC_ADD_ROOTCAUSE))"
-                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_ROOTCAUSE) ? "checked" : "") />
+                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_ROOTCAUSE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_edit" type="checkbox" id="csoLogAnal_Root_edit"
                                            value = "@((int)SecurityActionsEnum.SEC_EDIT_ROOTCAUSE))"
-                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_ROOTCAUSE) ? "checked" : "") />
+                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_ROOTCAUSE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_delete" type="checkbox" id="csoLogAnal_Root_delete"
                                            value = "@((int)SecurityActionsEnum.SEC_DELETE_ROOTCAUSE))"
-                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_ROOTCAUSE) ? "checked" : "") />
+                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_ROOTCAUSE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -367,37 +382,37 @@
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_mobile" type="checkbox" id="csoLogAnal_Monitor_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_MONITOR))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_MONITOR) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_MONITOR) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_desktop" type="checkbox" id="csoLogAnal_Monitor_desktop"
                                                value = "@((int)SecurityActionsEnum.SEC_DESKTOP_MONITOR))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_MONITOR) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_MONITOR) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_view" type="checkbox" id="csoLogAnal_Monitor_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_MONITOR))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_MONITOR) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_MONITOR) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_add" type="checkbox" id="csoLogAnal_Monitor_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_MONITOR))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_MONITOR) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_MONITOR) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_edit" type="checkbox" id="csoLogAnal_Monitor_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_MONITOR))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_MONITOR) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_MONITOR) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_delete" type="checkbox" id="csoLogAnal_Monitor_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_MONITOR))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_MONITOR) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_MONITOR) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -407,37 +422,37 @@
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_mobile" type="checkbox" id="csoLogAnal_Approve_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_APPROVE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_APPROVE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_APPROVE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_desktop" type="checkbox" id="csoLogAnal_Approve_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_APPROVE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_APPROVE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_APPROVE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_view" type="checkbox" id="csoLogAnal_Approve_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_APPROVE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_APPROVE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_APPROVE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_add" type="checkbox" id="csoLogAnal_Approve_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_APPROVE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_APPROVE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_APPROVE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_edit" type="checkbox" id="csoLogAnal_Approve_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_APPROVE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_APPROVE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_APPROVE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_delete" type="checkbox" id="csoLogAnal_Approve_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_APPROVE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_APPROVE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_APPROVE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -447,37 +462,37 @@
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_mobile" type="checkbox" id="csoLogAnal_Close_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_CLOSURE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CLOSURE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CLOSURE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_desktop" type="checkbox" id="csoLogAnal_Close_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_CLOSURE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CLOSURE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CLOSURE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_view" type="checkbox" id="csoLogAnal_Close_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_CLOSURE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CLOSURE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CLOSURE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_add" type="checkbox" id="csoLogAnal_Close_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_CLOSURE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_CLOSURE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_CLOSURE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_edit" type="checkbox" id="csoLogAnal_Close_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_CLOSURE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_CLOSURE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_CLOSURE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox csoLogAnal_delete" type="checkbox" id="csoLogAnal_Close_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_CLOSURE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_CLOSURE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_CLOSURE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -485,27 +500,27 @@
                             <tr class="parent-row">
                                 <td><span class="expand-icon" onclick="toggleChildren('reports')"><i class="fas fa-chevron-right" id="icon-reports"></i> Reports</span></td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="report_mobile_parent" onchange="toggleParentChild('reports', 'mobile', this.checked)" />
+                                        <input class="form-check-input" type="checkbox" id="report_mobile_parent" onchange="toggleParentChild('reports', 'mobile', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="report_desktop_parent" onchange="toggleParentChild('reports', 'desktop', this.checked)" />
+                                        <input class="form-check-input" type="checkbox" id="report_desktop_parent" onchange="toggleParentChild('reports', 'desktop', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="report_view_parent" onchange="toggleParentChild('reports', 'view', this.checked)" />
+                                        <input class="form-check-input" type="checkbox" id="report_view_parent" onchange="toggleParentChild('reports', 'view', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="report_add_parent" onchange="toggleParentChild('reports', 'add', this.checked)" />
+                                        <input class="form-check-input" type="checkbox" id="report_add_parent" onchange="toggleParentChild('reports', 'add', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="report_edit_parent" onchange="toggleParentChild('reports', 'edit', this.checked)" />
+                                        <input class="form-check-input" type="checkbox" id="report_edit_parent" onchange="toggleParentChild('reports', 'edit', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="report_delete_parent" onchange="toggleParentChild('reports', 'delete', this.checked)" />
+                                        <input class="form-check-input" type="checkbox" id="report_delete_parent" onchange="toggleParentChild('reports', 'delete', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -515,19 +530,19 @@
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox reports_mobile" type="checkbox" id="reports_Mis_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_MIS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_MIS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_MIS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox reports_desktop" type="checkbox" id="reports_Mis_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_MIS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_MIS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_MIS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox reports_view" type="checkbox" id="reports_Mis_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_MIS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_MIS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_MIS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td></td>
@@ -541,21 +556,21 @@
                                     <div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox reports_mobile" type="checkbox" id="reports_Cso_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_CSOLOG_REPORT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CSOLOG_REPORT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CSOLOG_REPORT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox reports_desktop" type="checkbox" id="reports_Cso_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_CSOLOG_REPORT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CSOLOG_REPORT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CSOLOG_REPORT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox reports_view" type="checkbox" id="reports_Cso_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_CSOLOG_REPORT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CSOLOG_REPORT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CSOLOG_REPORT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td></td>
@@ -568,37 +583,37 @@
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox email_mobile" type="checkbox" id="email_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_EMAIL_SMTP_SETTINGS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_EMAIL_SMTP_SETTINGS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_EMAIL_SMTP_SETTINGS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox email_desktop" type="checkbox" id="email_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_EMAIL_SMTP_SETTINGS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_EMAIL_SMTP_SETTINGS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_EMAIL_SMTP_SETTINGS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox email_view" type="checkbox" id="email_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_EMAIL_SMTP_SETTINGS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_EMAIL_SMTP_SETTINGS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_EMAIL_SMTP_SETTINGS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox email_add" type="checkbox" id="email_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_EMAIL_SMTP_SETTINGS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_EMAIL_SMTP_SETTINGS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_EMAIL_SMTP_SETTINGS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox email_edit" type="checkbox" id="email_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_EMAIL_SMTP_SETTINGS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_EMAIL_SMTP_SETTINGS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_EMAIL_SMTP_SETTINGS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox email_delete" type="checkbox" id="email_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_EMAIL_SMTP_SETTINGS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_EMAIL_SMTP_SETTINGS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_EMAIL_SMTP_SETTINGS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -608,37 +623,37 @@
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox mailMatrix_mobile" type="checkbox" id="mailMatrix_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_MAILMATRIX))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_MAILMATRIX) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_MAILMATRIX) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox mailMatrix_desktop" type="checkbox" id="mailMatrix_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_MAILMATRIX))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_MAILMATRIX) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_MAILMATRIX) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox mailMatrix_view" type="checkbox" id="mailMatrix_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_MAILMATRIX))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_MAILMATRIX) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_MAILMATRIX) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox mailMatrix_add" type="checkbox" id="mailMatrix_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_MAILMATRIX))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_MAILMATRIX) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_MAILMATRIX) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox mailMatrix_edit" type="checkbox" id="mailMatrix_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_MAILMATRIX))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_MAILMATRIX) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_MAILMATRIX) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox mailMatrix_delete" type="checkbox" id="mailMatrix_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_MAILMATRIX))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_MAILMATRIX) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_MAILMATRIX) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -646,27 +661,27 @@
                             <tr class="parent-row">
                                 <td><span class="expand-icon" onclick="toggleChildren('utility')"><i class="fas fa-chevron-right" id="icon-utility"></i> Utility</span></td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="utility_mobile_parent" onchange="toggleParentChild('utility', 'mobile', this.checked)" />
+                                        <input class="form-check-input" type="checkbox" id="utility_mobile_parent" onchange="toggleParentChild('utility', 'mobile', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="utility_desktop_parent" onchange="toggleParentChild('utility', 'desktop', this.checked)" />
+                                        <input class="form-check-input" type="checkbox" id="utility_desktop_parent" onchange="toggleParentChild('utility', 'desktop', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="utility_view_parent" onchange="toggleParentChild('utility', 'view', this.checked)" />
+                                        <input class="form-check-input" type="checkbox" id="utility_view_parent" onchange="toggleParentChild('utility', 'view', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="utility_add_parent" onchange="toggleParentChild('utility', 'add', this.checked)" />
+                                        <input class="form-check-input" type="checkbox" id="utility_add_parent" onchange="toggleParentChild('utility', 'add', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="utility_edit_parent" onchange="toggleParentChild('utility', 'edit', this.checked)" />
+                                        <input class="form-check-input" type="checkbox" id="utility_edit_parent" onchange="toggleParentChild('utility', 'edit', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="utility_delete_parent" onchange="toggleParentChild('utility', 'delete', this.checked)" />
+                                        <input class="form-check-input" type="checkbox" id="utility_delete_parent" onchange="toggleParentChild('utility', 'delete', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -676,37 +691,37 @@
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Division_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_DIVISION))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_DIVISION) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_DIVISION) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Division_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_DIVISION))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_DIVISION) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_DIVISION) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Division_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_DIVISION))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_DIVISION) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_DIVISION) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Division_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_DIVISION))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_DIVISION) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_DIVISION) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Division_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_DIVISION))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_DIVISION) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_DIVISION) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Division_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_DIVISION))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_DIVISION) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_DIVISION) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -716,37 +731,37 @@
                                 <td><div class="form-check form-switch">
                                         <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Category_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_CATEGORY))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CATEGORY) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CATEGORY) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Category_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_CATEGORY))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CATEGORY) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CATEGORY) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Category_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_CATEGORY))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CATEGORY) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CATEGORY) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Category_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_CATEGORY))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_CATEGORY) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_CATEGORY) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Category_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_CATEGORY))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_CATEGORY) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_CATEGORY) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Category_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_CATEGORY))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_CATEGORY) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_CATEGORY) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -756,37 +771,37 @@
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_CompType_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_COMPLAIN_TYPE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_COMPLAIN_TYPE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_COMPLAIN_TYPE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_CompType_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_COMPLAIN_TYPE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_COMPLAIN_TYPE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_COMPLAIN_TYPE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_CompType_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_COMPLAIN_TYPE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_COMPLAIN_TYPE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_COMPLAIN_TYPE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_CompType_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_COMPLAIN_TYPE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_COMPLAIN_TYPE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_COMPLAIN_TYPE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_CompType_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_COMPLAIN_TYPE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_COMPLAIN_TYPE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_COMPLAIN_TYPE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_CompType_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_COMPLAIN_TYPE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_COMPLAIN_TYPE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_COMPLAIN_TYPE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -796,37 +811,37 @@
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Cso_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_CSO_CLASS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CSO_CLASS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_CSO_CLASS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Cso_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_CSO_CLASS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CSO_CLASS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_CSO_CLASS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Cso_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_CSO_CLASS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CSO_CLASS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_CSO_CLASS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Cso_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_CSO_CLASS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_CSO_CLASS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_CSO_CLASS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Cso_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_CSO_CLASS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_CSO_CLASS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_CSO_CLASS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Cso_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_CSO_CLASS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_CSO_CLASS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_CSO_CLASS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -836,37 +851,37 @@
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Brand_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_BRAND))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_BRAND) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_BRAND) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Brand_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_BRAND))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_BRAND) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_BRAND) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Brand_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_BRAND))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_BRAND) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_BRAND) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Brand_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_BRAND))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_BRAND) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_BRAND) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Brand_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_BRAND))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_BRAND) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_BRAND) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Brand_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_BRAND))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_BRAND) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_BRAND) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -876,37 +891,37 @@
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Prod_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_PRODUCT_TYPE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_PRODUCT_TYPE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_PRODUCT_TYPE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Prod_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_PRODUCT_TYPE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_PRODUCT_TYPE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_PRODUCT_TYPE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Prod_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_PRODUCT_TYPE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_PRODUCT_TYPE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_PRODUCT_TYPE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Prod_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_PRODUCT_TYPE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_PRODUCT_TYPE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_PRODUCT_TYPE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Prod_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_PRODUCT_TYPE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_PRODUCT_TYPE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_PRODUCT_TYPE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Prod_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_PRODUCT_TYPE))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_PRODUCT_TYPE) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_PRODUCT_TYPE) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -916,37 +931,37 @@
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Plant_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_PLANT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_PLANT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_PLANT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Plant_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_PLANT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_PLANT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_PLANT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Plant_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_PLANT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_PLANT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_PLANT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Plant_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_PLANT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_PLANT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_PLANT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Plant_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_PLANT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_PLANT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_PLANT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Plant_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_PLANT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_PLANT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_PLANT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -956,37 +971,37 @@
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Nearest_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_NEAREST_PLANT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_NEAREST_PLANT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_NEAREST_PLANT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Nearest_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_NEAREST_PLANT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_NEAREST_PLANT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_NEAREST_PLANT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Nearest_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_NEAREST_PLANT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_NEAREST_PLANT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_NEAREST_PLANT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Nearest_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_NEAREST_PLANT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_NEAREST_PLANT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_NEAREST_PLANT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Nearest_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_NEAREST_PLANT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_NEAREST_PLANT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_NEAREST_PLANT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Nearest_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_NEAREST_PLANT))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_NEAREST_PLANT) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_NEAREST_PLANT) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -996,37 +1011,37 @@
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Recycle_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_RECYCLE_DAYS_CONFIGURATION))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Recycle_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_RECYCLE_DAYS_CONFIGURATION))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Recycle_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_RECYCLE_DAYS_CONFIGURATION))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Recycle_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_RECYCLE_DAYS_CONFIGURATION))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Recycle_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_RECYCLE_DAYS_CONFIGURATION))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Recycle_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_RECYCLE_DAYS_CONFIGURATION))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_RECYCLE_DAYS_CONFIGURATION) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>
@@ -1036,37 +1051,37 @@
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_mobile" type="checkbox" id="utility_Security_mobile"
                                                value="@((int)SecurityActionsEnum.SEC_MOBILE_SECURITY_ACTIONS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_SECURITY_ACTIONS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_SECURITY_ACTIONS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_desktop" type="checkbox" id="utility_Security_desktop"
                                                value="@((int)SecurityActionsEnum.SEC_DESKTOP_SECURITY_ACTIONS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_SECURITY_ACTIONS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DESKTOP_SECURITY_ACTIONS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_view" type="checkbox" id="utility_Security_view"
                                                value="@((int)SecurityActionsEnum.SEC_VIEW_SECURITY_ACTIONS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_SECURITY_ACTIONS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_VIEW_SECURITY_ACTIONS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_add" type="checkbox" id="utility_Security_add"
                                                value="@((int)SecurityActionsEnum.SEC_ADD_SECURITY_ACTIONS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_SECURITY_ACTIONS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_ADD_SECURITY_ACTIONS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_edit" type="checkbox" id="utility_Security_edit"
                                                value="@((int)SecurityActionsEnum.SEC_EDIT_SECURITY_ACTIONS))"
-                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_SECURITY_ACTIONS) ? "checked" : "") />
+                                               @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_EDIT_SECURITY_ACTIONS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
                                     <input class="form-check-input action-checkbox utility_delete" type="checkbox" id="utility_Security_delete"
                                                value="@((int)SecurityActionsEnum.SEC_DELETE_SECURITY_ACTIONS))"
-                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_SECURITY_ACTIONS) ? "checked" : "") />
+                                           @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_DELETE_SECURITY_ACTIONS) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                             </tr>

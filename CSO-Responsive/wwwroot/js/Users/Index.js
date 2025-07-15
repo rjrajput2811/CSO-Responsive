@@ -192,8 +192,8 @@ function OnDivGridLoad(response) {
             });
         });
 
-        columns.push(
-            {
+        if (canDelete) {
+            columns.push({
                 title: "Action",
                 field: "Action",
                 responsive: 0,
@@ -209,7 +209,10 @@ function OnDivGridLoad(response) {
 
                     return actionButtons;
                 }
-            },
+            });
+        }
+
+        columns.push(
             {
                 title: "SNo", field: "Sr_No", width: 100, responsive: 1, sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
             },

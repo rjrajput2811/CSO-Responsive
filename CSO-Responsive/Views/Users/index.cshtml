@@ -1,5 +1,16 @@
-﻿@{
+﻿@using CSO.Core.Security
+@using Microsoft.AspNetCore.Http
+@using CSO.Core.Repositories.SecurityActionRepo
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ISecurityActionRepository _securityActionRepository
+
+@{
     ViewData["Title"] = "Users";
+
+    var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
+
+    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_USERS, (int)userRoleId);
+    var canDelete = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DELETE_USERS, (int)userRoleId);
 }
 
 <link href="~/css/tabulator/tabulator.min.css" rel="stylesheet" />
@@ -147,9 +158,12 @@
                 Users
             </div>
             <div>
-                <button type="button" class="btn btn-outline-primary legitRipple mr-2" onclick="userDetailsPage()">
-                    <i class="fas fa-plus mr-2 fa-1x"></i>Add User
-                </button>
+                @if (canAdd)
+                {
+                    <button type="button" class="btn btn-outline-primary legitRipple mr-2" onclick="userDetailsPage()">
+                        <i class="fas fa-plus mr-2 fa-1x"></i>Add User
+                    </button>
+                }
                 <button type="button" class="btn btn-warning" onclick="history.back()">
                     <i class="fas fa-arrow-left mr-2"></i>Back
                 </button>
@@ -179,4 +193,7 @@
     <script src="~/js/tabulator.js"></script>
     <script src="~/js/tabulator.min.js"></script>
     <script src="~/js/users/index.js" asp-append-version="true"></script>
+    <script>
+        var canDelete = @(canDelete.ToString().ToLower());
+    </script>
 }

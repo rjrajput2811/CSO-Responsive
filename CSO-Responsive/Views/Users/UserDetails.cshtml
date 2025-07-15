@@ -1,10 +1,23 @@
 ﻿@using CSO.Core.Models
+@using CSO.Core.Security
+@using Microsoft.AspNetCore.Http
+@using CSO.Core.Repositories.SecurityActionRepo
 
 @model UserViewModel
+
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ISecurityActionRepository _securityActionRepository
 
 
 @{
     ViewData["Title"] = "User Details";
+
+    var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
+
+    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_USERS, (int)userRoleId);
+    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_USERS, (int)userRoleId);
+    var isNew = Model.Id == 0;
+    var disableSelect = (canEdit && !isNew) ? "disabled=\"disabled\"" : "";
 }
 
 <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
@@ -81,9 +94,12 @@
                 User Details
             </div>
             <div>
-                <button type="button" id="saveButton" onclick="InsertUpdateUser()" class="btn btn-primary">
-                    <i class="fas fa-floppy-disk mr-2"></i>Save
-                </button>
+                @if ((canAdd && isNew) || (canEdit && !isNew))
+                {
+                    <button type="button" id="saveButton" onclick="InsertUpdateUser()" class="btn btn-primary">
+                        <i class="fas fa-floppy-disk mr-2"></i>Save
+                    </button>
+                }
 
                 <button type="button" class="btn btn-warning" onclick="history.back()">
                     <i class="fas fa-arrow-left mr-2"></i>Back
@@ -104,28 +120,28 @@
                             <div class="row">
                                 <div class="col-lg-2 mb-3">
                                     @Html.LabelFor(m => m.ADid, new { @class = "custom-label" })<em>*</em>
-                                    @Html.TextBoxFor(l => l.ADid, new { @id = "txtADid", @class = "form-control" })
+                                    @Html.TextBoxFor(l => l.ADid, new { @id = "txtADid", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
                                     @Html.ValidationMessageFor(l => l.ADid, "", new { @class = "text-danger" })
                                 </div>
 
                                 <div class="col-lg-3 mb-3">
                                     @Html.LabelFor(m => m.Name, new { @class = "custom-label" })<em>*</em>
-                                    @Html.TextBoxFor(l => l.Name, new { @id = "txtName", @class = "form-control" })
+                                    @Html.TextBoxFor(l => l.Name, new { @id = "txtName", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
                                     @Html.ValidationMessageFor(l => l.Name, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-lg-3 mb-3">
                                   @Html.LabelFor(m => m.Email, new { @class = "custom-label" })<em>*</em>
-                                    @Html.TextBoxFor(l => l.Email, new { @id = "txtEmail", @class = "form-control" })
+                                    @Html.TextBoxFor(l => l.Email, new { @id = "txtEmail", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
                                     @Html.ValidationMessageFor(l => l.Email, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-lg-2 mb-3">
                                     @Html.LabelFor(m => m.MobileNo, new { @class = "custom-label" })<em>*</em>
-                                    @Html.TextBoxFor(l => l.MobileNo, new { @id = "txtMobile", @class = "form-control" })
+                                    @Html.TextBoxFor(l => l.MobileNo, new { @id = "txtMobile", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
                                     @Html.ValidationMessageFor(l => l.MobileNo, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="col-lg-2 mb-3">
                             @Html.LabelFor(m => m.Designation, new { @class = "custom-label" })<em>*</em>
-                                    @Html.TextBoxFor(l => l.Designation, new { @id = "txtDesignation", @class = "form-control" })
+                                    @Html.TextBoxFor(l => l.Designation, new { @id = "txtDesignation", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
                                     @Html.ValidationMessageFor(l => l.Designation, "", new { @class = "text-danger" })
                                 </div>
                             </div>
@@ -140,20 +156,20 @@
                             <div class="row">
                                 <div class="col-12 col-md-6 col-lg-3 mb-3">
                             @Html.LabelFor(m => m.RoleId, new { @class = "custom-label" })<em>*</em>
-                                    @Html.DropDownListFor(l => l.RoleId, (IEnumerable<SelectListItem>)ViewBag.RoleList, "Select Role", new { @id = "ddlRole", @class = "form-control" })
+                                    @Html.DropDownListFor(l => l.RoleId, (IEnumerable<SelectListItem>)ViewBag.RoleList, "Select Role", new { @id = "ddlRole", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
                                     @Html.ValidationMessageFor(l => l.RoleId, "", new { @class = "text-danger" })
                                 </div>
 
                                 <div class="col-12 col-md-6 col-lg-3 mb-3">
                             @Html.LabelFor(m => m.UserType, new { @class = "custom-label" })<em>*</em>
-                                    @Html.DropDownListFor(l => l.UserType, (IEnumerable<SelectListItem>)ViewBag.UserTypeList, "Select User Type", new { @id = "ddlUserType", @class = "form-control" })
+                                    @Html.DropDownListFor(l => l.UserType, (IEnumerable<SelectListItem>)ViewBag.UserTypeList, "Select User Type", new { @id = "ddlUserType", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
                                     @Html.ValidationMessageFor(l => l.UserType, "", new { @class = "text-danger" })
                                 </div>
 
                                 <div class="col-12 col-md-12 col-lg-4 mb-3">
                             @Html.LabelFor(m => m.DivisionId, new { @class = "custom-label" })<em>*</em><br />
                                     <div class="lstDivisionCtr">
-                                        <select tabindex="-1" class="lstDivision select2 w-100" onload="GetDivisionList(@Model.DivisionId)" multiple="multiple" id="lstDivision" placeholder="Select Section">
+                                        <select tabindex="-1" class="lstDivision select2 w-100" onload="GetDivisionList(@Model.DivisionId)" multiple="multiple" id="lstDivision" placeholder="Select Section" @Html.Raw(disableSelect)>
                                         </select>
                                     </div>
                                 </div>
@@ -172,7 +188,7 @@
                         @Html.LabelFor(m => m.PlantId, new { @class = "custom-label" })<em>*</em>
                                 <br />
                                 <div class="lstPlantCtr">
-                                    <select tabindex="-1" class="lstPlant select2 w-100" multiple="multiple" id="lstPlant" placeholder="Select Plant">
+                                    <select tabindex="-1" class="lstPlant select2 w-100" multiple="multiple" id="lstPlant" placeholder="Select Plant" @Html.Raw(disableSelect)>
                                     </select>
                                 </div>
                             </div>
@@ -180,7 +196,7 @@
                         @Html.LabelFor(m => m.NearestPlantId, new { @class = "custom-label" })<em>*</em>
                                 <br />
                                 <div class="lstNPlantCtr">
-                                    <select tabindex="-1" class="lstNPlant select2 w-100" multiple="multiple" id="lstNPlant" placeholder="Select Nearest Plant">
+                                    <select tabindex="-1" class="lstNPlant select2 w-100" multiple="multiple" id="lstNPlant" placeholder="Select Nearest Plant" @Html.Raw(disableSelect)>
                                     </select>
                                 </div>
                             </div>
@@ -197,7 +213,7 @@
                         @Html.LabelFor(m => m.BrandId, new { @class = "custom-label" })<em>*</em>
                                 <br />
                                 <div class="lstBrandCtr">
-                                    <select tabindex="-1" class="lstBrand select2 w-100" multiple="multiple" id="lstBrand" placeholder="Select Brand">
+                                    <select tabindex="-1" class="lstBrand select2 w-100" multiple="multiple" id="lstBrand" placeholder="Select Brand" @Html.Raw(disableSelect)>
                                     </select>
                                 </div>
                             </div>
@@ -205,14 +221,14 @@
                         @Html.LabelFor(m => m.ProductTypeId, new { @class = "custom-label" })<em>*</em>
                                 <br />
                                 <div class="lstProductTypeCtr">
-                                    <select tabindex="-1" class="lstProductType select2 w-100" multiple="multiple" id="lstProductType" placeholder="Select ProductType">
+                                    <select tabindex="-1" class="lstProductType select2 w-100" multiple="multiple" id="lstProductType" placeholder="Select ProductType" @Html.Raw(disableSelect)>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-lg-4 mb-4">
                                 <div class="form-check mt-2">
-                            @Html.LabelFor(m => m.IsInMailMatrix, new { @class = "mb-0 mr-2 custom-label" })
-                                    @Html.CheckBoxFor(m => m.IsInMailMatrix, new { id = "chkIsInMailMatrix" })
+                                    @Html.LabelFor(m => m.IsInMailMatrix, new { @class = "mb-0 mr-2 custom-label" })
+                                    @Html.CheckBoxFor(m => m.IsInMailMatrix, new { id = "chkIsInMailMatrix", @disabled = (canEdit && !isNew) ? "disabled" : "" })
                                 </div>
                             </div>
                         </div>
