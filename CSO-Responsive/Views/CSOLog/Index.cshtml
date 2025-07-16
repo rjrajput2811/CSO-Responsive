@@ -1,5 +1,16 @@
-﻿@{
+﻿@using CSO.Core.Security
+@using Microsoft.AspNetCore.Http
+@using CSO.Core.Repositories.SecurityActionRepo
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ISecurityActionRepository _securityActionRepository
+
+@{
     ViewData["Title"] = "CSO Log";
+
+    var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
+
+    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_CSOLOG, (int)userRoleId);
+    var canDelete = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DELETE_CSOLOG, (int)userRoleId);
 }
 
 
@@ -157,9 +168,12 @@
                 CSO Log
             </div>
             <div>
-                <button id="addButton" type="button" onclick="csoLogPage()" class="btn btn-outline-primary">
-                    <i class="fas fa-plus mr-2 fa-1x"></i>Add CSO Log
-                </button>
+                @if (canAdd)
+                {
+                    <button id="addButton" type="button" onclick="csoLogPage()" class="btn btn-outline-primary">
+                        <i class="fas fa-plus mr-2 fa-1x"></i>Add CSO Log
+                    </button>
+                }
                 <button id="backButton" class="btn btn-outline-danger ">
                     <i class="fas fa-arrow-left"></i>Back
                 </button>
@@ -191,6 +205,8 @@
         var tabledata = [];
         var table = '';
         const searchTerms = {};
+        var canDelete = @(canDelete.ToString().ToLower());
+
         $(document).ready(function () {
 
             document.addEventListener('DOMContentLoaded', function () {
@@ -314,8 +330,8 @@
                     });
                 });
 
-                columns.push(
-                    {
+                if (canDelete) {
+                    columns.push({
                         title: "Action",
                         field: "Action",
                         responsive: 0,
@@ -331,7 +347,10 @@
 
                             return actionButtons;
                         }
-                    },
+                    });
+                }
+
+                columns.push(
                     {
                                 title: "SNo", field: "Sr_No", width: 50, responsive: 1,  sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
                     },
