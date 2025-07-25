@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CSO.Core.DatabaseContext;
 
-[Table("CSOLogHistory")]
+[Table("CSOLogsHistory")]
 public class CSOLogHistory : SqlTable
 {
     public int CSOLogId { get; set; }

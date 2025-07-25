@@ -193,6 +193,10 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
                 AddedBy = csoLogDetails.AddedBy,
                 SKUDetails = csoLogDetails.SKUDetails,
                 FinancialYear = csoLogDetails.FinancialYear,
+                RootCauseAnalysisDescription = csoLogDetails.RootCauseAnalysisDescription,
+                PreventiveActionDescription = csoLogDetails.PreventiveActionDescription,
+                CorrectiveActionDescription = csoLogDetails.CorrectiveActionDescription,
+                MonitoringofCorrectiveActionDescription = csoLogDetails.MonitoringofCorrectiveActionDescription,
             };
             return result;
         }

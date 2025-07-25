@@ -1,7 +1,30 @@
-﻿@model CSO.Core.Models.CSOLogViewModel
+﻿@using CSO.Core.Security
+@using Microsoft.AspNetCore.Http
+@using CSO.Core.Repositories.SecurityActionRepo
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ISecurityActionRepository _securityActionRepository
+
+@model CSO.Core.Models.CSOLogViewModel
 
 @{
     ViewData["Title"] = "CSOLogAnalysisDetails";
+
+    var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
+
+    var canViewRootCause = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_ROOTCAUSE, (int)userRoleId);
+    var canViewMonitor = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_MONITOR, (int)userRoleId);
+    var canViewApprove = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_APPROVE, (int)userRoleId);
+    var canViewClouser = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CLOSURE, (int)userRoleId);
+
+    var canAddRootCause = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_ROOTCAUSE, (int)userRoleId);
+    var canAddMonitor = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_MONITOR, (int)userRoleId);
+    var canAddApprove = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_APPROVE, (int)userRoleId);
+    var canAddClouser = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_CLOSURE, (int)userRoleId);
+
+    var canEditRootCause = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_ROOTCAUSE, (int)userRoleId);
+    var canEditMonitor = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_MONITOR, (int)userRoleId);
+    var canEditApprove = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_APPROVE, (int)userRoleId);
+    var canEditClouser = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_CLOSURE, (int)userRoleId);
 }
 
 <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
@@ -321,7 +344,6 @@
             </div>
         </div>
     </div>
-    <form id="CSOLogAnay-form" method="post" asp-action="InsertUpdateCSOLogAnay" asp-controller="CSOLogAnalysisSolution">
         <div class="card" style="margin-top:10px;">
             <div class="section">
                 <div class="table-responsive-timeline">
@@ -353,10 +375,22 @@
         <!-- Tabs -->
         <ul class="nav nav-tabs nav-tabs-highlight mb-3">
             <li class="nav-item"><a href="#csoLog" class="nav-link active" data-bs-toggle="tab">CSO Log</a></li>
-            <li class="nav-item"><a href="#root" class="nav-link" data-bs-toggle="tab">Root Cause</a></li>
-            <li class="nav-item"><a href="#monitor" class="nav-link" data-bs-toggle="tab">Monitoring</a></li>
-            <li class="nav-item"><a href="#approve" class="nav-link" data-bs-toggle="tab">Approve / Reject</a></li>
-            <li class="nav-item"><a href="#closure" class="nav-link" data-bs-toggle="tab">Closure</a></li>
+            @if (canViewRootCause)
+            {
+                <li class="nav-item"><a href="#root" class="nav-link" data-bs-toggle="tab">Root Cause</a></li>
+            }
+            @if (canViewMonitor)
+            {
+                <li class="nav-item"><a href="#monitor" class="nav-link" data-bs-toggle="tab">Monitoring</a></li>
+            }
+            @if (canViewApprove)
+            {
+                <li class="nav-item"><a href="#approve" class="nav-link" data-bs-toggle="tab">Approve / Reject</a></li>
+            }
+            @if (canViewClouser)
+            {
+                <li class="nav-item"><a href="#closure" class="nav-link" data-bs-toggle="tab">Closure</a></li>
+            }
         </ul>
 
         <!-- Tab Content -->
@@ -367,319 +401,355 @@
                 <div class="row g-4">
                     <div class="col-lg-12">
                         <div class="card p-4">
-                            <div class="card">
-                                <div class=" section-title">
+                            
+                            <form id="CSOLogAnay-form" method="post" asp-action="InsertUpdateCSOLogAnay" asp-controller="CSOLogAnalysisSolution">
+                                <div class="card">
+                                    <div class=" section-title">
 
-                                    <label class="mb-0"><i class="fas fa-address-card mr-2 text-primary"></i>General Details</label>
-                                </div>
+                                        <label class="mb-0"><i class="fas fa-address-card mr-2 text-primary"></i>General Details</label>
+                                    </div>
 
-                                <div class="card-body">
-                                    <div class="row g-3">
-                                        @Html.HiddenFor(m => m.Id)
-                                        @Html.HiddenFor(m => m.FinancialYear)
-                                        <div class="col-md-2">
-                                            <label class=" custom-label required">CSO No.</label>
-                                            @{
-                                                string cSONo = string.Empty;
-                                                if (Model.CSONo > 0 && Model.FinancialYear > 0)
-                                                {
-                                                    cSONo = Model.CSONo + "/" + Model.FinancialYear;
+                                    <div class="card-body">
+                                        <div class="row g-3">
+                                            @Html.HiddenFor(m => m.Id)
+                                            @Html.HiddenFor(m => m.FinancialYear)
+                                            <div class="col-md-2">
+                                                <label class=" custom-label required">CSO No.</label>
+                                                @{
+                                                    string cSONo = string.Empty;
+                                                    if (Model.CSONo > 0 && Model.FinancialYear > 0)
+                                                    {
+                                                        cSONo = Model.CSONo + "/" + Model.FinancialYear;
+                                                    }
                                                 }
-                                            }
 
-                                            @Html.TextBox("CSONo", cSONo, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
-                                            @Html.ValidationMessageFor(m => m.CSONo, "", new { @class = "text-danger" })
-                                        </div>
+                                                @Html.TextBox("CSONo", cSONo, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
+                                                @Html.ValidationMessageFor(m => m.CSONo, "", new { @class = "text-danger" })
+                                            </div>
 
-                                        <div class="col-md-4">
-                                            <label class=" required select2 custom-label">Complaint Type*</label>
-                                            @Html.DropDownListFor(m => m.ComplaintTypeId, (IEnumerable<SelectListItem>)ViewBag.ComplainTypeList, "Select ComplaintType", new { @class = "form-control" })
-                                            @Html.ValidationMessageFor(m => m.ComplaintTypeId, "", new { @class = "text-danger" })
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class=" required select2 custom-label">Division/BU</label>
+                                            <div class="col-md-4">
+                                                <label class=" required select2 custom-label">Complaint Type*</label>
+                                                @Html.DropDownListFor(m => m.ComplaintTypeId, (IEnumerable<SelectListItem>)ViewBag.ComplainTypeList, "Select ComplaintType", new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(m => m.ComplaintTypeId, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class=" required select2 custom-label">Division/BU</label>
 
-                                            @Html.DropDownListFor(m => m.DivisionId, (IEnumerable<SelectListItem>)ViewBag.DivisionList, "Select Division", new { @class = "form-control " })
-                                            @Html.ValidationMessageFor(m => m.DivisionId, "", new { @class = "text-danger" })
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class=" required select2 custom-label">Category / Function</label>
+                                                @Html.DropDownListFor(m => m.DivisionId, (IEnumerable<SelectListItem>)ViewBag.DivisionList, "Select Division", new { @class = "form-control " })
+                                                @Html.ValidationMessageFor(m => m.DivisionId, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class=" required select2 custom-label">Category / Function</label>
 
-                                            @Html.DropDownListFor(m => m.CategoryId, (IEnumerable<SelectListItem>)ViewBag.CategoryList, "Select Category", new { @class = "form-control " })
-                                            @Html.ValidationMessageFor(m => m.CategoryId, "", new { @class = "text-danger" })
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class=" required select2 custom-label">CSO Class*</label>
+                                                @Html.DropDownListFor(m => m.CategoryId, (IEnumerable<SelectListItem>)ViewBag.CategoryList, "Select Category", new { @class = "form-control " })
+                                                @Html.ValidationMessageFor(m => m.CategoryId, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class=" required select2 custom-label">CSO Class*</label>
 
-                                            @Html.DropDownListFor(m => m.CSOClassId, (IEnumerable<SelectListItem>)ViewBag.CSOClassList, "Select CSOClass", new { @class = "form-control " })
-                                            @Html.ValidationMessageFor(m => m.CSOClassId, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card">
-                                <div class=" section-title">
-                                    <label class="mb-0"><i class="fas fa-box-open mr-2 text-info"></i>Product Information</label>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row g-3">
-                                        <div class="col-md-2">
-                                            <label class=" required select2 custom-label">Brand</label>
-
-                                            @Html.DropDownListFor(m => m.BrandId, Enumerable.Empty<SelectListItem>(), "Select Brand", new { @class = "form-control " })
-                                            @Html.ValidationMessageFor(m => m.BrandId, "", new { @class = "text-danger" })
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="required select2 custom-label">Product Type</label>
-
-                                            @Html.DropDownListFor(m => m.ProductTypeId, Enumerable.Empty<SelectListItem>(), "Select Product Type", new { @class = "form-control " })
-                                            @Html.ValidationMessageFor(m => m.ProductTypeId, "", new { @class = "text-danger" })
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class=" required select2 custom-label">SKU Details<em>*</em></label>
-
-                                            @Html.ValidationMessageFor(m => m.SKUDetails, "", new { @class = "text-danger" })
-                                            @Html.TextAreaFor(m => m.SKUDetails, 1, 40, new { @class = "form-control " })
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class=" required select2 custom-label">Batch</label>
-
-                                            @Html.TextBoxFor(m => m.Batch, new { @class = "form-control " })
-                                            @Html.ValidationMessageFor(m => m.Batch, "", new { @class = "text-danger" })
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class=" required select2 custom-label">PKD Date</label>
-
-                                            @Html.ValidationMessageFor(m => m.PKDDate, "", new { @class = "text-danger" })
-                                            @Html.TextBoxFor(m => m.PKDDate, new { @class = "form-control " })
-
+                                                @Html.DropDownListFor(m => m.CSOClassId, (IEnumerable<SelectListItem>)ViewBag.CSOClassList, "Select CSOClass", new { @class = "form-control " })
+                                                @Html.ValidationMessageFor(m => m.CSOClassId, "", new { @class = "text-danger" })
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="card">
-                                <div class=" section-title">
-                                    <label class="mb-0">  <i class="fas fa-industry mr-2 text-success"></i>Plant & Supply Info</label>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row g-3">
-                                        <div class="col-md-2">
-                                            <label class=" required select2 custom-label">Plant</label>
+                                <div class="card">
+                                    <div class=" section-title">
+                                        <label class="mb-0"><i class="fas fa-box-open mr-2 text-info"></i>Product Information</label>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-2">
+                                                <label class=" required select2 custom-label">Brand</label>
 
-                                            @Html.DropDownListFor(m => m.PlantId, Enumerable.Empty<SelectListItem>(), "Select Plant", new { @class = "form-control" })
-                                            @Html.ValidationMessageFor(m => m.PlantId, "", new { @class = "text-danger" })
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="required select2 custom-label">Nearest Plant</label>
+                                                @Html.DropDownListFor(m => m.BrandId, Enumerable.Empty<SelectListItem>(), "Select Brand", new { @class = "form-control " })
+                                                @Html.ValidationMessageFor(m => m.BrandId, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="required select2 custom-label">Product Type</label>
 
-                                            @Html.DropDownListFor(m => m.NearestPlantId, Enumerable.Empty<SelectListItem>(), "Select Nearest Plant", new { @class = "form-control ", @disabled = "disabled" })
-                                            @Html.ValidationMessageFor(m => m.NearestPlantId, "", new { @class = "text-danger" })
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="required select2 custom-label">Defective Quantity</label>
+                                                @Html.DropDownListFor(m => m.ProductTypeId, Enumerable.Empty<SelectListItem>(), "Select Product Type", new { @class = "form-control " })
+                                                @Html.ValidationMessageFor(m => m.ProductTypeId, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class=" required select2 custom-label">SKU Details<em>*</em></label>
 
-                                            @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control " })
-                                            @Html.ValidationMessageFor(m => m.Quantity, "", new { @class = "text-danger" })
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="required select2 custom-label">Supplied Quantity</label>
+                                                @Html.ValidationMessageFor(m => m.SKUDetails, "", new { @class = "text-danger" })
+                                                @Html.TextAreaFor(m => m.SKUDetails, 1, 40, new { @class = "form-control " })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class=" required select2 custom-label">Batch</label>
 
-                                            @Html.TextBoxFor(m => m.SuppliedQuantity, new { @class = "form-control " })
-                                            @Html.ValidationMessageFor(m => m.SuppliedQuantity, "", new { @class = "text-danger" })
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="required select2 custom-label">Cat Reference</label>
+                                                @Html.TextBoxFor(m => m.Batch, new { @class = "form-control " })
+                                                @Html.ValidationMessageFor(m => m.Batch, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class=" required select2 custom-label">PKD Date</label>
 
-                                            @Html.TextBoxFor(m => m.CatReference, new { @class = "form-control " })
-                                            @Html.ValidationMessageFor(m => m.CatReference, "", new { @class = "text-danger" })
+                                                @Html.ValidationMessageFor(m => m.PKDDate, "", new { @class = "text-danger" })
+                                                @Html.TextBoxFor(m => m.PKDDate, new { @class = "form-control " })
+
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="card">
-                                <div class=" section-title">
-                                    <label class="mb-0"><i class="fas fa-exclamation-circle mr-2 text-danger"></i> Complaint Details</label>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row g-3">
-                                        <div class="col-md-4">
-                                            <label class="custom-label required select2">Description of Complaint</label>
-                                            @Html.TextAreaFor(m => m.Description, 2, 40, new { @class = "form-control " })
-                                            @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                                <div class="card">
+                                    <div class=" section-title">
+                                        <label class="mb-0">  <i class="fas fa-industry mr-2 text-success"></i>Plant & Supply Info</label>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-2">
+                                                <label class=" required select2 custom-label">Plant</label>
+
+                                                @Html.DropDownListFor(m => m.PlantId, Enumerable.Empty<SelectListItem>(), "Select Plant", new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(m => m.PlantId, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="required select2 custom-label">Nearest Plant</label>
+
+                                                @Html.DropDownListFor(m => m.NearestPlantId, Enumerable.Empty<SelectListItem>(), "Select Nearest Plant", new { @class = "form-control ", @disabled = "disabled" })
+                                                @Html.ValidationMessageFor(m => m.NearestPlantId, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="required select2 custom-label">Defective Quantity</label>
+
+                                                @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control " })
+                                                @Html.ValidationMessageFor(m => m.Quantity, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="required select2 custom-label">Supplied Quantity</label>
+
+                                                @Html.TextBoxFor(m => m.SuppliedQuantity, new { @class = "form-control " })
+                                                @Html.ValidationMessageFor(m => m.SuppliedQuantity, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="required select2 custom-label">Cat Reference</label>
+
+                                                @Html.TextBoxFor(m => m.CatReference, new { @class = "form-control " })
+                                                @Html.ValidationMessageFor(m => m.CatReference, "", new { @class = "text-danger" })
+                                            </div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <label class="custom-label required select2">Source of Complaint</label>
-                                            @Html.TextBoxFor(m => m.SourceofComplaint, new { @class = "form-control " })
-                                            @Html.ValidationMessageFor(m => m.SourceofComplaint, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class=" section-title">
+                                        <label class="mb-0"><i class="fas fa-exclamation-circle mr-2 text-danger"></i> Complaint Details</label>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                <label class="custom-label required select2">Description of Complaint</label>
+                                                @Html.TextAreaFor(m => m.Description, 2, 40, new { @class = "form-control " })
+                                                @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="custom-label required select2">Source of Complaint</label>
+                                                @Html.TextBoxFor(m => m.SourceofComplaint, new { @class = "form-control " })
+                                                @Html.ValidationMessageFor(m => m.SourceofComplaint, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="custom-label">
+                                                    Samples Shipped
+                                                    <div class="form-check form-switch">
+
+                                                        @Html.CheckBoxFor(m => m.IsSampleShipped, new { @class = "slider round " })
+                                                    </div>
+                                                </label>
+                                            </div>
                                         </div>
-                                        <div class="col-md-2">
-                                            <label class="custom-label">
-                                                Samples Shipped
-                                                <div class="form-check form-switch">
+                                    </div>
+                                </div>
 
-                                                    @Html.CheckBoxFor(m => m.IsSampleShipped, new { @class = "slider round " })
-                                                </div>
-                                            </label>
+                                <div class="card">
+                                    <div class=" section-title">
+                                        <label class="mb-0"> <i class="fas fa-paperclip mr-2 text-primary"></i> Attachments</label>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="images" class="custom-label required">Upload Images</label>
+
+                                            <input id="csoLogFile" type="file" class="form-control" name="img" multiple />
+                                            @* @Html.ValidationMessageFor(m => m.CSOLogFileName, "", new { @class = "text-danger" }) *@
+                                            @Html.Label("FileSize", "Maximum upload file size: 5 MB.", new { style = "font-style: italic; font-weight: normal;" })
+                                            <div class="form-text">Max size 5MB per file</div>
+                                        </div>
+
+                                        <div class="form-group col-3" style="display:none" id="DivTrackingNo">
+                                            <label class="form-label">TrackingNo</label>
+                                            @Html.TextBoxFor(m => m.TrackingNo, new { @class = "form-control font-weight-bold" })
+                                            @Html.ValidationMessageFor(m => m.TrackingNo, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group col-3" id="DivEmptyTrackingNo">
+                                        </div>
+                                        <div class="form-group col-3">
+                                        </div>
+                                        <div class="form-group col-3">
+                                            <ul class="attachment" id="CSOLogImagesUL">
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="card">
-                                <div class=" section-title">
-                                    <label class="mb-0"> <i class="fas fa-paperclip mr-2 text-primary"></i> Attachments</label>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label for="images" class="custom-label required">Upload Images</label>
-
-                                        <input id="File" type="file" class="form-control" name="img" multiple />
-                                        @* @Html.ValidationMessageFor(m => m.CSOLogFileName, "", new { @class = "text-danger" }) *@
-                                        @Html.Label("FileSize", "Maximum upload file size: 5 MB.", new { style = "font-style: italic; font-weight: normal;" })
-                                        <div class="form-text">Max size 5MB per file</div>
-                                    </div>
-
-                                    <div class="form-group col-3" style="display:none" id="DivTrackingNo">
-                                        <label class="form-label">TrackingNo</label>
-                                        @Html.TextBoxFor(m => m.TrackingNo, new { @class = "form-control font-weight-bold" })
-                                        @Html.ValidationMessageFor(m => m.TrackingNo, "", new { @class = "text-danger" })
-                                    </div>
-                                    <div class="form-group col-3" id="DivEmptyTrackingNo">
-                                    </div>
-                                    <div class="form-group col-3">
-                                    </div>
-                                    <div class="form-group col-3">
-                                        <ul class="attachment" id="CSOLogImagesUL">
-                                        </ul>
+                            </form>
+                                <div class="card">
+                                    <div class="text-end m-3">
+                                        <button type="button" class="btn btn-outline-info" onclick="InsertUpdateCSOLogAnay()">Save</button>
+                                        <button type="button" class="btn btn-danger" onclick="onCancel()">Cancel</button>
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Root Cause Tab -->
-            <div class="tab-pane fade" id="root">
-                <div class="row g-4">
-                    <div class="col-lg-8">
-                        <div class="card p-4">
-                            <div class="d-flex justify-content-between mb-3">
-                                <h5 class="section-label">Root Cause Analysis</h5>
-                                <span class="badge bg-success badge-status">Submitted</span>
-                            </div>
-
-                            <div class="mb-3">
-                                @Html.Label("Root Cause Analysis")
-                                @Html.TextAreaFor(m => m.RootCauseAnalysisDescription, 3, 40, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.RootCauseAnalysisDescription, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="mb-3">
-                                @Html.Label("Corrective Action")
-                                @Html.TextAreaFor(m => m.CorrectiveActionDescription, 3, 40, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.CorrectiveActionDescription, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="mb-3">
-                                @Html.Label("Preventive Action")
-                                @Html.TextAreaFor(m => m.PreventiveActionDescription, 3, 40, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.PreventiveActionDescription, "", new { @class = "text-danger" })
-                            </div>
-
-                            <div class="text-end mt-4">
-                                <button type="button" id="saveButton" class="btn btn-primary" onclick="InsertUpdateCSOLogAnay()">Save</button>
-                                <button class="btn btn-primary">Submit</button>
-                                <button class="btn btn-danger">Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4">
-                        <div class="card p-4">
-                            <h6 class="section-label mb-3">Supporting Attachments</h6>
-                            <input type="file" class="form-control mb-2">
-                            <div class="file-note">Max file size: 5 MB</div>
-                            <hr>
-                            <p class="mb-0">Attached: <a href="#">rca_image_apr24.jpg</a></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Monitoring Tab -->
-            <div class="tab-pane fade" id="monitor">
-                <div class="card p-4">
-                    <h5 class="section-label mb-3">Monitoring of Corrective Action</h5>
-                    <textarea class="form-control" rows="4" placeholder="Enter monitoring notes...">Checked again on 05-July, no looseness found. Process satisfactory.</textarea>
-                    <div class="mt-3">
-                        <label class="section-label">Attach File</label>
-                        <input type="file" class="form-control">
-                        <div class="file-note mt-1">Max file size: 5 MB</div>
-                    </div>
-                    <div class="text-end mt-4">
-                        <button class="btn btn-outline-info">Save</button>
-                        <button class="btn btn-success">Submit</button>
-                        <button class="btn btn-danger">Cancel</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Approve / Reject Tab -->
-            <div class="tab-pane fade" id="approve">
-                <div class="card p-4">
-                    <div class="d-flex justify-content-between mb-3">
-                        <h5 class="section-label">Final Review - Approve / Reject</h5>
-                        <span class="badge bg-warning text-dark badge-status">Pending Review</span>
-                    </div>
+            @if (canViewRootCause)
+            {
+                <!-- Root Cause Tab -->
+                <div class="tab-pane fade" id="root">
                     <div class="row g-4">
-                        <div class="col-md-8">
-                            <label class="section-label">Review Comments</label>
-                            <textarea class="form-control" rows="4" placeholder="Add remarks for approval or rejection..."></textarea>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="section-label">If Rejected, Revert To</label>
-                            <select id="revertStatus" class="form-select" disabled>
-                                <option selected disabled>Select status...</option>
-                                <option value="root">Root Cause Analysis</option>
-                                <option value="monitor">Monitoring</option>
-                                <option value="log">Log CSO</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="text-end mt-4">
-                        <button id="btnReject" class="btn btn-outline-danger me-2">Reject</button>
-                        <button class="btn btn-success me-2">Approve</button>
-                        <button class="btn btn-secondary">Cancel</button>
-                    </div>
-                </div>
-            </div>
+                        <div class="col-lg-8">
+                            <div class="card p-4">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h5 class="section-label">Root Cause Analysis</h5>
+                                    <span class="badge bg-success badge-status">Submitted</span>
+                                </div>
+                                <form id="CSOLogRootCause-form" method="post" asp-action="UpdateCSOLogForRootCause" asp-controller="CSOLogAnalysisSolution">
+                                    <div class="mb-3">
+                                        @Html.Label("Root Cause Analysis")
+                                        @Html.TextAreaFor(m => m.RootCauseAnalysisDescription, 3, 40, (!canAddRootCause && !canEditRootCause) ? new { @class = "form-control", @disabled = "disabled" } : new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.RootCauseAnalysisDescription, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="mb-3">
+                                        @Html.Label("Corrective Action")
+                                        @Html.TextAreaFor(m => m.CorrectiveActionDescription, 3, 40, (!canAddRootCause && !canEditRootCause) ? new { @class = "form-control", @disabled = "disabled" } : new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.CorrectiveActionDescription, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="mb-3">
+                                        @Html.Label("Preventive Action")
+                                        @Html.TextAreaFor(m => m.PreventiveActionDescription, 3, 40, (!canAddRootCause && !canEditRootCause) ? new { @class = "form-control", @disabled = "disabled" } : new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.PreventiveActionDescription, "", new { @class = "text-danger" })
+                                    </div>
 
-            <!-- Closure Tab -->
-            <div class="tab-pane fade" id="closure">
-                <div class="card p-4">
-                    <div class="d-flex justify-content-between mb-3">
-                        <h5 class="section-label">Log Closure</h5>
-                        <span class="badge bg-secondary badge-status">Final Step</span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="section-label">Closure Comments</label>
-                        <textarea class="form-control" rows="4" placeholder="Enter final closure remarks..."></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="section-label">Closure Date</label>
-                        <input type="date" class="form-control">
-                    </div>
-                    <div class="text-end">
-                        <button class="btn btn-outline-info">Save</button>
-                        <button class="btn btn-success">Close Log</button>
+                                    <div class="text-end mt-4">
+                                        @if (canAddRootCause || canEditRootCause)
+                                        {
+                                            <button type="button" id="saveButton" class="btn btn-primary" onclick="UpdateCSOLogRootCause('Save')">Save</button>
+                                            <button type="button" class="btn btn-primary" onclick="UpdateCSOLogRootCause('Submit')">Submit</button>
+                                        }
+                                        <button type="button" class="btn btn-danger" onclick="onCancel()">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card p-4">
+                                <h6 class="section-label mb-3">Supporting Attachments</h6>
+                                <input id="csoRootCauseFile" type="file" class="form-control mb-2" @Html.Raw((!canAddRootCause && canEditRootCause) ? "disabled" : "")>
+                                <div class="file-note">Max file size: 5 MB</div>
+                                <hr>
+                                <p class="mb-0">Attached: <a href="#">rca_image_apr24.jpg</a></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
+
+            @if (canViewMonitor)
+            {
+                <!-- Monitoring Tab -->
+                <div class="tab-pane fade" id="monitor">
+                    <div class="card p-4">
+                        <form id="CSOLogMonitor-form" method="post" asp-action="UpdateCSOLogForMonitor" asp-controller="CSOLogAnalysisSolution">
+                            @Html.Label("Monitoring of Corrective Action")
+                            @Html.TextAreaFor(m => m.MonitoringofCorrectiveActionDescription, 4, 40, (!canAddMonitor && !canEditMonitor) ? new { @class = "form-control", @disabled = "disabled" } : new { @class = "form-control" })
+                            <div class="mt-3">
+                                <label class="section-label">Attach File</label>
+                                <input id="monitorFile" type="file" class="form-control" @Html.Raw((!canAddMonitor && canEditMonitor) ? "disabled" : null)>
+                                <div class="file-note mt-1">Max file size: 5 MB</div>
+                            </div>
+                        </form>
+                        <div class="text-end mt-4">
+                            @if(canAddMonitor || canEditMonitor)
+                            {
+                                <button type="button" class="btn btn-outline-info" onclick="UpdateCSOLogMonitor('Save')">Save</button>
+                                <button type="button" class="btn btn-success" onclick="UpdateCSOLogMonitor('Submit')">Submit</button>
+                            }
+                            <button type="button" class="btn btn-danger" onclick="onCancel()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            }
+            
+            @if (canViewApprove)
+            {
+                <!-- Approve / Reject Tab -->
+                <div class="tab-pane fade" id="approve">
+                    <div class="card p-4">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h5 class="section-label">Final Review - Approve / Reject</h5>
+                            <span class="badge bg-warning text-dark badge-status">Pending Review</span>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-8">
+                                @Html.Label("Review Comments")
+                                @Html.TextAreaFor(m => m.Review1, 4, 40, (!canAddApprove && !canEditApprove) ? new { @class = "form-control", @disabled = "disabled" } : new { @class = "form-control" })
+                            </div>
+                            <div class="col-md-4">
+                                <label class="section-label">If Rejected, Revert To</label>
+                                <select id="revertStatus" class="form-select" disabled>
+                                    <option selected disabled>Select status...</option>
+                                    <option value="root">Root Cause Analysis</option>
+                                    <option value="monitor">Monitoring</option>
+                                    <option value="log">Log CSO</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="text-end mt-4">
+                            @if(canAddApprove || canEditApprove)
+                            {
+                                <button id="btnReject" class="btn btn-outline-danger me-2">Reject</button>
+                                <button type="button" class="btn btn-success me-2">Approve</button>
+                            }
+                            <button type="button" class="btn btn-secondary" onclick="onCancel()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            }
+            
+            @if (canViewClouser)
+            {
+                <!-- Closure Tab -->
+                <div class="tab-pane fade" id="closure">
+                    <div class="card p-4">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h5 class="section-label">Log Closure</h5>
+                            <span class="badge bg-secondary badge-status">Final Step</span>
+                        </div>
+                        <div class="mb-3">
+                            @Html.Label("Closure Comments")
+                            @Html.TextAreaFor(m => m.Review2, 4, 40, (!canAddClouser && !canEditClouser) ? new { @class = "form-control", @disabled = "disabled" } : new { @class = "form-control" })
+                        </div>
+                        <div class="mb-3">
+                            <label class="section-label">Closure Date</label>
+                            <input type="date" class="form-control" @Html.Raw((!canAddClouser && canEditClouser) ? "disabled" : "")>
+                        </div>
+                        <div class="text-end">
+                            @if(canAddClouser || canEditClouser)
+                            {
+                                <button type="button" class="btn btn-outline-info">Save</button>
+                                <button type="button" class="btn btn-success">Close Log</button>
+                            }
+                            <button type="button" class="btn btn-secondary" onclick="onCancel()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            }
 
         </div>
-    </form>
 </div>
 
 @section Scripts {
@@ -687,7 +757,7 @@
 
     @* <script src="~/js/CSOLog/CSOLog.js" asp-append-version="true"></script> *@
     <script src="~/js/csologanalysis/csoanalysis.js" asp-append-version="true"></script>
-    <script>
+    <script asp-append-version="true">
         document.addEventListener("DOMContentLoaded", function () {
              const rejectBtn = document.getElementById("btnReject");
              const revertDropdown = document.getElementById("revertStatus");
@@ -695,10 +765,14 @@
                revertDropdown.removeAttribute("disabled");
                revertDropdown.focus();
              });
-
-            var csoLogId = @Model.Id;
-
         });
+
+        var csoLogId = @Model.Id;
+
+        function onCancel() {
+            var url = "@Url.Action("CSOLogAnalysisSolution", "CSOLogAnalysisSolution")";
+            window.open(url, '_self');
+        }
     </script>
 }
 

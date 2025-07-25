@@ -5,6 +5,7 @@ using CSO.Core.Repositories.ComplaintTypeRepo;
 using CSO.Core.Repositories.CSOClassRepo;
 using CSO.Core.Repositories.CSOLogAnalysisRepo;
 using CSO.Core.Repositories.CSOLogFileRepo;
+using CSO.Core.Repositories.CSOLogHistoryRepo;
 using CSO.Core.Repositories.CSOLogRepo;
 using CSO.Core.Repositories.DivisionRepo;
 using CSO.Core.Repositories.NearestPlantRepo;
@@ -35,17 +36,19 @@ namespace CSO_Responsive.Controllers
         private readonly ICSOLogFileRepository _csoLogFileRepository;
         private readonly IComplaintTypeRepository _complaintTypeRepository;
         private readonly ICSOClassRepository _cSOClassRepository;
+        private readonly ICSOLogHistoryRepository _csoLogHistoryRepository;
 
         public CSOLogAnalysisSolutionController(ICSOLogAnalysisRepository csoLogAnalRepository,
-                                ISystemLogService systemLogService, IDivisionRepository divisionRepository,
-                            ICategoryRepository categoryRepository,
-                            IBrandRepository brandRepository,
-                            IPlantRepository plantRepository,
-                            INearestPlantRepository nearestPlantRepository,
-                            IProductTypeRepository productTypeRepository,
-                            IUserRepository userRepository,
-                            ICSOLogFileRepository csoLogFileRepository, ICSOLogRepository csoLogRepository,
-                            IComplaintTypeRepository complaintTypeRepository,ICSOClassRepository cSOClassRepository)
+                                                ISystemLogService systemLogService, IDivisionRepository divisionRepository,
+                                                ICategoryRepository categoryRepository,
+                                                IBrandRepository brandRepository,
+                                                IPlantRepository plantRepository,
+                                                INearestPlantRepository nearestPlantRepository,
+                                                IProductTypeRepository productTypeRepository,
+                                                IUserRepository userRepository,
+                                                ICSOLogFileRepository csoLogFileRepository, ICSOLogRepository csoLogRepository,
+                                                IComplaintTypeRepository complaintTypeRepository,ICSOClassRepository cSOClassRepository,
+                                                ICSOLogHistoryRepository csoLogHistoryRepository)
         {
             _csoLogAnalRepository = csoLogAnalRepository;
             _systemLogService = systemLogService;
@@ -60,6 +63,7 @@ namespace CSO_Responsive.Controllers
             _csoLogFileRepository = csoLogFileRepository;
             _complaintTypeRepository = complaintTypeRepository;
             _cSOClassRepository = cSOClassRepository;
+            _csoLogHistoryRepository = csoLogHistoryRepository;
         }
         public IActionResult CSOLogAnalysisSolution()
         {
@@ -232,19 +236,17 @@ namespace CSO_Responsive.Controllers
 
         public async Task<ActionResult> InsertUpdateCSOLogAnayAsync(CSOLogViewModel model)
         {
-            var result = new OperationResult();
-            if (model.Id > 0)
-            {
-                model.UpdatedBy = HttpContext.Session.GetInt32("UserId");
-                result = await _csoLogAnalRepository.UpdateCSOLogAnyaAsync(model);
-            }
-            else
-            {
-                model.AddedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
-                model.UserId = HttpContext.Session.GetInt32("UserId") ?? 0;
-                result = await _csoLogAnalRepository.CreateCSOLogAnyaAsync(model);
-            }
+            model.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+            var result = await _csoLogAnalRepository.UpdateCSOLogAnyaAsync(model);
 
+            if (!result.Success) { return Json(result); }
+
+            var csoLogHistory = new CSOLogHistoryViewModel
+            {
+                CSOLogId = model.Id
+            };
+
+            result = await _csoLogHistoryRepository.CreateCSOLogHistoryAsync(csoLogHistory);
             if (!result.Success) { return Json(result); }
 
             var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
@@ -279,6 +281,180 @@ namespace CSO_Responsive.Controllers
                 result = await _csoLogFileRepository.InsertCSOLogFileInfoAsync(csoLogFilesModel);
                 if (!result.Success) { return Json(result); }
             }
+
+            return Json(result);
+        }
+
+        public async Task<ActionResult> UpdateCSOLogForRootCauseAsync(CSOLogViewModel model)
+        {
+            if (model.Status == "Submit")
+            {
+                model.Status1 = (int)Status.RootCause;
+            }
+            
+            model.UpdatedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
+            model.UpdatedOn = DateTime.Now;
+
+            var result = await _csoLogAnalRepository.UpdateCSOLogAnalysisForRootCauseAsync(model);
+            if (!result.Success) { return Json(result); }
+
+            var existsCSOLogHistory = await _csoLogHistoryRepository.CheckCSOLogHistryExistsAsync(model.Id);
+
+            if (!existsCSOLogHistory)
+            {
+                var csoLogHistoryToCreate = new CSOLogHistoryViewModel
+                {
+                    CSOLogId = model.Id
+                };
+
+                result = await _csoLogHistoryRepository.CreateCSOLogHistoryAsync(csoLogHistoryToCreate);
+                if (!result.Success) { return Json(result); }
+            }
+
+            var csoLogHistoryToUpdate = new CSOLogHistoryViewModel
+            {
+                CSOLogId = model.Id,
+                RootCauseBy = HttpContext.Session.GetInt32("UserId") ?? 0,
+                RootCauseOn = DateTime.Now
+            };
+
+            result = await _csoLogHistoryRepository.UpdateCSOLogHistoryForRootCauseAsync(csoLogHistoryToUpdate);
+            if (!result.Success) { return Json(result); }
+
+            var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var uploadFolder = "CSOLogandAnalysisSolutionFiles";
+            var uploadPath = Path.Combine(wwwRootPath, uploadFolder);
+
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            foreach (var file in model.files)
+            {
+                var originalFileNameWithoutExt = Path.GetFileNameWithoutExtension(file.FileName);
+                var extension = Path.GetExtension(file.FileName);
+                var dateStamp = DateTime.Now.ToString("ddMMyyyyHHmmss");
+
+                var uniqueFileName = $"{originalFileNameWithoutExt}_{dateStamp}{extension}";
+                var filePath = Path.Combine(uploadPath, uniqueFileName);
+
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await file.CopyToAsync(stream);
+
+                var csoLogFilesModel = new CSOLogFileViewModel
+                {
+                    FilePath = filePath,
+                    FileName = uniqueFileName,
+                    Type = (int)CSOLogFileType.RootCauseAnalysisFile,
+                    CSOLogId = result.ObjectId ?? 0,
+                    AddedBy = HttpContext.Session.GetInt32("UserId") ?? 0,
+                    AddedOn = DateTime.Now
+                };
+
+                result = await _csoLogFileRepository.InsertCSOLogFileInfoAsync(csoLogFilesModel);
+                if (!result.Success) { return Json(result); }
+            }
+
+            return Json(result);
+        }
+
+        public async Task<ActionResult> UpdateCSOLogForMonitorAsync(CSOLogViewModel model)
+        {
+            if (model.Status == "Submit")
+            {
+                model.Status1 = (int)Status.Monitor;
+            }
+
+            model.UpdatedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
+            model.UpdatedOn = DateTime.Now;
+
+            var result = await _csoLogAnalRepository.UpdateCSOLogAnalysisForMonitorAsync(model);
+            if (!result.Success) { return Json(result); }
+
+            var csoLogHistory = new CSOLogHistoryViewModel
+            {
+                CSOLogId = model.Id,
+                MonitoringBy = HttpContext.Session.GetInt32("UserId") ?? 0,
+                MonitoringOn = DateTime.Now
+            };
+
+            result = await _csoLogHistoryRepository.UpdateCSOLogHistoryForMonitorAsync(csoLogHistory);
+            if (!result.Success) { return Json(result); }
+
+            var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var uploadFolder = "CSOLogandAnalysisSolutionFiles";
+            var uploadPath = Path.Combine(wwwRootPath, uploadFolder);
+
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            foreach (var file in model.files)
+            {
+                var originalFileNameWithoutExt = Path.GetFileNameWithoutExtension(file.FileName);
+                var extension = Path.GetExtension(file.FileName);
+                var dateStamp = DateTime.Now.ToString("ddMMyyyyHHmmss");
+
+                var uniqueFileName = $"{originalFileNameWithoutExt}_{dateStamp}{extension}";
+                var filePath = Path.Combine(uploadPath, uniqueFileName);
+
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await file.CopyToAsync(stream);
+
+                var csoLogFilesModel = new CSOLogFileViewModel
+                {
+                    FilePath = filePath,
+                    FileName = uniqueFileName,
+                    Type = (int)CSOLogFileType.MonitoringofCorrectiveActionFile,
+                    CSOLogId = result.ObjectId ?? 0,
+                    AddedBy = HttpContext.Session.GetInt32("UserId") ?? 0,
+                    AddedOn = DateTime.Now
+                };
+
+                result = await _csoLogFileRepository.InsertCSOLogFileInfoAsync(csoLogFilesModel);
+                if (!result.Success) { return Json(result); }
+            }
+
+            return Json(result);
+        }
+
+        public async Task<ActionResult> UpdateCSOLogForApproveRejectAsync(CSOLogViewModel model)
+        {
+            model.UpdatedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
+            model.UpdatedOn = DateTime.Now;
+
+            var result = await _csoLogAnalRepository.UpdateCSOLogAnalysisForApproveRejectAsync(model);
+            if (!result.Success) { return Json(result); }
+
+            var csoLogHistory = new CSOLogHistoryViewModel
+            {
+                CSOLogId = model.Id,
+                MonitoringBy = HttpContext.Session.GetInt32("UserId") ?? 0,
+                MonitoringOn = DateTime.Now
+            };
+
+            result = await _csoLogHistoryRepository.UpdateCSOLogHistoryForMonitorAsync(csoLogHistory);
+            if (!result.Success) { return Json(result); }
+
+            return Json(result);
+        }
+
+        public async Task<ActionResult> UpdateCSOLogForCloseAsync(CSOLogViewModel model)
+        {
+            model.Status1 = (int)Status.Close;
+            model.UpdatedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
+            model.UpdatedOn = DateTime.Now;
+
+            var result = await _csoLogAnalRepository.UpdateCSOLogAnalysisForApproveRejectAsync(model);
+            if (!result.Success) { return Json(result); }
+
+            var csoLogHistory = new CSOLogHistoryViewModel
+            {
+                CSOLogId = model.Id,
+                MonitoringBy = HttpContext.Session.GetInt32("UserId") ?? 0,
+                MonitoringOn = DateTime.Now
+            };
+
+            result = await _csoLogHistoryRepository.UpdateCSOLogHistoryForCloseAsync(csoLogHistory);
+            if (!result.Success) { return Json(result); }
 
             return Json(result);
         }

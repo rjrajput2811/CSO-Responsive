@@ -139,19 +139,133 @@ namespace CSO.Core.Repositories.CSOLogAnalysisRepo
                 csoLogData.PKDDate = model.PKDDate;
                 csoLogData.Quantity = model.Quantity;
                 csoLogData.SuppliedQuantity = model.SuppliedQuantity;
-                csoLogData.CatReference = model.CatReference;
+                csoLogData.CatReference = model.CatReference ?? "";
                 csoLogData.IsSampleShipped = model.IsSampleShipped;
                 csoLogData.TrackingNo = model.IsSampleShipped == true ? model.TrackingNo : "";
                 csoLogData.UpdatedBy = model.UserId;
                 csoLogData.UpdatedOn = DateTime.Now;
                 csoLogData.SKUDetails = model.SKUDetails;
-                csoLogData.CorrectiveActionDescription = model.CorrectiveActionDescription;
-                csoLogData.MonitoringofCorrectiveActionDescription = model.MonitoringofCorrectiveActionDescription;
-                csoLogData.PreventiveActionDescription = model.PreventiveActionDescription;
-                csoLogData.RootCauseAnalysisDescription = model.RootCauseAnalysisDescription;
 
                 var result = await base.UpdateAsync<CSOLog>(csoLogData);
                 return result;
+            }
+            catch (Exception ex)
+            {
+                _systemLogService.WriteLog(ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<OperationResult> UpdateCSOLogAnalysisForRootCauseAsync(CSOLogViewModel model)
+        {
+            try
+            {
+                var csoLogData = await base.GetByIdAsync<CSOLog>(model.Id);
+
+                csoLogData.Status1 = model.Status1;
+                csoLogData.RootCauseAnalysisDescription = model.RootCauseAnalysisDescription;
+                csoLogData.CorrectiveActionDescription = model.CorrectiveActionDescription;
+                csoLogData.PreventiveActionDescription = model.PreventiveActionDescription;
+                csoLogData.UpdatedBy = model.UpdatedBy;
+                csoLogData.UpdatedOn = model.UpdatedOn;
+
+                var result = await base.UpdateAsync<CSOLog>(csoLogData);
+
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                _systemLogService.WriteLog(ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<OperationResult> UpdateCSOLogAnalysisForMonitorAsync(CSOLogViewModel model)
+        {
+            try
+            {
+                var csoLogData = await base.GetByIdAsync<CSOLog>(model.Id);
+
+                csoLogData.Status1 = model.Status1;
+                csoLogData.MonitoringofCorrectiveActionDescription = model.MonitoringofCorrectiveActionDescription;
+                csoLogData.UpdatedBy = model.UpdatedBy;
+                csoLogData.UpdatedOn = model.UpdatedOn;
+
+                var result = await base.UpdateAsync<CSOLog>(csoLogData);
+
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                _systemLogService.WriteLog(ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<OperationResult> UpdateCSOLogAnalysisForApproveRejectAsync(CSOLogViewModel model)
+        {
+            try
+            {
+                var csoLogData = await base.GetByIdAsync<CSOLog>(model.Id);
+
+                if (model.Status1 == 4)
+                {
+                    csoLogData.Status1 = (int)Status.Approve;
+                    csoLogData.Review1 = model.Review1;
+                    csoLogData.UpdatedBy = model.UpdatedBy;
+                    csoLogData.UpdatedOn = model.UpdatedOn;
+                }
+                else
+                {
+                    if(model.RejectRevertStatus == "root")
+                    {
+                        csoLogData.Status1 = (int)Status.RootCause;
+                        csoLogData.UpdatedBy = model.UpdatedBy;
+                        csoLogData.UpdatedOn = model.UpdatedOn;
+                    }
+                    if(model.RejectRevertStatus == "monitor")
+                    {
+                        csoLogData.Status1 = (int)Status.Monitor;
+                        csoLogData.UpdatedBy = model.UpdatedBy;
+                        csoLogData.UpdatedOn = model.UpdatedOn;
+                    }
+                    if(model.RejectRevertStatus == "log")
+                    {
+                        csoLogData.Status1 = (int)Status.Open;
+                        csoLogData.UpdatedBy = model.UpdatedBy;
+                        csoLogData.UpdatedOn = model.UpdatedOn;
+                    }
+                }
+
+                var result = await base.UpdateAsync<CSOLog>(csoLogData);
+
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                _systemLogService.WriteLog(ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<OperationResult> UpdateCSOLogAnalysisForCloseAsync(CSOLogViewModel model)
+        {
+            try
+            {
+                var csoLogData = await base.GetByIdAsync<CSOLog>(model.Id);
+
+                csoLogData.Status1 = model.Status1;
+                csoLogData.Review2 = model.Review2;
+                csoLogData.UpdatedBy = model.UpdatedBy;
+                csoLogData.UpdatedOn = model.UpdatedOn;
+
+                var result = await base.UpdateAsync<CSOLog>(csoLogData);
+
+                return result;
+
             }
             catch (Exception ex)
             {

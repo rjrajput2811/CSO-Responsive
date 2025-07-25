@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace CSO.Core.Models;
+﻿namespace CSO.Core.Models;
 
 public class CSOLogHistoryViewModel
 {

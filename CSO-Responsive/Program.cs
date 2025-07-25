@@ -5,6 +5,7 @@ using CSO.Core.Repositories.ComplaintTypeRepo;
 using CSO.Core.Repositories.CSOClassRepo;
 using CSO.Core.Repositories.CSOLogAnalysisRepo;
 using CSO.Core.Repositories.CSOLogFileRepo;
+using CSO.Core.Repositories.CSOLogHistoryRepo;
 using CSO.Core.Repositories.CSOLogRepo;
 using CSO.Core.Repositories.DivisionRepo;
 using CSO.Core.Repositories.MailMatrixRepo;
@@ -50,6 +51,7 @@ builder.Services.AddTransient<ICSOLogFileRepository, CSOLogFileRepository>();
 builder.Services.AddTransient<ICSOLogAnalysisRepository, CSOLogAnalysisRepository>();
 builder.Services.AddTransient<IMailMatrixRepository, MailMatrixRepository>();
 builder.Services.AddTransient<ISecurityActionRepository, SecurityActionRepository>();
+builder.Services.AddTransient<ICSOLogHistoryRepository, CSOLogHistoryRepository>();
 builder.Services.AddScoped<IDbConnection>(db => new SqlConnection(connstring));
 
 
