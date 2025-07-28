@@ -418,6 +418,14 @@ namespace CSO_Responsive.Controllers
 
         public async Task<ActionResult> UpdateCSOLogForApproveRejectAsync(CSOLogViewModel model)
         {
+            if(model.Status == "Approve")
+            {
+                model.Status1 = (int)Status.Approve;
+            }
+            else
+            {
+                model.RejectRevertStatus = model.Status;
+            }
             model.UpdatedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
             model.UpdatedOn = DateTime.Now;
 
@@ -431,7 +439,7 @@ namespace CSO_Responsive.Controllers
                 MonitoringOn = DateTime.Now
             };
 
-            result = await _csoLogHistoryRepository.UpdateCSOLogHistoryForMonitorAsync(csoLogHistory);
+            result = await _csoLogHistoryRepository.UpdateCSOLogHistoryForApproveRejectAsync(csoLogHistory);
             if (!result.Success) { return Json(result); }
 
             return Json(result);
@@ -439,11 +447,14 @@ namespace CSO_Responsive.Controllers
 
         public async Task<ActionResult> UpdateCSOLogForCloseAsync(CSOLogViewModel model)
         {
-            model.Status1 = (int)Status.Close;
+            if (model.Status == "Submit")
+            {
+                model.Status1 = (int)Status.Close;
+            }
             model.UpdatedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
             model.UpdatedOn = DateTime.Now;
 
-            var result = await _csoLogAnalRepository.UpdateCSOLogAnalysisForApproveRejectAsync(model);
+            var result = await _csoLogAnalRepository.UpdateCSOLogAnalysisForCloseAsync(model);
             if (!result.Success) { return Json(result); }
 
             var csoLogHistory = new CSOLogHistoryViewModel

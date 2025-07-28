@@ -272,8 +272,7 @@
                         <label class="custom-label">
                             Samples Shipped
                             <div class="form-check form-switch">
-
-                                @Html.CheckBoxFor(m => m.IsSampleShipped, new { @class = "slider round", @disabled = (!canEdit && !isNew)  ? "disabled" : "" })
+                                @Html.CheckBoxFor(m => m.IsSampleShipped, (!canEdit && !isNew) ? new { @class = "form-control", @disabled = "disabled" } : new { @class = "form-control" })
                             </div>
                         </label>
                     </div>

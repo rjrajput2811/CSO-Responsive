@@ -377,19 +377,19 @@
             <li class="nav-item"><a href="#csoLog" class="nav-link active" data-bs-toggle="tab">CSO Log</a></li>
             @if (canViewRootCause)
             {
-                <li class="nav-item"><a href="#root" class="nav-link" data-bs-toggle="tab">Root Cause</a></li>
+                <li class="nav-item"><a href="#root" id="rootCauseTab" class="nav-link" data-bs-toggle="tab">Root Cause</a></li>
             }
             @if (canViewMonitor)
             {
-                <li class="nav-item"><a href="#monitor" class="nav-link" data-bs-toggle="tab">Monitoring</a></li>
+                <li class="nav-item"><a href="#monitor" id="monitorTab" class="nav-link" data-bs-toggle="tab">Monitoring</a></li>
             }
             @if (canViewApprove)
             {
-                <li class="nav-item"><a href="#approve" class="nav-link" data-bs-toggle="tab">Approve / Reject</a></li>
+                <li class="nav-item"><a href="#approve" id="approveRejectTab" class="nav-link" data-bs-toggle="tab">Approve / Reject</a></li>
             }
             @if (canViewClouser)
             {
-                <li class="nav-item"><a href="#closure" class="nav-link" data-bs-toggle="tab">Closure</a></li>
+                <li class="nav-item"><a href="#closure" id="clousreTab" class="nav-link" data-bs-toggle="tab">Closure</a></li>
             }
         </ul>
 
@@ -693,26 +693,28 @@
                             <h5 class="section-label">Final Review - Approve / Reject</h5>
                             <span class="badge bg-warning text-dark badge-status">Pending Review</span>
                         </div>
-                        <div class="row g-4">
-                            <div class="col-md-8">
-                                @Html.Label("Review Comments")
-                                @Html.TextAreaFor(m => m.Review1, 4, 40, (!canAddApprove && !canEditApprove) ? new { @class = "form-control", @disabled = "disabled" } : new { @class = "form-control" })
+                        <form id="CSOLogApproveReject-form" method="post" asp-action="UpdateCSOLogForApproveReject" asp-controller="CSOLogAnalysisSolution">
+                            <div class="row g-4">
+                                <div class="col-md-8">
+                                    @Html.Label("Review Comments")
+                                    @Html.TextAreaFor(m => m.Review1, 4, 40, (!canAddApprove && !canEditApprove) ? new { @class = "form-control", @disabled = "disabled" } : new { @class = "form-control" })
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="section-label">If Rejected, Revert To</label>
+                                    <select id="revertStatus" class="form-select" disabled>
+                                        <option value="" selected disabled>Select status...</option>
+                                        <option value="root">Root Cause Analysis</option>
+                                        <option value="monitor">Monitoring</option>
+                                        <option value="log">Log CSO</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <label class="section-label">If Rejected, Revert To</label>
-                                <select id="revertStatus" class="form-select" disabled>
-                                    <option selected disabled>Select status...</option>
-                                    <option value="root">Root Cause Analysis</option>
-                                    <option value="monitor">Monitoring</option>
-                                    <option value="log">Log CSO</option>
-                                </select>
-                            </div>
-                        </div>
+                        </form>
                         <div class="text-end mt-4">
                             @if(canAddApprove || canEditApprove)
                             {
-                                <button id="btnReject" class="btn btn-outline-danger me-2">Reject</button>
-                                <button type="button" class="btn btn-success me-2">Approve</button>
+                                <button id="btnReject" type="button" class="btn btn-outline-danger me-2">Reject</button>
+                                <button type="button" class="btn btn-success me-2" onclick="UpdateCSOLogApproveReject('Approve')">Approve</button>
                             }
                             <button type="button" class="btn btn-secondary" onclick="onCancel()">Cancel</button>
                         </div>
@@ -729,19 +731,21 @@
                             <h5 class="section-label">Log Closure</h5>
                             <span class="badge bg-secondary badge-status">Final Step</span>
                         </div>
-                        <div class="mb-3">
-                            @Html.Label("Closure Comments")
-                            @Html.TextAreaFor(m => m.Review2, 4, 40, (!canAddClouser && !canEditClouser) ? new { @class = "form-control", @disabled = "disabled" } : new { @class = "form-control" })
-                        </div>
-                        <div class="mb-3">
-                            <label class="section-label">Closure Date</label>
-                            <input type="date" class="form-control" @Html.Raw((!canAddClouser && canEditClouser) ? "disabled" : "")>
-                        </div>
+                    <form id="CSOLogClose-form" method="post" asp-action="UpdateCSOLogForClose" asp-controller="CSOLogAnalysisSolution">
+                            <div class="mb-3">
+                                @Html.Label("Closure Comments")
+                                @Html.TextAreaFor(m => m.Review2, 4, 40, (!canAddClouser && !canEditClouser) ? new { @class = "form-control", @disabled = "disabled" } : new { @class = "form-control" })
+                            </div>
+                            <div class="mb-3">
+                                <label class="section-label">Closure Date</label>
+                                <input type="date" class="form-control" @Html.Raw((!canAddClouser && canEditClouser) ? "disabled" : "")>
+                            </div>
+                        </form>
                         <div class="text-end">
                             @if(canAddClouser || canEditClouser)
                             {
-                                <button type="button" class="btn btn-outline-info">Save</button>
-                                <button type="button" class="btn btn-success">Close Log</button>
+                                <button type="button" class="btn btn-outline-info" onclick="UpdateCSOLogClose('Save')">Save</button>
+                                <button type="button" class="btn btn-success" onclick="UpdateCSOLogClose('Submit')">Close Log</button>
                             }
                             <button type="button" class="btn btn-secondary" onclick="onCancel()">Cancel</button>
                         </div>
@@ -762,8 +766,35 @@
              const rejectBtn = document.getElementById("btnReject");
              const revertDropdown = document.getElementById("revertStatus");
              rejectBtn.addEventListener("click", function () {
-               revertDropdown.removeAttribute("disabled");
-               revertDropdown.focus();
+                const requiredFields = [
+                    { id: 'Review1', name: 'Review Comments' }
+                ];
+
+                let isValid = true;
+                let missingFields = [];
+
+                requiredFields.forEach(field => {
+                    const element = $('#' + field.id);
+                    if (!element.val()) {
+                        isValid = false;
+                        missingFields.push(field.name);
+                        element.addClass('missing-field');
+                    }
+                });
+
+                if (!isValid) {
+                    const missingFieldsList = missingFields.map(field => `<li>${field}</li>`).join('');
+                    const alertMessage = `
+                            <p>Please fill out the following required field(s):</p>
+                            <ul>${missingFieldsList}</ul>
+                        `;
+                    showDangerAlert(alertMessage);
+                    return false;
+                }
+                else{
+                    revertDropdown.removeAttribute("disabled");
+                    revertDropdown.focus();
+                }
              });
         });
 

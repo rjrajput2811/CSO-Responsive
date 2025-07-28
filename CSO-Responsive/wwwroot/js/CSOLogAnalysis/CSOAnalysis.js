@@ -91,7 +91,7 @@
         $.ajax({
             url: $("#hf_GetNearestPlantListByPlantAndUser").val(),
             type: "GET",
-            data: { brandId: $("#BrandId").val() },
+            data: { plantId: $("#PlantId").val() },
             success: function (response) {
                 $('#NearestPlantId').empty();
                 $('#NearestPlantId').append($('<option>').val('').text('Select Nearest Plant'));
@@ -118,6 +118,12 @@
                 showDangerAlert('Error retrieving data: ' + error);
             }
         });
+    });
+
+    $("#revertStatus").on('change', function () {
+        if ($("#revertStatus").val() != "") {
+            UpdateCSOLogApproveReject($("#revertStatus").val());
+        }
     });
 });
 
@@ -414,8 +420,82 @@ function UpdateCSOLogMonitor(status) {
 
 function UpdateCSOLogApproveReject(status) {
     Blockloadershow();
+    if (status == 'Approve') {
+        const requiredFields = [
+            { id: 'Review1', name: 'Review Comments' }
+        ];
+
+        let isValid = true;
+        let missingFields = [];
+
+        requiredFields.forEach(field => {
+            const element = $('#' + field.id);
+            if (!element.val()) {
+                isValid = false;
+                missingFields.push(field.name);
+                element.addClass('missing-field');
+            }
+        });
+
+        if (!isValid) {
+            const missingFieldsList = missingFields.map(field => `<li>${field}</li>`).join('');
+            const alertMessage = `
+                <p>Please fill out the following required field(s):</p>
+                <ul>${missingFieldsList}</ul>
+            `;
+            showDangerAlert(alertMessage);
+            Blockloaderhide();
+            return false;
+        }
+    }
+
+    const form = $('#CSOLogApproveReject-form')[0];
+    const formData = new FormData(form);
+
+    formData.append('Id', csoLogId);
+    formData.append('Status', status);
+
+    $.ajax({
+        url: $('#CSOLogApproveReject-form').attr('action'),
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            Blockloaderhide();
+            if (!response.success) {
+                var errorMessg = "";
+                for (var error in response.errors) {
+                    errorMessg += error + "\n";
+                }
+                if (errorMessg != "") {
+                    showDangerAlert(errorMessg);
+                }
+                else {
+                    showDangerAlert(response.message);
+                }
+                return false;
+            }
+            else {
+                if (status == 'Save') {
+                    showSuccessAlert("CSO Log Saved Successfully.");
+                }
+                else {
+                    showSuccessAlert("CSO Log Submited Successfully.");
+                }
+            }
+        },
+        error: function (xhr, status, error) {
+            Blockloaderhide();
+            showDangerAlert('Error saving data: ' + error);
+        }
+    });
+}
+
+function UpdateCSOLogClose(status) {
+    Blockloadershow();
     const requiredFields = [
-        { id: 'MonitoringofCorrectiveActionDescription', name: 'Monitoring of Corrective Action' }
+        { id: 'Review2', name: 'Closure Comments' }
     ];
 
     let isValid = true;
@@ -441,36 +521,14 @@ function UpdateCSOLogApproveReject(status) {
         return false;
     }
 
-    var files = $('#monitorFile')[0].files;
-
-    //if (files.length === 0 && csoLogId == 0) {
-    //    showDangerAlert('Please select at least one file to upload.');
-    //    Blockloaderhide();
-    //    return false;
-    //}
-
-    const form = $('#CSOLogMonitor-form')[0];
+    const form = $('#CSOLogClose-form')[0];
     const formData = new FormData(form);
 
     formData.append('Id', csoLogId);
     formData.append('Status', status);
 
-    const maxFileSizeMB = 5;
-    const maxFileSizeBytes = maxFileSizeMB * 1024 * 1024;
-
-    for (let i = 0; i < files.length; i++) {
-        if (files[i].size > maxFileSizeBytes) {
-            showDangerAlert(`File "${files[i].name}" exceeds the 5MB limit.`);
-            return false;
-        }
-    }
-
-    for (var i = 0; i < files.length; i++) {
-        formData.append('files', files[i]);
-    }
-
     $.ajax({
-        url: $('#CSOLogMonitor-form').attr('action'),
+        url: $('#CSOLogClose-form').attr('action'),
         type: 'POST',
         data: formData,
         processData: false,
@@ -492,10 +550,10 @@ function UpdateCSOLogApproveReject(status) {
             }
             else {
                 if (status == 'Save') {
-                    showSuccessAlert("CSO Log Monitor Saved Successfully.");
+                    showSuccessAlert("CSO Log Saved Successfully.");
                 }
                 else {
-                    showSuccessAlert("CSO Log Monitor Submited Successfully.");
+                    showSuccessAlert("CSO Log Closed Successfully.");
                 }
             }
         },
