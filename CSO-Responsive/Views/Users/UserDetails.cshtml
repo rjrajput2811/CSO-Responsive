@@ -17,7 +17,7 @@
     var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_USERS, (int)userRoleId);
     var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_USERS, (int)userRoleId);
     var isNew = Model.Id == 0;
-    var disableSelect = (canEdit && !isNew) ? "disabled=\"disabled\"" : "";
+    var disableSelect = (!canEdit && !isNew) ? "disabled=\"disabled\"" : "";
 }
 
 <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
@@ -107,136 +107,134 @@
             </div>
         </div>
     </div>
-
-                <form id="userForm" method="post" asp-action="InsertUpdateUser" asp-controller="Users">
-
-                    <!-- Personal Information -->
-            <div class="card">
-                <div class="section-title">
-                            <label class="mb-0"><i class="fas fa-user"></i>Personal Information</label>
-                        </div>
-                        <div class="card-body">
-                            @Html.HiddenFor(m => m.Id)
-                            <div class="row">
-                                <div class="col-lg-2 mb-3">
-                                    @Html.LabelFor(m => m.ADid, new { @class = "custom-label" })<em>*</em>
-                                    @Html.TextBoxFor(l => l.ADid, new { @id = "txtADid", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
-                                    @Html.ValidationMessageFor(l => l.ADid, "", new { @class = "text-danger" })
-                                </div>
-
-                                <div class="col-lg-3 mb-3">
-                                    @Html.LabelFor(m => m.Name, new { @class = "custom-label" })<em>*</em>
-                                    @Html.TextBoxFor(l => l.Name, new { @id = "txtName", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
-                                    @Html.ValidationMessageFor(l => l.Name, "", new { @class = "text-danger" })
-                                </div>
-                                <div class="col-lg-3 mb-3">
-                                  @Html.LabelFor(m => m.Email, new { @class = "custom-label" })<em>*</em>
-                                    @Html.TextBoxFor(l => l.Email, new { @id = "txtEmail", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
-                                    @Html.ValidationMessageFor(l => l.Email, "", new { @class = "text-danger" })
-                                </div>
-                                <div class="col-lg-2 mb-3">
-                                    @Html.LabelFor(m => m.MobileNo, new { @class = "custom-label" })<em>*</em>
-                                    @Html.TextBoxFor(l => l.MobileNo, new { @id = "txtMobile", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
-                                    @Html.ValidationMessageFor(l => l.MobileNo, "", new { @class = "text-danger" })
-                                </div>
-                                <div class="col-lg-2 mb-3">
-                            @Html.LabelFor(m => m.Designation, new { @class = "custom-label" })<em>*</em>
-                                    @Html.TextBoxFor(l => l.Designation, new { @id = "txtDesignation", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
-                                    @Html.ValidationMessageFor(l => l.Designation, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                        </div>
-                   </div>
-                    <!-- Access & Role -->
+    <form id="userForm" method="post" asp-action="InsertUpdateUser" asp-controller="Users">
+        <!-- Personal Information -->
         <div class="card">
-                <div class="section-title">
-                            <label class="mb-0"><i class="fas fa-key"></i> Access & Role</label>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-12 col-md-6 col-lg-3 mb-3">
-                            @Html.LabelFor(m => m.RoleId, new { @class = "custom-label" })<em>*</em>
-                                    @Html.DropDownListFor(l => l.RoleId, (IEnumerable<SelectListItem>)ViewBag.RoleList, "Select Role", new { @id = "ddlRole", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
-                                    @Html.ValidationMessageFor(l => l.RoleId, "", new { @class = "text-danger" })
-                                </div>
+            <div class="section-title">
+                <label class="mb-0"><i class="fas fa-user"></i>Personal Information</label>
+            </div>
+             <div class="card-body">
+                 @Html.HiddenFor(m => m.Id)
+                 <div class="row">
+                     <div class="col-lg-2 mb-3">
+                         @Html.LabelFor(m => m.ADid, new { @class = "custom-label" })<em>*</em>
+                         @Html.TextBoxFor(l => l.ADid, (!canEdit && !isNew) ? new { @id = "txtADid", @class = "form-control", @disabled = "disabled" } : new { @id = "txtADid", @class = "form-control" })
+                         @Html.ValidationMessageFor(l => l.ADid, "", new { @class = "text-danger" })
+                     </div>
 
-                                <div class="col-12 col-md-6 col-lg-3 mb-3">
-                            @Html.LabelFor(m => m.UserType, new { @class = "custom-label" })<em>*</em>
-                                    @Html.DropDownListFor(l => l.UserType, (IEnumerable<SelectListItem>)ViewBag.UserTypeList, "Select User Type", new { @id = "ddlUserType", @class = "form-control", @disabled = (canEdit && !isNew) ? "disabled" : "" })
-                                    @Html.ValidationMessageFor(l => l.UserType, "", new { @class = "text-danger" })
-                                </div>
+                     <div class="col-lg-3 mb-3">
+                         @Html.LabelFor(m => m.Name, new { @class = "custom-label" })<em>*</em>
+                         @Html.TextBoxFor(l => l.Name, (!canEdit && !isNew) ? new { @id = "txtName", @class = "form-control", @disabled = "disabled" } : new { @id = "txtName", @class = "form-control" })
+                         @Html.ValidationMessageFor(l => l.Name, "", new { @class = "text-danger" })
+                     </div>
+                     <div class="col-lg-3 mb-3">
+                       @Html.LabelFor(m => m.Email, new { @class = "custom-label" })<em>*</em>
+                         @Html.TextBoxFor(l => l.Email, (!canEdit && !isNew) ? new { @id = "txtEmail", @class = "form-control", @disabled = "disabled" } : new { @id = "txtEmail", @class = "form-control" })
+                         @Html.ValidationMessageFor(l => l.Email, "", new { @class = "text-danger" })
+                     </div>
+                     <div class="col-lg-2 mb-3">
+                         @Html.LabelFor(m => m.MobileNo, new { @class = "custom-label" })<em>*</em>
+                         @Html.TextBoxFor(l => l.MobileNo, (!canEdit && !isNew) ? new { @id = "txtMobile", @class = "form-control", @disabled = "disabled" } : new { @id = "txtMobile", @class = "form-control" })
+                         @Html.ValidationMessageFor(l => l.MobileNo, "", new { @class = "text-danger" })
+                     </div>
+                     <div class="col-lg-2 mb-3">
+                 @Html.LabelFor(m => m.Designation, new { @class = "custom-label" })<em>*</em>
+                         @Html.TextBoxFor(l => l.Designation, (!canEdit && !isNew) ? new { @id = "txtDesignation", @class = "form-control", @disabled = "disabled" } : new { @id = "txtDesignation", @class = "form-control" })
+                         @Html.ValidationMessageFor(l => l.Designation, "", new { @class = "text-danger" })
+                     </div>
+                 </div>
+             </div>
+        </div>
 
-                                <div class="col-12 col-md-12 col-lg-4 mb-3">
-                            @Html.LabelFor(m => m.DivisionId, new { @class = "custom-label" })<em>*</em><br />
-                                    <div class="lstDivisionCtr">
-                                        <select tabindex="-1" class="lstDivision select2 w-100" onload="GetDivisionList(@Model.DivisionId)" multiple="multiple" id="lstDivision" placeholder="Select Section" @Html.Raw(disableSelect)>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-              </div>
-
-
-                    <!-- Organization Details -->
+        <!-- Access & Role -->
         <div class="card">
-                <div class="section-title">
-                            <label class="mb-0"><i class="fas fa-building"></i> Organization Details</label>
+            <div class="section-title">
+                <label class="mb-0"><i class="fas fa-key"></i> Access & Role</label>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-md-6 col-lg-3 mb-3">
+                @Html.LabelFor(m => m.RoleId, new { @class = "custom-label" })<em>*</em>
+                        @Html.DropDownListFor(l => l.RoleId, (IEnumerable<SelectListItem>)ViewBag.RoleList, "Select Role", (!canEdit && !isNew) ? new { @id = "ddlRole", @class = "form-control", @disabled = "disabled" } : new { @id = "ddlRole", @class = "form-control" })
+                        @Html.ValidationMessageFor(l => l.RoleId, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-3 mb-3">
+                @Html.LabelFor(m => m.UserType, new { @class = "custom-label" })<em>*</em>
+                        @Html.DropDownListFor(l => l.UserType, (IEnumerable<SelectListItem>)ViewBag.UserTypeList, "Select User Type", (!canEdit && !isNew) ? new { @id = "ddlUserType", @class = "form-control", @disabled = "disabled" } : new { @id = "ddlUserType", @class = "form-control" })
+                        @Html.ValidationMessageFor(l => l.UserType, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-12 col-md-12 col-lg-4 mb-3">
+                @Html.LabelFor(m => m.DivisionId, new { @class = "custom-label" })<em>*</em><br />
+                        <div class="lstDivisionCtr">
+                            <select tabindex="-1" class="lstDivision select2 w-100" onload="GetDivisionList(@Model.DivisionId)" multiple="multiple" id="lstDivision" placeholder="Select Section" @Html.Raw(disableSelect)>
+                            </select>
                         </div>
-                        <div class="card-body row">
-                            <div class="col-lg-4 mb-3">
-                        @Html.LabelFor(m => m.PlantId, new { @class = "custom-label" })<em>*</em>
-                                <br />
-                                <div class="lstPlantCtr">
-                                    <select tabindex="-1" class="lstPlant select2 w-100" multiple="multiple" id="lstPlant" placeholder="Select Plant" @Html.Raw(disableSelect)>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 mb-3">
-                        @Html.LabelFor(m => m.NearestPlantId, new { @class = "custom-label" })<em>*</em>
-                                <br />
-                                <div class="lstNPlantCtr">
-                                    <select tabindex="-1" class="lstNPlant select2 w-100" multiple="multiple" id="lstNPlant" placeholder="Select Nearest Plant" @Html.Raw(disableSelect)>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
                 </div>
-
-                    <!-- Product Preferences -->
+            </div>
+        </div>
+        
+        <!-- Organization Details -->
         <div class="card">
-                <div class="section-title">
-                            <label class="mb-0"><i class="fas fa-boxes"></i> Product Preferences</label>
-                        </div>
-                        <div class="card-body row">
-                            <div class="col-lg-4 mb-3">
-                        @Html.LabelFor(m => m.BrandId, new { @class = "custom-label" })<em>*</em>
-                                <br />
-                                <div class="lstBrandCtr">
-                                    <select tabindex="-1" class="lstBrand select2 w-100" multiple="multiple" id="lstBrand" placeholder="Select Brand" @Html.Raw(disableSelect)>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 mb-3">
-                        @Html.LabelFor(m => m.ProductTypeId, new { @class = "custom-label" })<em>*</em>
-                                <br />
-                                <div class="lstProductTypeCtr">
-                                    <select tabindex="-1" class="lstProductType select2 w-100" multiple="multiple" id="lstProductType" placeholder="Select ProductType" @Html.Raw(disableSelect)>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 mb-4">
-                                <div class="form-check mt-2">
-                                    @Html.LabelFor(m => m.IsInMailMatrix, new { @class = "mb-0 mr-2 custom-label" })
-                                    @Html.CheckBoxFor(m => m.IsInMailMatrix, new { id = "chkIsInMailMatrix", @disabled = (canEdit && !isNew) ? "disabled" : "" })
-                                </div>
-                            </div>
-                        </div>
+            <div class="section-title">
+                <label class="mb-0"><i class="fas fa-building"></i> Organization Details</label>
+            </div>
+            <div class="card-body row">
+                <div class="col-lg-4 mb-3">
+            @Html.LabelFor(m => m.PlantId, new { @class = "custom-label" })<em>*</em>
+                    <br />
+                    <div class="lstPlantCtr">
+                        <select tabindex="-1" class="lstPlant select2 w-100" multiple="multiple" id="lstPlant" placeholder="Select Plant" @Html.Raw(disableSelect)>
+                        </select>
+                    </div>
                 </div>
+                <div class="col-lg-4 mb-3">
+            @Html.LabelFor(m => m.NearestPlantId, new { @class = "custom-label" })<em>*</em>
+                    <br />
+                    <div class="lstNPlantCtr">
+                        <select tabindex="-1" class="lstNPlant select2 w-100" multiple="multiple" id="lstNPlant" placeholder="Select Nearest Plant" @Html.Raw(disableSelect)>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Preferences -->
+        <div class="card">
+            <div class="section-title">
+                <label class="mb-0"><i class="fas fa-boxes"></i> Product Preferences</label>
+            </div>
+            <div class="card-body row">
+                <div class="col-lg-4 mb-3">
+            @Html.LabelFor(m => m.BrandId, new { @class = "custom-label" })<em>*</em>
+                    <br />
+                    <div class="lstBrandCtr">
+                        <select tabindex="-1" class="lstBrand select2 w-100" multiple="multiple" id="lstBrand" placeholder="Select Brand" @Html.Raw(disableSelect)>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-3">
+            @Html.LabelFor(m => m.ProductTypeId, new { @class = "custom-label" })<em>*</em>
+                    <br />
+                    <div class="lstProductTypeCtr">
+                        <select tabindex="-1" class="lstProductType select2 w-100" multiple="multiple" id="lstProductType" placeholder="Select ProductType" @Html.Raw(disableSelect)>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="form-check mt-2">
+                        @Html.LabelFor(m => m.IsInMailMatrix, new { @class = "mb-0 mr-2 custom-label" })
+                        @Html.CheckBoxFor(m => m.IsInMailMatrix, (!canEdit && !isNew) ? new { @id = "chkIsInMailMatrix", @class = "form-control", @disabled = "disabled" } : new { @id = "chkIsInMailMatrix", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+        </div>
               
 
-                </form>
-            </div>
+    </form>
+</div>
       
    
 @section Scripts {
