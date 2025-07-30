@@ -349,7 +349,7 @@
                 <span class="badge mr-2"></span> @* badge-mark  border-orange-300*@
                 Customer Satisfaction Opportunities
                 @*<span style="font-size:12px;">Version:@CSO.Web.HtmlHelperExtensions.GetApplicationVersion()</span>*@
-                <span style="font-size:12px;">Version:3.14  Date: 10-04-2025</span>
+                <span style="font-size:12px;">Version:1.0  Date:01-05-2025</span>
             </span>
 
 
@@ -536,7 +536,7 @@
                     @if((canEmailSmtpSettingsShowOnMobile || canEmailSmtpSettingsShowOnDesktop) && canViewEmailSmtpSettings)
                     {
                         <li class="nav-item">
-                            <a asp-controller="EmailConfiguration" asp-action="AddEditEmailConfiguration" class="nav-link" id="EmailConfiguration" title="Email/SMTP Setting">
+                                <a asp-controller="SMTPSetting" asp-action="SMTPSetting" class="nav-link" id="EmailConfiguration" title="Email/SMTP Setting">
                                 <i class="fas fa-envelope-square"></i>
                                 <span>
                                     Email/SMTP Setting
