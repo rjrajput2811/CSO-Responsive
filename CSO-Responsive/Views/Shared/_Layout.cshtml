@@ -470,7 +470,7 @@
                     @if((canDashboardShowOnMobile || canDashboardShowOnDesktop) && canViewDashboard)
                     {
                         <li class="nav-item">
-                            <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-link" id="Dashboard" title="Dashboard">
+                            <a asp-controller="Dashboard" asp-action="Index" class="nav-link" id="Dashboard" title="Dashboard">
                                 <i class="icon-home4"></i>
                                 <span>
                                     Dashboard
@@ -598,19 +598,17 @@
 
                         </li>
                     }
-                        
-                            
-
-                            
-                       
-                            <li class="nav-item">
-                            <a asp-controller="MailMatrix" asp-action="MailMatrix" class="nav-link" id="EmailConfiguration" title="Email/SMTP Setting">
-                                    <i class="fas fa-envelope-square"></i>
-                                    <span>
-                                        Mail Matrix
-                                    </span>
-                                </a>
-                            </li>
+                    @if ((canMailMatrixShowOnMobile || canMailMatrixShowOnDesktop) && canViewMailMatrix)
+                    {
+                        <li class="nav-item">
+                            <a asp-controller="MailMatrix" asp-action="Index" class="nav-link" id="MailMatrix" title="Mail Matrix">
+                                <i class="fas fa-envelope-square"></i>
+                                <span>
+                                    Mail Matrix
+                                </span>
+                            </a>
+                        </li>
+                    }
                         
                     </ul>
                 </div>

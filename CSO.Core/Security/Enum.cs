@@ -5,6 +5,13 @@ public enum UserType
     Manager = 0,
     General = 1
 }
+public enum MailType
+{
+    NewUserRegistration = 1,
+    CsoMovement = 2,
+    CsoClosure = 3,
+    CsoMonthlyMail = 4
+}
 
 public enum Permissions
 {

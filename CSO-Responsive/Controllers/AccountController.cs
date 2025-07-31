@@ -42,7 +42,7 @@ namespace CSO_Responsive.Controllers
                         HttpContext.Session.SetString("FYear", ((DateTime.Now.Year - 1).ToString().Substring(2) + (DateTime.Now.Year).ToString().Substring(2)));
                     }
 
-                    return RedirectToAction("DashBoard", "DashBoard");
+                    return RedirectToAction("Index", "DashBoard");
                     
                     
                 }

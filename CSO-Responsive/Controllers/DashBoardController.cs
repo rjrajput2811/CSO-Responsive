@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace CSO_Responsive.Controllers
+namespace CSO_Responsive.Controllers;
+
+public class DashBoardController : Controller
 {
-    public class DashBoardController : Controller
+    public IActionResult Index()
     {
-        public IActionResult DashBoard()
-        {
-            return View();
-        }
+        return View();
     }
 }
