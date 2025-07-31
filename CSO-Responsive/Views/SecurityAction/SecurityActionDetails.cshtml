@@ -16,7 +16,7 @@
     var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_USERS, (int)userRoleId);
     var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_USERS, (int)userRoleId);
     var isNew = Model.UserRoleId == 0;
-    var disableCheck = ((canEdit && !isNew) || Model.UserRoleId == 7) ? "disabled=\"disabled\"" : "";
+    var disableCheck = ((!canEdit && !isNew) || Model.UserRoleId == 7) ? "disabled=\"disabled\"" : "";
 }
 
 <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
@@ -1119,6 +1119,34 @@
 
         function savePermissions() {
             Blockloadershow();
+
+            const requiredFields = [
+                { id: 'UserRoleName', name: 'Role Name' }
+            ];
+
+            let isValid = true;
+            let missingFields = [];
+
+            requiredFields.forEach(field => {
+                const element = $('#' + field.id);
+                if (!element.val()) {
+                    isValid = false;
+                    missingFields.push(field.name);
+                    element.addClass('missing-field');
+                }
+            });
+
+            if (!isValid) {
+                const missingFieldsList = missingFields.map(field => `<li>${field}</li>`).join('');
+                const alertMessage = `
+                        <p>Please fill out the following required field(s):</p>
+                        <ul>${missingFieldsList}</ul>
+                    `;
+                showDangerAlert(alertMessage);
+                Blockloaderhide();
+                return false;
+            }
+
             var model = [];
 
             $('.action-checkbox:checked').each(function () {

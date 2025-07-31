@@ -53,12 +53,31 @@ public class ProductTypeRepository : SqlTableRepository, IProductTypeRepository
                 return new List<ProductTypeViewModel>();
 
             // Parse string to List<int>
-            var ProductTypeIdList = userAssignedProductTypes
+            var ProductTypeIdList = new List<int>();
+
+            if (userAssignedProductTypes.Contains("["))
+            {
+                ProductTypeIdList = userAssignedProductTypes
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(entry =>
+                    {
+                        var cleaned = entry.Trim('[', ']');
+                        var parts = cleaned.Split('-', StringSplitOptions.RemoveEmptyEntries);
+                        return parts.Length == 2 && int.TryParse(parts[1], out var secondId) ? secondId : (int?)null;
+                    })
+                    .Where(id => id.HasValue)
+                    .Select(id => id.Value)
+                    .ToList();
+            }
+            else
+            {
+                ProductTypeIdList = userAssignedProductTypes
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(id => int.TryParse(id, out var value) ? value : (int?)null)
                 .Where(id => id.HasValue)
                 .Select(id => id.Value)
                 .ToList();
+            }            
 
             // Early return if no valid IDs
             if (ProductTypeIdList.Count == 0)
