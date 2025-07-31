@@ -97,4 +97,8 @@ public class CSOLogViewModel
     public string? RejectRevertStatus { get; set; }
     public List<IFormFile> files { get; set; } = new List<IFormFile>();
 
+    public bool IsRootCauseSubmitted { get; set; }
+    public bool IsMonitorSubmitted { get; set; }
+    public bool IsApproveSubmitted { get; set; }
+
 }

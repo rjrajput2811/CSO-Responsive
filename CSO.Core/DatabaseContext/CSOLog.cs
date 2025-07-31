@@ -105,4 +105,8 @@ public class CSOLog : SqlTable
     [ForeignKey("NearestPlantId")]
     public virtual NearestPlant? NearestPlants { get; set; }
 
+    public bool IsRootCauseSubmitted { get; set; }
+    public bool IsMonitorSubmitted { get; set; }
+    public bool IsApproveSubmitted { get; set; }
+
 }

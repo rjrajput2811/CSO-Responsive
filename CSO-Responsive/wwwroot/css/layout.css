@@ -464,7 +464,7 @@ body {
     color: rgba(255, 255, 255, 0.9);
     border-bottom-color: rgba(255, 255, 255, 0.1); }
     .sidebar-dark .sidebar-mobile-toggler:not([class*=bg-]) {
-      background-color: #1e272c; }
+     }
     .sidebar-dark .sidebar-mobile-toggler a {
       color: rgba(255, 255, 255, 0.9); }
       .sidebar-dark .sidebar-mobile-toggler a:hover {
@@ -1103,3 +1103,4 @@ body {
     margin-left: 1.25rem; }
   .breadcrumb-line > .content-boxed > *:last-child {
     margin-right: 1.25rem; } }
+/* Sidebar hover open in collapsed mode */
