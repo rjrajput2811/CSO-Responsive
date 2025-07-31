@@ -197,6 +197,9 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
                 PreventiveActionDescription = csoLogDetails.PreventiveActionDescription,
                 CorrectiveActionDescription = csoLogDetails.CorrectiveActionDescription,
                 MonitoringofCorrectiveActionDescription = csoLogDetails.MonitoringofCorrectiveActionDescription,
+                IsRootCauseSubmitted = csoLogDetails.IsRootCauseSubmitted,
+                IsMonitorSubmitted = csoLogDetails.IsMonitorSubmitted,
+                IsApproveSubmitted = csoLogDetails.IsApproveSubmitted,
             };
             return result;
         }

@@ -290,6 +290,7 @@ namespace CSO_Responsive.Controllers
             if (model.Status == "Submit")
             {
                 model.Status1 = (int)Status.RootCause;
+                model.IsRootCauseSubmitted = true;
             }
             
             model.UpdatedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -362,6 +363,7 @@ namespace CSO_Responsive.Controllers
             if (model.Status == "Submit")
             {
                 model.Status1 = (int)Status.Monitor;
+                model.IsMonitorSubmitted = true;
             }
 
             model.UpdatedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -421,6 +423,7 @@ namespace CSO_Responsive.Controllers
             if(model.Status == "Approve")
             {
                 model.Status1 = (int)Status.Approve;
+                model.IsApproveSubmitted = true;
             }
             else
             {

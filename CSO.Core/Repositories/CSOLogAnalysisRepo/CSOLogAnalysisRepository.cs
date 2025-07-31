@@ -163,6 +163,7 @@ namespace CSO.Core.Repositories.CSOLogAnalysisRepo
                 var csoLogData = await base.GetByIdAsync<CSOLog>(model.Id);
 
                 csoLogData.Status1 = model.Status1;
+                csoLogData.IsRootCauseSubmitted = model.IsRootCauseSubmitted;
                 csoLogData.RootCauseAnalysisDescription = model.RootCauseAnalysisDescription;
                 csoLogData.CorrectiveActionDescription = model.CorrectiveActionDescription;
                 csoLogData.PreventiveActionDescription = model.PreventiveActionDescription;
@@ -188,6 +189,7 @@ namespace CSO.Core.Repositories.CSOLogAnalysisRepo
                 var csoLogData = await base.GetByIdAsync<CSOLog>(model.Id);
 
                 csoLogData.Status1 = model.Status1;
+                csoLogData.IsMonitorSubmitted = model.IsMonitorSubmitted;
                 csoLogData.MonitoringofCorrectiveActionDescription = model.MonitoringofCorrectiveActionDescription;
                 csoLogData.UpdatedBy = model.UpdatedBy;
                 csoLogData.UpdatedOn = model.UpdatedOn;
@@ -213,6 +215,7 @@ namespace CSO.Core.Repositories.CSOLogAnalysisRepo
                 if (model.Status1 == 4)
                 {
                     csoLogData.Status1 = (int)Status.Approve;
+                    csoLogData.IsApproveSubmitted = model.IsApproveSubmitted;
                     csoLogData.Review1 = model.Review1;
                     csoLogData.UpdatedBy = model.UpdatedBy;
                     csoLogData.UpdatedOn = model.UpdatedOn;
