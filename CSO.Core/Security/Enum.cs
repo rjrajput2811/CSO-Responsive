@@ -21,3 +21,15 @@ public enum Permissions
     AdminRights = 11,
     MailMatrixConfiguration = 12
 }
+
+public enum Role
+{
+    None = 0,
+    MQHead = 1,
+    BUHead = 2,
+    FactoryHead = 3,
+    ProductionTeam = 4,
+    QualityTeam = 5,
+    GeneralStaff = 6,
+    Admin = 7
+}

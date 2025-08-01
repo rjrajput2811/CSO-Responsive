@@ -22,6 +22,7 @@ public class ComplaintTypeRepository : SqlTableRepository, IComplaintTypeReposit
         try
         {
             var list = await _dbContext.ComplaintTypes
+                 .OrderBy(x => x.Name) 
                 .Select(x => new ComplaintTypeViewModel
                 {
                     Id = x.Id,

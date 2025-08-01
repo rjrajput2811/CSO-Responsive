@@ -451,16 +451,18 @@
             document.querySelectorAll('.form-control').forEach(function (input) {
                 if (input.tagName === 'INPUT') {
                     if (input.type === 'hidden' || input.readOnly) {
-                        // Skip hidden or readonly inputs
                         return;
                     }
-                    input.value = ''; // Clear input value
+                    input.value = '';
                 } else if (input.tagName === 'SELECT') {
-                    input.selectedIndex = 0; // Reset dropdown to first option
+                    // Reset select and update Select2 if applied
+                    $(input).val(null).trigger('change'); // handles both normal and Select2 dropdowns
+                } else if (input.tagName === 'TEXTAREA') {
+                    input.value = '';
                 }
             });
 
-            // Clear error messages if needed
+            // Clear error messages
             document.querySelectorAll('.text-danger').forEach(function (error) {
                 error.textContent = '';
             });

@@ -116,14 +116,14 @@
     var canSecurityActionsShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_SECURITY_ACTIONS, (int)userRoleId);
     var canViewSecurityActions = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_SECURITY_ACTIONS, (int)userRoleId);
 
-    var canShowCSOLogAnalysisAndSolutions = ((canRootCauseShowOnMobile || canRootCauseShowOnDesktop) || (canMonitorShowOnMobile || canMonitorShowOnDesktop) 
-                                             || (canApproveShowOnMobile || canApproveShowOnDesktop) || (canClosureShowOnMobile || canClosureShowOnDesktop)) 
+    var canShowCSOLogAnalysisAndSolutions = ((canRootCauseShowOnMobile || canRootCauseShowOnDesktop) || (canMonitorShowOnMobile || canMonitorShowOnDesktop)
+                                             || (canApproveShowOnMobile || canApproveShowOnDesktop) || (canClosureShowOnMobile || canClosureShowOnDesktop))
                                              && (canViewRootCause || canViewMonitor || canViewApprove || canViewClosure);
     var canShowReports = ((canMISShowOnMobile || canMISShowOnDesktop) || (canCSOLogReportShowOnMobile || canCSOLogReportShowOnDesktop)) && (canViewMIS || canViewCSOLogReport);
-    var canShowMasters = ((canDivisionShowOnMobile || canDivisionShowOnDesktop) || (canCategoryShowOnMobile || canCategoryShowOnDesktop) || (canComplainTypeShowOnMobile || canComplainTypeShowOnDesktop) 
+    var canShowMasters = ((canDivisionShowOnMobile || canDivisionShowOnDesktop) || (canCategoryShowOnMobile || canCategoryShowOnDesktop) || (canComplainTypeShowOnMobile || canComplainTypeShowOnDesktop)
                           || (canCSOClassShowOnMobile || canCSOClassShowOnDesktop) || (canBrandShowOnMobile || canBrandShowOnDesktop) || (canProductTypeShowOnMobile || canProductTypeShowOnDesktop)
                           || (canPlantShowOnMobile || canPlantShowOnDesktop) || (canNearestPlantShowOnMobile || canNearestPlantShowOnDesktop) || (canRecycleDaysConfigurationShowOnMobile || canRecycleDaysConfigurationShowOnDesktop)
-                          || (canSecurityActionsShowOnMobile || canSecurityActionsShowOnDesktop)) 
+                          || (canSecurityActionsShowOnMobile || canSecurityActionsShowOnDesktop))
                           && (canViewDivision || canViewCategory || canViewComplainType || canViewCSOClass || canViewBrand || canViewProductType || canViewPlant || canViewNearestPlant
                           || canViewRecycleDaysConfiguration || canViewSecurityActions);
 }
@@ -147,7 +147,7 @@
     <link href="~/css/colors.min.css" rel="stylesheet" type="text/css" />
     <link href="~/css/switch.css" rel="stylesheet" />
     <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
-    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" /> 
+    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" />
     <link href="~/js/sweetalert/sweetalert.css" rel="stylesheet" />
     <link href="~/css/buttons.dataTables.min.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" type="text/css" />
@@ -155,8 +155,8 @@
 
     @RenderSection("styles", false)
 
-    
-@*     <link rel="stylesheet" href="~/css/font-awesome.min.css"> *@
+
+    @*     <link rel="stylesheet" href="~/css/font-awesome.min.css"> *@
 
     <script>
         $(document).ready(function () {
@@ -189,47 +189,63 @@
                 // Send the selected year to the server and refresh the page
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("SetFinancialYear", "Home")', 
+                    url: '@Url.Action("SetFinancialYear", "Home")',
                     data: { fyear: selectedFY },
                     success: function (response) {
-                        location.reload(); 
+                        location.reload();
                     },
                     error: function () {
                         showDangerAlert("Something went wrong while setting Financial Year.");
                     }
                 });
             });
+
+            $("#iProfileIcon").click(function () {
+                $("#myModal_Profile").modal('show');
+            });
         });
     </script>
 
     <style>
 
-      
 
-        .navbar-nav-link 
-        {
+
+        .navbar-nav-link {
             padding: 0 0 0 0 !important;
         }
 
-        .fa-sign-out, .fa-user 
-        {
+        .fa-sign-out, .fa-user {
             font-size: 24px;
         }
 
-        #modalProfileContent {
-            width: 75% !important;
+        .modal-dialog-slideout {
+            position: fixed;
+            right: 2%;
+            top: 13%;
+            margin: 0;
+            width: 300px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-out;
+            z-index: 1050; /* Above backdrop */
         }
 
-        #myModal_Profile
-        {
-            width: 75% !important;
-            left: 51%;
-            top: 5%;
+        .modal.fade.show .modal-dialog-slideout {
+            transform: translateX(0);
         }
 
-        .Profilelabel 
-        {
+        .modal-content {
+            border-radius: 0;
+            border: none;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+            height: auto; /* <-- KEY: content-based height */
+            max-height: 90vh; /* optional max height for very long content */
+            overflow-y: auto; /* allows scroll if it grows too tall */
+        }
+
+        .Profilelabel {
             margin-left: 12px;
+            font-weight: 500;
+            font-size: 1rem;
         }
 
         .custom-label {
@@ -237,8 +253,7 @@
             font-size: 16px;
         }
 
-        .loader
-        {
+        .loader {
             position: fixed;
             left: 0px;
             top: 0px;
@@ -248,39 +263,57 @@
             background: url('~/images/Rolling.gif') 50% 50% no-repeat rgb(249,249,249);
         }
 
-        #cover-spin 
-        {
-            position:fixed;
-            width:100%;
-            left:0;right:0;top:0;bottom:0;
+        #cover-spin {
+            position: fixed;
+            width: 100%;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
             background-color: rgba(255,255,255,0.7);
-            z-index:9999;
-            display:none;
+            z-index: 9999;
+            display: none;
         }
 
-        -webkit-keyframes spin 
+        -webkit-keyframes spin {
+            from
+
         {
-            from {-webkit-transform:rotate(0deg);}
-            to {-webkit-transform:rotate(360deg);}
+            -webkit-transform: rotate(0deg);
+        }
+
+        to {
+            -webkit-transform: rotate(360deg);
+        }
+
         }
 
         keyframes spin {
-            from {transform:rotate(0deg);}
-            to {transform:rotate(360deg);}
+            from
+
+        {
+            transform: rotate(0deg);
         }
 
-        #cover-spin::after
-        {
-            content:'';
-            display:block;
-            position:absolute;
-            left:48%;top:40%;
-            width:40px;height:40px;
-            border-style:solid;
-            border-color:black;
-            border-top-color:transparent;
+        to {
+            transform: rotate(360deg);
+        }
+
+        }
+
+        #cover-spin::after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 48%;
+            top: 40%;
+            width: 40px;
+            height: 40px;
+            border-style: solid;
+            border-color: black;
+            border-top-color: transparent;
             border-width: 4px;
-            border-radius:50%;
+            border-radius: 50%;
             -webkit-animation: spin .8s linear infinite;
             animation: spin .8s linear infinite;
         }
@@ -302,22 +335,18 @@
             }
 
         @@media (max-width: 768px) {
-            #ddlFinancialYear
-            {
+            #ddlFinancialYear {
                 font-size: 16px;
                 padding: 1px 5px;
             }
         }
 
         @@media (min-width: 769px) {
-            #ddlFinancialYear
-            {
+            #ddlFinancialYear {
                 font-size: 14px;
                 padding: 1px 5px;
             }
         }
-
-      
 
     </style>
 
@@ -326,8 +355,8 @@
 <body style="height:100%" class="sidebar-xs">
 
     <!-- Main navbar -->
-<!-- Main navbar -->
-<div class="navbar navbar-expand-md navbar-dark bg-indigo navbar-static px-3 py-2">
+    <!-- Main navbar -->
+    <div class="navbar navbar-expand-md navbar-dark bg-indigo navbar-static px-3 py-2">
 
         <div class="d-flex align-items-center">
             <button class="navbar-toggler sidebar-mobile-main-toggle d-block p-0 me-2" type="button">
@@ -336,23 +365,23 @@
         </div>
 
 
-    <!-- Title + Version -->
-    <div class="text-white d-flex align-items-center fw-bold fs-6 me-3">
-        <span class="d-none d-md-inline">Customer Satisfaction Opportunities</span>
-        <span class="d-inline d-md-none">CSO</span>
-        <span class="ms-2 small fw-normal">v1.0 | 01-05-2025</span>
-    </div>
+        <!-- Title + Version -->
+        <div class="text-white d-flex align-items-center fw-bold fs-6 me-3">
+            <span class="d-none d-md-inline">Customer Satisfaction Opportunities</span>
+            <span class="d-inline d-md-none">CSO</span>
+            <span class="ms-2 small fw-normal">v1.0 | 01-05-2025</span>
+        </div>
 
-    <!-- FY Dropdown -->
+        <!-- FY Dropdown -->
         <div class="d-flex align-items-center ms-auto">
             <label class="mb-0 me-2 fw-bold text-white small">FY:</label>
             <select id="ddlFinancialYear" class="form-select form-select-sm" style="width:auto; min-width: 90px;">
-            @{
-                var fyStartMonth = DateTime.Now.Month;
-                var fyYear = DateTime.Now.Year;
-                if(fyStartMonth > 3) { fyYear += 1; }
-                var selectedFyYear = HttpContextAccessor.HttpContext.Session.GetString("FYear");
-            }
+                @{
+                    var fyStartMonth = DateTime.Now.Month;
+                    var fyYear = DateTime.Now.Year;
+                    if (fyStartMonth > 3) { fyYear += 1; }
+                    var selectedFyYear = HttpContextAccessor.HttpContext.Session.GetString("FYear");
+                }
                 @for (int i = 2021; i < fyYear; i++)
                 {
                     var val = i.ToString().Substring(2) + (i + 1).ToString().Substring(2);
@@ -367,26 +396,23 @@
                         <option value="@val">@text</option>
                     }
                 }
-        </select>
-    </div>
-  
-    
+            </select>
+        </div>
 
-    <!-- Right side: Profile & Logout -->
-    <div class="d-flex align-items-center ms-auto">
-        <a class="text-white me-3" id="iProfileIcon">
-            <i class="fa fa-user fs-5"></i>
-        </a>
-        <a href="@Url.Action("Login", "Account")" class="text-white">
+
+
+        <!-- Right side: Profile & Logout -->
+        <div class="d-flex align-items-center ms-auto">
+            <a class="text-white me-3" id="iProfileIcon" style="cursor:pointer">
+                <i class="fa fa-user fs-5"></i>
+            </a>
+            <a href="@Url.Action("Login", "Account")" class="text-white"  style="cursor:pointer">
                 <i class="icon-switch2"></i>
-        </a>
+            </a>
+        </div>
+
     </div>
-
-</div>
-<!-- /Main navbar -->
-
-
-
+    <!-- /Main navbar -->
     <!-- Page content -->
     <div class="page-content">
 
@@ -426,151 +452,151 @@
                 <!-- Main navigation -->
                 <div class="card card-sidebar-mobile" id="divMnu">
                     <ul class="nav nav-sidebar" data-nav-type="accordion">
-                    @if((canDashboardShowOnMobile || canDashboardShowOnDesktop) && canViewDashboard)
-                    {
-                        <li class="nav-item">
-                            <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-link" id="Dashboard" title="Dashboard">
-                                <i class="icon-home4"></i>
-                                <span>
-                                    Dashboard
-                                </span>
-                            </a>
-                        </li>
-                    }
-                    @if((canUsersShowOnMobile || canUsersShowOnDesktop) && canViewUsers)
-                    {
-                        <li class="nav-item">
-                                <a asp-controller="Users" asp-action="Index" class="nav-link" id="Users" title="User">
-                                <i class="icon-user"></i>
-                                <span>
-                                    User
-                                </span>
-                            </a>
-                        </li>
-                    } 
-                    @if((canCSOLogShowOnMobile || canCSOLogShowOnDesktop) && canViewCSOLog)
-                    {
-                        <li class="nav-item">
-                            <a asp-controller="CSOLog" asp-action="Index" class="nav-link" id="CSOLog" title="CSO Log">
-                                <i class="far fa-edit"></i>
-                                <span>
-                                    CSO Log
-                                </span>
-                            </a>
-
-                        </li>
-                    }
-                    @if (canShowCSOLogAnalysisAndSolutions)
-                    {
-                        <li class="nav-item">
-                            <a asp-controller="CSOLogAnalysisSolution" asp-action="CSOLogAnalysisSolution" class="nav-link" id="CSOLogAnalysisSolution" title="Analysis & Solution">
-                                <i class="fas fa-clipboard-list"></i>
-                                <span>
-                                    Analysis & Solution
-                                </span>
-                            </a>
-                        </li>
-                    }
-                    @if(canShowReports)
-                    {
-                        <li class="nav-item nav-item-submenu">
-                            <a href="#" class="nav-link" title="Reports">
-                                <i class="icon-file-eye"></i>
-                                <span>
-                                    Reports
-                                </span>
-                            </a>
-                            <ul class="nav nav-group-sub" data-submenu-title="Reports">
-                            @if((canMISShowOnMobile || canMISShowOnDesktop) && canViewMIS)
-                            {
-                                <li class="nav-item"><a asp-controller="MIS" asp-action="Index" class="nav-link" title="MIS">MIS</a></li>
-                            }
-                            @if((canCSOLogReportShowOnMobile || canCSOLogReportShowOnDesktop) && canViewCSOLogReport)
-                            {
-                                <li class="nav-item"><a asp-controller="CSOLogReport" asp-action="Index" class="nav-link" title="CSO Log Report">CSO Log Report</a></li>
-                            }                                    
-                            </ul>
-                        </li>
-                    }
-                    @if((canEmailSmtpSettingsShowOnMobile || canEmailSmtpSettingsShowOnDesktop) && canViewEmailSmtpSettings)
-                    {
-                        <li class="nav-item">
-                                <a asp-controller="SMTPSetting" asp-action="SMTPSetting" class="nav-link" id="EmailConfiguration" title="Email/SMTP Setting">
-                                <i class="fas fa-envelope-square"></i>
-                                <span>
-                                    Email/SMTP Setting
-                                </span>
-                            </a>
-                        </li>
-                    }
-                    @if(canShowMasters)
-                    {
-                        <li class="nav-item nav-item-submenu">
-                            <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Utility</span></a>
-                            <ul class="nav nav-group-sub" data-submenu-title="Configuration">
-                                <li class="nav-item nav-item-submenu">
-                                    <a href="#" class="nav-link">Masters</a>
-                                    <ul class="nav nav-group-sub">
-                                    @if((canDivisionShowOnMobile || canDivisionShowOnDesktop) && canViewDivision)
-                                    {
-                                        <li class="nav-item"><a title="Division" asp-controller="Division" asp-action="Division" class="nav-link">Division</a></li>
-                                    }
-                                    @if((canCategoryShowOnMobile || canCategoryShowOnDesktop) && canViewCategory)
-                                    {
-                                        <li class="nav-item"><a title="Category" asp-controller="Category" asp-action="Index" class="nav-link">Category</a></li>
-                                    }
-                                    @if((canComplainTypeShowOnMobile || canComplainTypeShowOnDesktop) && canViewComplainType)
-                                    {
-                                        <li class="nav-item"><a title="Complaint Type" asp-controller="ComplaintType" asp-action="ComplaintType" class="nav-link">Complaint Type</a></li>
-                                    }
-                                    @if((canCSOClassShowOnMobile || canCSOClassShowOnDesktop) && canViewCSOClass)
-                                    {
-                                        <li class="nav-item"><a title="CSO Class" asp-controller="CSOClass" asp-action="CSOClass" class="nav-link">CSO Class</a></li>
-                                    }
-                                    @if((canBrandShowOnMobile || canBrandShowOnDesktop) && canViewBrand)
-                                    {
-                                        <li class="nav-item"><a title="Brand" asp-controller="Brand" asp-action="Brand" class="nav-link">Brand</a></li>
-                                    }
-                                    @if((canProductTypeShowOnMobile || canProductTypeShowOnDesktop) && canViewProductType)
-                                    {
-                                        <li class="nav-item"><a title="Product Type" asp-controller="ProductType" asp-action="ProductType" class="nav-link">Product Type</a></li>
-                                    }
-                                    @if((canPlantShowOnMobile || canPlantShowOnDesktop) && canViewPlant)
-                                    {
-                                        <li class="nav-item"><a title="Plant" asp-controller="Plant" asp-action="Plant" class="nav-link">Plant</a></li>
-                                    }
-                                    @if((canNearestPlantShowOnMobile || canNearestPlantShowOnDesktop) && canViewNearestPlant)
-                                    {
-                                        <li class="nav-item"><a title="Nearest Plant" asp-controller="NearestPlant" asp-action="NearestPlant" class="nav-link">Nearest Plant</a></li>
-                                    }
-                                    @if((canRecycleDaysConfigurationShowOnMobile || canRecycleDaysConfigurationShowOnDesktop) && canViewRecycleDaysConfiguration)
-                                    {
-                                        <li class="nav-item"><a title="Recycle Days" asp-controller="RecycleDay" asp-action="RecycleDay" class="nav-link">Recycle Days Configuration</a></li>
-                                    }
-                                    @if((canSecurityActionsShowOnMobile || canSecurityActionsShowOnDesktop) && canViewSecurityActions)
-                                    {
-                                        <li class="nav-item"><a title="Security Action" asp-controller="SecurityAction" asp-action="Index" class="nav-link">Security Action</a></li>
-                                    }
-                                    </ul>
-                                </li>
-                            </ul>
-
-                        </li>
-                    }
-                        
-                            
-
-                            
-                       
+                        @if ((canDashboardShowOnMobile || canDashboardShowOnDesktop) && canViewDashboard)
+                        {
                             <li class="nav-item">
-                            <a asp-controller="MailMatrix" asp-action="MailMatrix" class="nav-link" id="EmailConfiguration" title="Email/SMTP Setting">
-                                    <i class="fas fa-envelope-square"></i>
+                                <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-link" id="Dashboard" title="Dashboard">
+                                    <i class="icon-home4"></i>
                                     <span>
-                                        Mail Matrix
+                                        Dashboard
                                     </span>
                                 </a>
                             </li>
-                        
+                        }
+                        @if ((canUsersShowOnMobile || canUsersShowOnDesktop) && canViewUsers)
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Users" asp-action="Index" class="nav-link" id="Users" title="User">
+                                    <i class="icon-user"></i>
+                                    <span>
+                                        User
+                                    </span>
+                                </a>
+                            </li>
+                        }
+                        @if ((canCSOLogShowOnMobile || canCSOLogShowOnDesktop) && canViewCSOLog)
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="CSOLog" asp-action="Index" class="nav-link" id="CSOLog" title="CSO Log">
+                                    <i class="far fa-edit"></i>
+                                    <span>
+                                        CSO Log
+                                    </span>
+                                </a>
+
+                            </li>
+                        }
+                        @if (canShowCSOLogAnalysisAndSolutions)
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="CSOLogAnalysisSolution" asp-action="CSOLogAnalysisSolution" class="nav-link" id="CSOLogAnalysisSolution" title="Analysis & Solution">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    <span>
+                                        Analysis & Solution
+                                    </span>
+                                </a>
+                            </li>
+                        }
+                        @if (canShowReports)
+                        {
+                            <li class="nav-item nav-item-submenu">
+                                <a href="#" class="nav-link" title="Reports">
+                                    <i class="icon-file-eye"></i>
+                                    <span>
+                                        Reports
+                                    </span>
+                                </a>
+                                <ul class="nav nav-group-sub" data-submenu-title="Reports">
+                                    @if ((canMISShowOnMobile || canMISShowOnDesktop) && canViewMIS)
+                                    {
+                                        <li class="nav-item"><a asp-controller="MIS" asp-action="Index" class="nav-link" title="MIS">MIS</a></li>
+                                    }
+                                    @if ((canCSOLogReportShowOnMobile || canCSOLogReportShowOnDesktop) && canViewCSOLogReport)
+                                    {
+                                        <li class="nav-item"><a asp-controller="CSOLogReport" asp-action="Index" class="nav-link" title="CSO Log Report">CSO Log Report</a></li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                        @if ((canEmailSmtpSettingsShowOnMobile || canEmailSmtpSettingsShowOnDesktop) && canViewEmailSmtpSettings)
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="SMTPSetting" asp-action="SMTPSetting" class="nav-link" id="EmailConfiguration" title="Email/SMTP Setting">
+                                    <i class="fas fa-envelope-square"></i>
+                                    <span>
+                                        Email/SMTP Setting
+                                    </span>
+                                </a>
+                            </li>
+                        }
+                        @if (canShowMasters)
+                        {
+                            <li class="nav-item nav-item-submenu">
+                                <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Utility</span></a>
+                                <ul class="nav nav-group-sub" data-submenu-title="Configuration">
+                                    <li class="nav-item nav-item-submenu">
+                                        <a href="#" class="nav-link">Masters</a>
+                                        <ul class="nav nav-group-sub">
+                                            @if ((canDivisionShowOnMobile || canDivisionShowOnDesktop) && canViewDivision)
+                                            {
+                                                <li class="nav-item"><a title="Division" asp-controller="Division" asp-action="Division" class="nav-link">Division</a></li>
+                                            }
+                                            @if ((canCategoryShowOnMobile || canCategoryShowOnDesktop) && canViewCategory)
+                                            {
+                                                <li class="nav-item"><a title="Category" asp-controller="Category" asp-action="Index" class="nav-link">Category</a></li>
+                                            }
+                                            @if ((canComplainTypeShowOnMobile || canComplainTypeShowOnDesktop) && canViewComplainType)
+                                            {
+                                                <li class="nav-item"><a title="Complaint Type" asp-controller="ComplaintType" asp-action="ComplaintType" class="nav-link">Complaint Type</a></li>
+                                            }
+                                            @if ((canCSOClassShowOnMobile || canCSOClassShowOnDesktop) && canViewCSOClass)
+                                            {
+                                                <li class="nav-item"><a title="CSO Class" asp-controller="CSOClass" asp-action="CSOClass" class="nav-link">CSO Class</a></li>
+                                            }
+                                            @if ((canBrandShowOnMobile || canBrandShowOnDesktop) && canViewBrand)
+                                            {
+                                                <li class="nav-item"><a title="Brand" asp-controller="Brand" asp-action="Brand" class="nav-link">Brand</a></li>
+                                            }
+                                            @if ((canProductTypeShowOnMobile || canProductTypeShowOnDesktop) && canViewProductType)
+                                            {
+                                                <li class="nav-item"><a title="Product Type" asp-controller="ProductType" asp-action="ProductType" class="nav-link">Product Type</a></li>
+                                            }
+                                            @if ((canPlantShowOnMobile || canPlantShowOnDesktop) && canViewPlant)
+                                            {
+                                                <li class="nav-item"><a title="Plant" asp-controller="Plant" asp-action="Plant" class="nav-link">Plant</a></li>
+                                            }
+                                            @if ((canNearestPlantShowOnMobile || canNearestPlantShowOnDesktop) && canViewNearestPlant)
+                                            {
+                                                <li class="nav-item"><a title="Nearest Plant" asp-controller="NearestPlant" asp-action="NearestPlant" class="nav-link">Nearest Plant</a></li>
+                                            }
+                                            @if ((canRecycleDaysConfigurationShowOnMobile || canRecycleDaysConfigurationShowOnDesktop) && canViewRecycleDaysConfiguration)
+                                            {
+                                                <li class="nav-item"><a title="Recycle Days" asp-controller="RecycleDay" asp-action="RecycleDay" class="nav-link">Recycle Days Configuration</a></li>
+                                            }
+                                            @if ((canSecurityActionsShowOnMobile || canSecurityActionsShowOnDesktop) && canViewSecurityActions)
+                                            {
+                                                <li class="nav-item"><a title="Security Action" asp-controller="SecurityAction" asp-action="Index" class="nav-link">Security Action</a></li>
+                                            }
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                            </li>
+                        }
+
+
+
+
+
+                        <li class="nav-item">
+                            <a asp-controller="MailMatrix" asp-action="MailMatrix" class="nav-link" id="EmailConfiguration" title="Email/SMTP Setting">
+                                <i class="fas fa-envelope-square"></i>
+                                <span>
+                                    Mail Matrix
+                                </span>
+                            </a>
+                        </li>
+
                     </ul>
                 </div>
                 <!-- /main navigation -->
@@ -610,37 +636,37 @@
         <div id="cover-spin"></div>
     </div>
     <!-- /page content -->
-    <div id="myModal_Profile" class="modal fade myModalView" role="dialog">
-        <div class="modal-dialog modal-sm" id="modalProfile">
-            Modal content
-            <div class="modal-content" id="modalProfileContent">
+    <div id="myModal_Profile" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-slideout" role="document">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title"><strong>@HttpContextAccessor.HttpContext.Session.GetString("FullName")</strong></h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-
+                    <h5 class="modal-title">
+                        <strong>@HttpContextAccessor.HttpContext.Session.GetString("FullName")</strong>
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
                 </div>
                 <form id="frmUser">
-
-                    <div class="box box-default">
-                        <div class="box-body">
-                            <br />
-
-                            <label class="Profilelabel">Role:  @HttpContextAccessor.HttpContext.Session.GetString("RoleName")</label>
-                            <br />
-                            <label class="Profilelabel">Designation:  @HttpContextAccessor.HttpContext.Session.GetString("Designation")</label>
-
-
-                        </div>
+                    <div class="modal-body">
+                        <label class="Profilelabel">
+                            Role: @HttpContextAccessor.HttpContext.Session.GetString("RoleName")
+                        </label>
+                        <br />
+                        <label class="Profilelabel">
+                            Designation: @HttpContextAccessor.HttpContext.Session.GetString("Designation")
+                        </label>
                     </div>
-
                 </form>
             </div>
         </div>
     </div>
 
+
+
     <script src="~/js/bootstrap.bundle.min.js" type="text/javascript"></script>
-    <script src="~/lib/bootstrap5/js/bootstrap.bundle.js"></script>
-    <script src="~/lib/bootstrap5/js/bootstrap.bundle.min.js"></script>
+    @*  <script src="~/lib/bootstrap5/js/bootstrap.bundle.js"></script>
+    <script src="~/lib/bootstrap5/js/bootstrap.bundle.min.js"></script> *@
     <script src="~/js/popper.min.js"></script>
     <script src="~/js/blockui.min.js" type="text/javascript"></script>
     <script src="~/js/ripple.min.js" type="text/javascript"></script>
@@ -653,8 +679,8 @@
     <script src="~/js/noty.min.js" type="text/javascript"></script>
     <script src="~/js/PopupAlert.js" type="text/javascript"></script>
 
-    @*<script src="~/js/form_checkboxes_radios.js" type="text/javascript"></script>
-    <script src="~/Scripts/Shared/master.js" asp-append-version="true"></script> *@
+    @* <script src="~/js/form_checkboxes_radios.js" type="text/javascript"></script> *@
+    @* <script src="~/Scripts/Shared/master.js" asp-append-version="true"></script> *@
 
 
     <script type="text/javascript" src="~/js/jszip.min.js"></script>
@@ -686,15 +712,15 @@
     <script src="~/js/plugins/tables/footable/footable.min.js"></script>
     <script src="~/js/jquery.validate.unobtrusive.js"></script>
     <script src="~/js/echarts.min.js" type="text/javascript"></script>
-    
+
     <script src="~/css/bootstrap-multiselect.js"></script> *@
     @RenderSection("scripts", false)
     <script>
-    $(document).on('click', '.sidebar-mobile-main-toggle', function () {
-    $('body').toggleClass('sidebar-mobile-main'); // Mobile mode
-    $('body').toggleClass('sidebar-xs'); // Desktop mode
-    });
-              
+        $(document).on('click', '.sidebar-mobile-main-toggle', function () {
+        $('body').toggleClass('sidebar-mobile-main'); // Mobile mode
+        $('body').toggleClass('sidebar-xs'); // Desktop mode
+        });
+
     </script>
 </body>
 

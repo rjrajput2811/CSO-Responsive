@@ -314,7 +314,7 @@ public class UserRepository : SqlTableRepository, IUserRepository
             var sendSubmissionEmail = await _mailMatrixRepository.SendForgotPassword(result.Password, result.Email);
             return 1;
         }
-       
+
         return 0;
     }
 
@@ -342,10 +342,18 @@ public class UserRepository : SqlTableRepository, IUserRepository
 
         user.Password = password;
 
-         _dbContext.Users.Update(user);
+        _dbContext.Users.Update(user);
 
         var result = await _dbContext.SaveChangesAsync();
 
         return result > 0 ? 1 : -1;
+    }
+
+    public string GetRoleName(int roleId)
+    {
+        var role = from Role d in Enum.GetValues(typeof(Role))
+                   select new { ID = (int)d, Name = d.ToString() };
+
+        return role.Where(s => s.ID == roleId).Select(s => s.Name).First();
     }
 }

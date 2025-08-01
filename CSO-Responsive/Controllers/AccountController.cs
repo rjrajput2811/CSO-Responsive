@@ -11,7 +11,7 @@ namespace CSO_Responsive.Controllers
     public class AccountController : Controller
     {
         private readonly IUserRepository _usersRepository;
-        public AccountController(IUserRepository usersRepository)
+        public AccountController(IUserRepository usersRepository, IUserRepository userService)
         {
             _usersRepository = usersRepository;
         }
@@ -30,8 +30,12 @@ namespace CSO_Responsive.Controllers
                 if (loginUser != null)
                 {
                     HttpContext.Session.SetInt32("UserId", loginUser.Id);
+                    HttpContext.Session.SetInt32("Role", loginUser.RoleId);
                     HttpContext.Session.SetString("FullName", loginUser.Name ?? "");
                     HttpContext.Session.SetInt32("UserRole", (int)loginUser.RoleId);
+                    HttpContext.Session.SetString("RoleName", _usersRepository.GetRoleName(loginUser.RoleId));
+                    HttpContext.Session.SetString("Designation", loginUser.Designation);
+                    HttpContext.Session.SetInt32("UserType", loginUser.UserType);
 
                     if (DateTime.Now.Month > 3)
                     {
