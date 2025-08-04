@@ -1,5 +1,6 @@
 using CSO.Core.DatabaseContext;
 using CSO.Core.Models;
+using CSO.Core.Repositories.EmailConfigurationRepo;
 using CSO.Core.Repositories.MailMatrixRepo;
 using CSO.Core.Repositories.Shared;
 using CSO.Core.Security;
@@ -13,14 +14,14 @@ public class UserRepository : SqlTableRepository, IUserRepository
 {
     private new readonly CSOResponsiveDbContext _dbContext;
     private readonly ISystemLogService _systemLogService;
-    private readonly IMailMatrixRepository _mailMatrixRepository;
+    private readonly IEmailConfigurationRepository _emailConfigurationRepository;
     public UserRepository(CSOResponsiveDbContext dbContext,
                           ISystemLogService systemLogService,
-                          IMailMatrixRepository mailMatrixRepository) : base(dbContext)
+                          IEmailConfigurationRepository emailConfigurationRepository) : base(dbContext)
     {
         _dbContext = dbContext;
         _systemLogService = systemLogService;
-        _mailMatrixRepository = mailMatrixRepository;
+        _emailConfigurationRepository = emailConfigurationRepository;
     }
 
     public async Task<User> Login(LoginViewModel loginViewModel)
@@ -311,7 +312,7 @@ public class UserRepository : SqlTableRepository, IUserRepository
 
         if (result != null)
         {
-            var sendSubmissionEmail = await _mailMatrixRepository.SendForgotPassword(result.Password, result.Email);
+            var sendSubmissionEmail = await _emailConfigurationRepository.SendForgotPassword(result.Password, result.Email);
             return 1;
         }
        
@@ -324,7 +325,7 @@ public class UserRepository : SqlTableRepository, IUserRepository
 
         if (result != null)
         {
-            var sendSubmissionEmail = await _mailMatrixRepository.SendForgotPassword(OTP, result.Email);
+            var sendSubmissionEmail = await _emailConfigurationRepository.SendForgotPassword(OTP, result.Email);
             return 1;
         }
 
