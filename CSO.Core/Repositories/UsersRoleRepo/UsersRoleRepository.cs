@@ -3,6 +3,7 @@ using CSO.Core.Models;
 using CSO.Core.Repositories.Shared;
 using CSO.Core.Services.SystemLogs;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace CSO.Core.Repositories.UsersRoleRepo;
 
@@ -119,5 +120,14 @@ public class UsersRoleRepository : SqlTableRepository, IUsersRoleRepository
             _systemLogService.WriteLog(ex.Message);
             throw;
         }
+    }
+
+    public async Task<string?> GetRoleName(int roleId)
+    {
+        var roleName = await _dbContext.UserRoles
+            .Where(i => i.Id == roleId)
+            .Select(x => x.RoleName)
+            .FirstOrDefaultAsync();
+        return roleName;
     }
 }

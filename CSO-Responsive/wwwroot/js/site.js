@@ -1,4 +1,15 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿function GetBaseUrl() {
+    let origin = window.location.origin;
+    let pathSegments = window.location.pathname.split('/').filter(Boolean);
+    let csoIndex = pathSegments.findIndex(segment => segment.toLowerCase() === 'cso');
+    let baseUrl;
 
-// Write your JavaScript code.
+    if (csoIndex !== -1) {
+        let pathUpToCso = pathSegments.slice(0, csoIndex + 1).join('/');
+        baseUrl = `${origin}/${pathUpToCso}`;
+    } else {
+        baseUrl = origin;
+    }
+
+    return baseUrl;
+}

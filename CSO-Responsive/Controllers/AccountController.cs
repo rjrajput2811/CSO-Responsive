@@ -1,7 +1,9 @@
 ﻿using CSO.Core.DatabaseContext;
 using CSO.Core.Models;
 using CSO.Core.Repositories.UserRepo;
+using CSO.Core.Repositories.UsersRoleRepo;
 using CSO.Core.Security;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices.JavaScript;
@@ -11,9 +13,13 @@ namespace CSO_Responsive.Controllers
     public class AccountController : Controller
     {
         private readonly IUserRepository _usersRepository;
-        public AccountController(IUserRepository usersRepository, IUserRepository userService)
+        private readonly IUsersRoleRepository _usersRoleRepository;
+        public AccountController(IUserRepository usersRepository,
+                                 IUserRepository userService,
+                                 IUsersRoleRepository usersRoleRepository)
         {
             _usersRepository = usersRepository;
+            _usersRoleRepository = usersRoleRepository;
         }
 
         public IActionResult Login()
@@ -33,7 +39,7 @@ namespace CSO_Responsive.Controllers
                     HttpContext.Session.SetInt32("Role", loginUser.RoleId);
                     HttpContext.Session.SetString("FullName", loginUser.Name ?? "");
                     HttpContext.Session.SetInt32("UserRole", (int)loginUser.RoleId);
-                    HttpContext.Session.SetString("RoleName", _usersRepository.GetRoleName(loginUser.RoleId));
+                    HttpContext.Session.SetString("RoleName", await _usersRoleRepository.GetRoleName(loginUser.RoleId));
                     HttpContext.Session.SetString("Designation", loginUser.Designation);
                     HttpContext.Session.SetInt32("UserType", loginUser.UserType);
 
@@ -46,7 +52,7 @@ namespace CSO_Responsive.Controllers
                         HttpContext.Session.SetString("FYear", ((DateTime.Now.Year - 1).ToString().Substring(2) + (DateTime.Now.Year).ToString().Substring(2)));
                     }
 
-                    return RedirectToAction("DashBoard", "DashBoard");
+                    return RedirectToAction("Index", "DashBoard");
                     
                     
                 }

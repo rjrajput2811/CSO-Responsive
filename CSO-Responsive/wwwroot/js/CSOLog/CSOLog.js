@@ -1,5 +1,9 @@
-﻿$(function () {
+﻿let baseUrl;
+
+$(function () {
     setTimeout(function () {
+        baseUrl = GetBaseUrl();
+
         var divisionVal = $('#DivisionId').val();
         if (divisionVal) {
             $('#DivisionId').trigger('change');
@@ -195,6 +199,8 @@ function InsertUpdateCSOLog() {
     for (var i = 0; i < files.length; i++) {
         formData.append('files', files[i]);
     }
+
+    formData.append('BaseUrl', baseUrl);
 
     $.ajax({
         url: $('#CSOLog-form').attr('action'),

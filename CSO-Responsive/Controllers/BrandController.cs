@@ -56,7 +56,7 @@ namespace CSO_Responsive.Controllers
                     if (!existingResult)
                     {
                         model.AddedOn = DateTime.Now;
-                        model.AddedBy = 1;
+                        model.AddedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
                         operationResult = await _brandRepository.CreateAsync(model);
                         return Json(operationResult);
                     }
@@ -88,7 +88,7 @@ namespace CSO_Responsive.Controllers
                     if (!existingResult)
                     {
                         model.UpdatedOn = DateTime.Now;
-                        model.UpdatedBy = 1;
+                        model.UpdatedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
                         operationResult = await _brandRepository.UpdateAsync(model);
                         return Json(operationResult);
                     }

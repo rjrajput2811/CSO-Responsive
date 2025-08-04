@@ -8,6 +8,7 @@ using CSO.Core.Repositories.CSOLogFileRepo;
 using CSO.Core.Repositories.CSOLogHistoryRepo;
 using CSO.Core.Repositories.CSOLogRepo;
 using CSO.Core.Repositories.DivisionRepo;
+using CSO.Core.Repositories.EmailConfigurationRepo;
 using CSO.Core.Repositories.MailMatrixRepo;
 using CSO.Core.Repositories.NearestPlantRepo;
 using CSO.Core.Repositories.PlantRepo;
@@ -52,6 +53,7 @@ builder.Services.AddTransient<ICSOLogAnalysisRepository, CSOLogAnalysisRepositor
 builder.Services.AddTransient<IMailMatrixRepository, MailMatrixRepository>();
 builder.Services.AddTransient<ISecurityActionRepository, SecurityActionRepository>();
 builder.Services.AddTransient<ICSOLogHistoryRepository, CSOLogHistoryRepository>();
+builder.Services.AddTransient<IEmailConfigurationRepository, EmailConfigurationRepository>();
 builder.Services.AddScoped<IDbConnection>(db => new SqlConnection(connstring));
 
 

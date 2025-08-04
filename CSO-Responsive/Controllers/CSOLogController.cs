@@ -5,6 +5,7 @@ using CSO.Core.Repositories.CategoryRepo;
 using CSO.Core.Repositories.CSOLogFileRepo;
 using CSO.Core.Repositories.CSOLogRepo;
 using CSO.Core.Repositories.DivisionRepo;
+using CSO.Core.Repositories.MailMatrixRepo;
 using CSO.Core.Repositories.NearestPlantRepo;
 using CSO.Core.Repositories.PlantRepo;
 using CSO.Core.Repositories.ProductTypeRepo;
@@ -31,6 +32,7 @@ public class CSOLogController : Controller
     private readonly IProductTypeRepository _productTypeRepository;
     private readonly IUserRepository _userRepository;
     private readonly ICSOLogFileRepository _csoLogFileRepository;
+    private readonly IMailMatrixRepository _mailMatrixRepository;
 
     public CSOLogController(ICSOLogRepository csoLogRepository,
                             ISystemLogService systemLogService,
@@ -41,7 +43,8 @@ public class CSOLogController : Controller
                             INearestPlantRepository nearestPlantRepository,
                             IProductTypeRepository productTypeRepository,
                             IUserRepository userRepository,
-                            ICSOLogFileRepository csoLogFileRepository)
+                            ICSOLogFileRepository csoLogFileRepository,
+                            IMailMatrixRepository mailMatrixRepository)
     {
         _csoLogRepository = csoLogRepository;
         _systemLogService = systemLogService;
@@ -53,6 +56,7 @@ public class CSOLogController : Controller
         _productTypeRepository = productTypeRepository;
         _userRepository = userRepository;
         _csoLogFileRepository = csoLogFileRepository;
+        _mailMatrixRepository = mailMatrixRepository;
     }
     public IActionResult Index()
     {
@@ -213,6 +217,8 @@ public class CSOLogController : Controller
 
         if (!result.Success) { return Json(result); }
 
+        var csoLogId = result.ObjectId ?? 0;
+
         var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
         var uploadFolder = "CSOLogandAnalysisSolutionFiles";
         var uploadPath = Path.Combine(wwwRootPath, uploadFolder);
@@ -245,6 +251,8 @@ public class CSOLogController : Controller
             result = await _csoLogFileRepository.InsertCSOLogFileInfoAsync(csoLogFilesModel);
             if (!result.Success) { return Json(result); }
         }
+
+        result = await _mailMatrixRepository.CSOMailTrigger(csoLogId, (int)MailType.NewUserRegistration, model.BaseUrl);
 
         return Json(result);
     }

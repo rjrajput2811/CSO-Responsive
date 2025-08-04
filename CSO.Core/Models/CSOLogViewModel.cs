@@ -101,4 +101,5 @@ public class CSOLogViewModel
     public bool IsMonitorSubmitted { get; set; }
     public bool IsApproveSubmitted { get; set; }
 
+    public string? BaseUrl { get; set; }
 }
