@@ -2,7 +2,7 @@
 
 namespace CSO_Responsive.Controllers
 {
-    public class SMTPSettingController : Controller
+    public class SMTPSettingController : BaseController
     {
         public IActionResult Index()
         {

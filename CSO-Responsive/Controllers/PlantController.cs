@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSO_Responsive.Controllers
 {
-    public class PlantController : Controller
+    public class PlantController : BaseController
     {
         private readonly IPlantRepository _plantRepository;
         private readonly IDivisionRepository _divisionRepository;

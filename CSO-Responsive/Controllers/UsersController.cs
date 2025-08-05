@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CSO_Responsive.Controllers;
 
-public class UsersController : Controller
+public class UsersController : BaseController
 {
     private readonly IUsersRoleRepository _usersRoleRepository;
     private readonly IDivisionRepository _divisionRepository;
@@ -40,7 +40,6 @@ public class UsersController : Controller
         _productTypeRepository = productTypeRepository;
     }
 
-    [Authorize]
     public IActionResult Index()
     {
         return View();
@@ -58,7 +57,6 @@ public class UsersController : Controller
     //    return Json(usersList);
     //}
 
-    [Authorize]
     public async Task<IActionResult> UserDetailsAsync(int Id)
     {
         var model = new UserViewModel();

@@ -14,8 +14,8 @@
 
     var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
 
-    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_USERS, (int)userRoleId);
-    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_USERS, (int)userRoleId);
+    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_USERS, userRoleId ?? 0);
+    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_USERS, userRoleId ?? 0);
     var isNew = Model.Id == 0;
     var disableSelect = (!canEdit && !isNew) ? "disabled=\"disabled\"" : "";
 }

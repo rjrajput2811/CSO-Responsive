@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CSO_Responsive.Controllers;
 
-public class SecurityActionController : Controller
+public class SecurityActionController : BaseController
 {
     private readonly ISecurityActionRepository _securityActionRepository;
     private readonly IUsersRoleRepository _usersRoleRepository;

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSO_Responsive.Controllers
 {
-    public class ProductTypeController : Controller
+    public class ProductTypeController : BaseController
     {
         private readonly IProductTypeRepository _productTypeRepository;
         private readonly ISystemLogService _systemLogService;

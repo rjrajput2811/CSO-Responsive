@@ -9,8 +9,8 @@
 
     var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
 
-    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_MAILMATRIX, (int)userRoleId);
-    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_MAILMATRIX, (int)userRoleId);
+    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_MAILMATRIX, userRoleId ?? 0);
+    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_MAILMATRIX, userRoleId ?? 0);
 
     var newCSORestrationMail = (int)MailType.NewUserRegistration;
     var phaseWiseCSOMail = (int)MailType.CsoMovement;

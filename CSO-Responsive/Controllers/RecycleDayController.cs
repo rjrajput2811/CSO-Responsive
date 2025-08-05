@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSO_Responsive.Controllers
 {
-    public class RecycleDayController : Controller
+    public class RecycleDayController : BaseController
     {
         private readonly IRecycleDayRepository _recycleDayRepository;
         private readonly ISystemLogService _systemLogService;

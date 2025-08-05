@@ -7,7 +7,7 @@ using System.Numerics;
 
 namespace CSO_Responsive.Controllers
 {
-    public class DivisionController : Controller
+    public class DivisionController : BaseController
     {
         private readonly IDivisionRepository _divisionRepository;
         private readonly ISystemLogService _systemLogService;
