@@ -3,10 +3,13 @@ using CSO.Core.Models;
 using CSO.Core.Repositories.UserRepo;
 using CSO.Core.Repositories.UsersRoleRepo;
 using CSO.Core.Security;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices.JavaScript;
+using System.Security.Claims;
 
 namespace CSO_Responsive.Controllers
 {
@@ -22,13 +25,14 @@ namespace CSO_Responsive.Controllers
             _usersRoleRepository = usersRoleRepository;
         }
 
-        public IActionResult Login()
+        public IActionResult Login(string? returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel user)
+        public async Task<IActionResult> Login(LoginViewModel user, string? returnUrl = null)
         {
             if (ModelState.IsValid)
             {
@@ -51,6 +55,32 @@ namespace CSO_Responsive.Controllers
                     {
                         HttpContext.Session.SetString("FYear", ((DateTime.Now.Year - 1).ToString().Substring(2) + (DateTime.Now.Year).ToString().Substring(2)));
                     }
+
+                    // ✅ Create user claims
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, loginUser.Name),
+                        new Claim(ClaimTypes.Email, loginUser.Email),
+                        new Claim(ClaimTypes.Role, await _usersRoleRepository.GetRoleName(loginUser.RoleId)),
+                    };
+
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var principal = new ClaimsPrincipal(identity);
+
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = user.RememberMe
+                    };
+
+                    // ✅ Sign in (this creates the auth cookie)
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        principal,
+                        authProperties
+                    );
+
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                        return Redirect(returnUrl);
 
                     return RedirectToAction("Index", "DashBoard");
                     

@@ -7,6 +7,7 @@ using CSO.Core.Repositories.ProductTypeRepo;
 using CSO.Core.Repositories.UserRepo;
 using CSO.Core.Repositories.UsersRoleRepo;
 using CSO.Core.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -39,6 +40,7 @@ public class UsersController : Controller
         _productTypeRepository = productTypeRepository;
     }
 
+    [Authorize]
     public IActionResult Index()
     {
         return View();
@@ -56,6 +58,7 @@ public class UsersController : Controller
     //    return Json(usersList);
     //}
 
+    [Authorize]
     public async Task<IActionResult> UserDetailsAsync(int Id)
     {
         var model = new UserViewModel();

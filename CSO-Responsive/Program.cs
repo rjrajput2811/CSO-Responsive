@@ -18,6 +18,8 @@ using CSO.Core.Repositories.SecurityActionRepo;
 using CSO.Core.Repositories.UserRepo;
 using CSO.Core.Repositories.UsersRoleRepo;
 using CSO.Core.Services.SystemLogs;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
@@ -57,9 +59,19 @@ builder.Services.AddTransient<IEmailConfigurationRepository, EmailConfigurationR
 builder.Services.AddScoped<IDbConnection>(db => new SqlConnection(connstring));
 
 
-
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
+//builder.Services.AddAuthentication(IISDefaults.AuthenticationScheme);
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(
+    options =>
+    {
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.LoginPath = new PathString("/Account/Login");
+    });
+builder.Services.AddAuthorization();
+
 //builder.Services.AddCors(opt =>
 //{
 //    opt.AddPolicy("CorsPolicy", builder => builder
@@ -85,6 +97,7 @@ app.UseStaticFiles();
 app.UseRouting();
 //app.UseCors("CorsPolicy");
 app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
