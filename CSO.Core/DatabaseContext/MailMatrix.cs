@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CSO.Core.DatabaseContext;
 
-[Table("MailMatrix")]
+[Table("MailMatrices")]
 public class MailMatrix : SqlTable
 {
     public int MailType { get; set; }

@@ -4,7 +4,7 @@ namespace CSO_Responsive.Controllers
 {
     public class SMTPSettingController : Controller
     {
-        public IActionResult SMTPSetting()
+        public IActionResult Index()
         {
             return View();
         }
