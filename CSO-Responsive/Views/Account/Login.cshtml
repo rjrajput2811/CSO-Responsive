@@ -53,9 +53,9 @@
 
 <!-- Content area -->
 <div class="content d-flex justify-content-center align-items-center">
-
     <!-- Login card -->
     <form class="login-form" sp-controller="Account" asp-action="Login" method="post">
+        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
         <div class="card mb-0 shadow" style="border-radius: 15px; overflow: hidden; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);">
             <div class="text-center bg-white p-3">
                 <a>
