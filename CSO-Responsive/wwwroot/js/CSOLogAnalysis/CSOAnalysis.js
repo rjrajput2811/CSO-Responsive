@@ -1,5 +1,9 @@
-﻿$(function () {
+﻿let baseUrl;
+
+$(function () {
     setTimeout(function () {
+        baseUrl = GetBaseUrl();
+
         var divisionVal = $('#DivisionId').val();
         if (divisionVal) {
             $('#DivisionId').trigger('change');
@@ -196,6 +200,8 @@ function InsertUpdateCSOLogAnay() {
         formData.append('files', files[i]);
     }
 
+    formData.append('BaseUrl', baseUrl);
+
     $.ajax({
         url: $('#CSOLogAnay-form').attr('action'),
         type: 'POST',
@@ -286,6 +292,8 @@ function UpdateCSOLogRootCause(status) {
     for (var i = 0; i < files.length; i++) {
         formData.append('files', files[i]);
     }
+
+    formData.append('BaseUrl', baseUrl);
 
     $.ajax({
         url: $('#CSOLogRootCause-form').attr('action'),
@@ -381,6 +389,8 @@ function UpdateCSOLogMonitor(status) {
         formData.append('files', files[i]);
     }
 
+    formData.append('BaseUrl', baseUrl);
+
     $.ajax({
         url: $('#CSOLogMonitor-form').attr('action'),
         type: 'POST',
@@ -454,6 +464,7 @@ function UpdateCSOLogApproveReject(status) {
 
     formData.append('Id', csoLogId);
     formData.append('Status', status);
+    formData.append('BaseUrl', baseUrl);
 
     $.ajax({
         url: $('#CSOLogApproveReject-form').attr('action'),
@@ -526,6 +537,7 @@ function UpdateCSOLogClose(status) {
 
     formData.append('Id', csoLogId);
     formData.append('Status', status);
+    formData.append('BaseUrl', baseUrl);
 
     $.ajax({
         url: $('#CSOLogClose-form').attr('action'),

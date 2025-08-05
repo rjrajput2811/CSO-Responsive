@@ -11,4 +11,5 @@ public interface IUsersRoleRepository
     Task<OperationResult> UpdateUserRoleAsync(UsersRoleViewModel model);
     Task<OperationResult> DeleteUserRoleAsync(int Id);
     Task<UsersRole> GetUserRoleByIdAsync(int Id);
+    Task<string?> GetRoleName(int roleId);
 }

@@ -5,13 +5,6 @@ public enum UserType
     Manager = 0,
     General = 1
 }
-public enum MailType
-{
-    NewUserRegistration = 1,
-    CsoMovement = 2,
-    CsoClosure = 3,
-    CsoMonthlyMail = 4
-}
 
 public enum Permissions
 {
@@ -29,14 +22,23 @@ public enum Permissions
     MailMatrixConfiguration = 12
 }
 
-public enum Role
+public enum MailType
 {
-    None = 0,
-    MQHead = 1,
-    BUHead = 2,
-    FactoryHead = 3,
-    ProductionTeam = 4,
-    QualityTeam = 5,
-    GeneralStaff = 6,
-    Admin = 7
+    NewUserRegistration = 1,
+    CsoMovement = 2,
+    CsoClosure = 3,
+    CsoMonthlyMail = 4
+}
+public enum EmailTemplateKey
+{
+    CSONo,
+    CSODT,
+    CSOLocation,
+    CSOProdLine,
+    CSODescription,
+    CSOProductCode,
+    CSOBatchCode,
+    CSOQty,
+    CSOURL,
+    CSOStatus
 }

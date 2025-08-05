@@ -1,4 +1,5 @@
-﻿using CSO.Core.Models;
+﻿using CSO.Core.DatabaseContext;
+using CSO.Core.Models;
 using CSO.Core.Repositories.BrandRepo;
 using CSO.Core.Repositories.CategoryRepo;
 using CSO.Core.Repositories.ComplaintTypeRepo;
@@ -8,6 +9,7 @@ using CSO.Core.Repositories.CSOLogFileRepo;
 using CSO.Core.Repositories.CSOLogHistoryRepo;
 using CSO.Core.Repositories.CSOLogRepo;
 using CSO.Core.Repositories.DivisionRepo;
+using CSO.Core.Repositories.MailMatrixRepo;
 using CSO.Core.Repositories.NearestPlantRepo;
 using CSO.Core.Repositories.PlantRepo;
 using CSO.Core.Repositories.ProductTypeRepo;
@@ -37,6 +39,7 @@ namespace CSO_Responsive.Controllers
         private readonly IComplaintTypeRepository _complaintTypeRepository;
         private readonly ICSOClassRepository _cSOClassRepository;
         private readonly ICSOLogHistoryRepository _csoLogHistoryRepository;
+        private readonly IMailMatrixRepository _mailMatrixRepository;
 
         public CSOLogAnalysisSolutionController(ICSOLogAnalysisRepository csoLogAnalRepository,
                                                 ISystemLogService systemLogService, IDivisionRepository divisionRepository,
@@ -48,7 +51,8 @@ namespace CSO_Responsive.Controllers
                                                 IUserRepository userRepository,
                                                 ICSOLogFileRepository csoLogFileRepository, ICSOLogRepository csoLogRepository,
                                                 IComplaintTypeRepository complaintTypeRepository,ICSOClassRepository cSOClassRepository,
-                                                ICSOLogHistoryRepository csoLogHistoryRepository)
+                                                ICSOLogHistoryRepository csoLogHistoryRepository,
+                                                IMailMatrixRepository mailMatrixRepository)
         {
             _csoLogAnalRepository = csoLogAnalRepository;
             _systemLogService = systemLogService;
@@ -64,6 +68,7 @@ namespace CSO_Responsive.Controllers
             _complaintTypeRepository = complaintTypeRepository;
             _cSOClassRepository = cSOClassRepository;
             _csoLogHistoryRepository = csoLogHistoryRepository;
+            _mailMatrixRepository = mailMatrixRepository;
         }
         public IActionResult CSOLogAnalysisSolution()
         {
@@ -355,6 +360,8 @@ namespace CSO_Responsive.Controllers
                 if (!result.Success) { return Json(result); }
             }
 
+            result = await _mailMatrixRepository.CSOMailTrigger(model.Id, (int)MailType.CsoMovement, model.BaseUrl);
+
             return Json(result);
         }
 
@@ -415,6 +422,8 @@ namespace CSO_Responsive.Controllers
                 if (!result.Success) { return Json(result); }
             }
 
+            result = await _mailMatrixRepository.CSOMailTrigger(model.Id, (int)MailType.CsoMovement, model.BaseUrl);
+
             return Json(result);
         }
 
@@ -445,6 +454,8 @@ namespace CSO_Responsive.Controllers
             result = await _csoLogHistoryRepository.UpdateCSOLogHistoryForApproveRejectAsync(csoLogHistory);
             if (!result.Success) { return Json(result); }
 
+            result = await _mailMatrixRepository.CSOMailTrigger(model.Id, (int)MailType.CsoMovement, model.BaseUrl);
+
             return Json(result);
         }
 
@@ -469,6 +480,8 @@ namespace CSO_Responsive.Controllers
 
             result = await _csoLogHistoryRepository.UpdateCSOLogHistoryForCloseAsync(csoLogHistory);
             if (!result.Success) { return Json(result); }
+
+            result = await _mailMatrixRepository.CSOMailTrigger(model.Id, (int)MailType.CsoClosure, model.BaseUrl);
 
             return Json(result);
         }
