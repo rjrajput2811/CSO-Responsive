@@ -8,8 +8,8 @@ public class EmailConfigurationViewModel
     public string? From { get; set; }
     public string? SmtpServer { get; set; }
     public int Port { get; set; }
-    public string? UserName { get; set; }
-    public string? Password { get; set; }
+    public string? SMTPUserName { get; set; }
+    public string? SMTPPassword { get; set; }
     public bool SslRequired { get; set; }
     public string? DisplayName { get; set; }
     public string? OpenEmailSubject { get; set; }
