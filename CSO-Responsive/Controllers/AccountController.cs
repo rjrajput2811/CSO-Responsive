@@ -5,6 +5,7 @@ using CSO.Core.Repositories.UsersRoleRepo;
 using CSO.Core.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata;
@@ -13,6 +14,7 @@ using System.Security.Claims;
 
 namespace CSO_Responsive.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly IUserRepository _usersRepository;

@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,7 +70,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         options.LoginPath = new PathString("/Account/Login");
-    });
+    })
+    .AddNegotiate();
 builder.Services.AddAuthorization();
 
 //builder.Services.AddCors(opt =>
