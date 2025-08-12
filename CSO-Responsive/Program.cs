@@ -17,6 +17,7 @@ using CSO.Core.Repositories.RecycleDayRepo;
 using CSO.Core.Repositories.SecurityActionRepo;
 using CSO.Core.Repositories.UserRepo;
 using CSO.Core.Repositories.UsersRoleRepo;
+using CSO.Core.Services.ActiveDirectoryUserRoleManagerService;
 using CSO.Core.Services.SystemLogs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Server.IISIntegration;
@@ -57,6 +58,7 @@ builder.Services.AddTransient<IMailMatrixRepository, MailMatrixRepository>();
 builder.Services.AddTransient<ISecurityActionRepository, SecurityActionRepository>();
 builder.Services.AddTransient<ICSOLogHistoryRepository, CSOLogHistoryRepository>();
 builder.Services.AddTransient<IEmailConfigurationRepository, EmailConfigurationRepository>();
+builder.Services.AddTransient<IActiveDirectoryUserRoleManager, ActiveDirectoryUserRoleManager>();
 builder.Services.AddScoped<IDbConnection>(db => new SqlConnection(connstring));
 
 
@@ -104,6 +106,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}");
+    pattern: "{controller=Home}/{action=Index}");
 
 app.Run();
