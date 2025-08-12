@@ -94,7 +94,7 @@ namespace CSO_Responsive.Controllers
                         authProperties
                     );
 
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) && returnUrl != "/")
                         return Redirect(returnUrl);
 
                     if ((canDashboardShowOnMobile || canDashboardShowOnDesktop) && canViewDashboard)

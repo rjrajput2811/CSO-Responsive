@@ -88,7 +88,7 @@ namespace CSO_Responsive.Controllers
                         principal
                     );
 
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) && returnUrl != "/")
                         return Redirect(returnUrl);
 
                     if ((canDashboardShowOnMobile || canDashboardShowOnDesktop) && canViewDashboard)
