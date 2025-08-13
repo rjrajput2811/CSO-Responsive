@@ -14,6 +14,8 @@ public class RecycleDay : SqlTable
     [Column("RecDayId")]
     public override int Id { get; set; }
     //------------ END overrides --------
+
+    public int CSOLogPhase { get; set; }
     public DateTime FromDate { get; set; }
     public DateTime ToDate { get; set; }
     public int ThresholdDays { get; set; }

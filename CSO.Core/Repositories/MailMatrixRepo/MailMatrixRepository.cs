@@ -214,7 +214,7 @@ public class MailMatrixRepository : SqlTableRepository, IMailMatrixRepository
 
             var encryptId = CommonService.EncryptStringAES(csoLogData?.Id.ToString());
 
-            var CSOlogURL = $"{hostUrl}/Account/Login?id=" + encryptId;
+            var CSOlogURL = $"{hostUrl}/CSOLogAnalysisSolution/CSOLogAnalysisDetails/" + encryptId;
 
             (string mailBody, string mailSubject) = _emailConfigurationRepository.GenerateMailBody(mailMatrixConfig.MailBody, mailMatrixConfig.MessageHeader, 
                 mailMatrixConfig.MessageFooter, mailMatrixConfig.Subject, mailMatrixConfig.MailType, CsoNo, CsoDT, location, prodLine, description, prodCode, batchCode, 

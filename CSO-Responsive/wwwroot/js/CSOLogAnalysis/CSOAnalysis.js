@@ -212,7 +212,7 @@ function InsertUpdateCSOLogAnay() {
             Blockloaderhide();
             if (!response.success) {
                 var errorMessg = "";
-                for (var error in response.errors) {
+                for (var error of response.errors) {
                     errorMessg += error + "\n";
                 }
                 if (errorMessg != "") {
@@ -305,7 +305,7 @@ function UpdateCSOLogRootCause(status) {
             Blockloaderhide();
             if (!response.success) {
                 var errorMessg = "";
-                for (var error in response.errors) {
+                for (var error of response.errors) {
                     errorMessg += error + "\n";
                 }
                 if (errorMessg != "") {
@@ -401,7 +401,7 @@ function UpdateCSOLogMonitor(status) {
             Blockloaderhide();
             if (!response.success) {
                 var errorMessg = "";
-                for (var error in response.errors) {
+                for (var error of response.errors) {
                     errorMessg += error + "\n";
                 }
                 if (errorMessg != "") {
@@ -476,7 +476,7 @@ function UpdateCSOLogApproveReject(status) {
             Blockloaderhide();
             if (!response.success) {
                 var errorMessg = "";
-                for (var error in response.errors) {
+                for (var error of response.errors) {
                     errorMessg += error + "\n";
                 }
                 if (errorMessg != "") {
@@ -549,7 +549,7 @@ function UpdateCSOLogClose(status) {
             Blockloaderhide();
             if (!response.success) {
                 var errorMessg = "";
-                for (var error in response.errors) {
+                for (var error of response.errors) {
                     errorMessg += error + "\n";
                 }
                 if (errorMessg != "") {

@@ -9,9 +9,9 @@
 
     var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
 
-    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_BRAND, (int)userRoleId);
-    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_BRAND, (int)userRoleId);
-    var canDelete = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DELETE_BRAND, (int)userRoleId);
+    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_BRAND, userRoleId ?? 0);
+    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_BRAND, userRoleId ?? 0);
+    var canDelete = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DELETE_BRAND, userRoleId ?? 0);
 }
 
 
@@ -175,8 +175,6 @@
     </div>
 </div>
 
-@* ///////// Model Of Division  //////// *@
-
 <div class="modal fade" id="recycleDayModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -184,35 +182,44 @@
                 <h5 class="modal-title" id="formModalLabel">Add/Edit Recycle Day Configuration</h5>
             </div>
             <div class="modal-body">
-                <!-- Your Form Starts Here -->
-                <form>
-                    <div class="form-group">
-                        <div class="row form-group align-items-center mb-2">
-                            <input type="hidden" id="hdnId" name="Id" value="0" />
-                            <label class="col-2">From Date</label>
-                            <div class="col-4">
-                                <input type="date" name="FromDate" id="FromDate" class="form-control" required />
-                            </div>
-                        </div>
-                        <div class="row form-group align-items-center mb-2">
-                            <label class="col-2">To Date</label>
-                            <div class="col-4">
-                                <input type="date" name="ToDate" id="ToDate" class="form-control" required />
-                            </div>
-                        </div>
-                        <div class="row form-group align-items-center mb-2">
-                            <label class="col-2">Recycle Days</label>
-                            <div class="col-4">
-                                <input name="RecDay" id="RecDay" class="form-control" required />
-                            </div>
+                <div class="form-group">
+                    <div class="row form-group align-items-center mb-2">
+                        <input type="hidden" id="hdnId" name="Id" value="0" />
+                        <label class="col-3">CSO Log Phase</label>
+                        <div class="col-4">
+                            <select class="form-control" id="ddlCSOLogPhase">
+                                <option value="">Select Phase</option>
+                                <option value="@((int)Status.Open)">Open</option>
+                                <option value="@((int)Status.RootCause)">Root Cause</option>
+                                <option value="@((int)Status.Monitor)">Monitor</option>
+                                <option value="@((int)Status.Approve)">Approve</option>
+                            </select>
                         </div>
                     </div>
-                </form>
+                    <div class="row form-group align-items-center mb-2">
+                        <label class="col-3">From Date</label>
+                        <div class="col-4">
+                            <input type="date" name="FromDate" id="fromDate" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="row form-group align-items-center mb-2">
+                        <label class="col-3">To Date</label>
+                        <div class="col-4">
+                            <input type="date" name="ToDate" id="toDate" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="row form-group align-items-center mb-2">
+                        <label class="col-3">Recycle Days</label>
+                        <div class="col-4">
+                            <input name="RecDay" id="txtRecDay" class="form-control" required />
+                        </div>
+                    </div>
+                </div>
                 <br />
                 <div class="ml-auto">
                     <button type="button" class="btn btn-primary legitRipple" onclick="InsertUpdateRecycleDay()">Submit</button>
                     <button type="button" class="btn btn-warning legitRipple" onclick="clearForm()">Clear</button>&nbsp;
-                    <button type="button" class="btn btn-secondary legitRipple" data-bs-dismiss="modal" onclick="">Close</button>
+                    <button type="button" class="btn btn-secondary legitRipple" data-bs-dismiss="modal" onclick="closeRecycleDayModal()">Close</button>
                 </div>
             </div>
         </div>
@@ -342,6 +349,7 @@
                     tabledata.push({
                         Sr_No: index + 1,
                         Id: item.id,
+                        CSOLogPhase: item.csoLogPhaseName,
                         FormDate: fromDate,
                         ToDate: toDate,
                         ThresholdDays: item.thresholdDays,
@@ -377,14 +385,15 @@
                     {
                                 title: "SNo", field: "Sr_No", width: 50, responsive: 1,  sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
                     },
-                    { title: "Form Date", field: "FormDate", responsive: 2,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
-                    { title: "To Date", field: "ToDate", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
-                    { title: "Recycle Days", field: "ThresholdDays", responsive: 4,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
-                    { title: "Financial Year", field: "FinancialYear", responsive: 5,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
-                    { title: "User", field: "CreatedBy", responsive: 6,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
-                    { title: "Create Date", field: "CreatedDate", responsive: 7,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
-                    { title: "Updated By", field: "UpdatedBy", responsive: 8,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
-                    { title: "Update Date", field: "UpdatedDate", responsive: 9,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "CSO Log Phase", field: "CSOLogPhase", responsive: 2,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "Form Date", field: "FormDate", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "To Date", field: "ToDate", responsive: 4,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "Recycle Days", field: "ThresholdDays", responsive: 5,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "Financial Year", field: "FinancialYear", responsive: 6,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center" },
+                    { title: "User", field: "CreatedBy", responsive: 7,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Create Date", field: "CreatedDate", responsive: 8,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Updated By", field: "UpdatedBy", responsive: 9,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Update Date", field: "UpdatedDate", responsive: 10,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
                 );
 
                 // // Initialize Tabulator
@@ -439,10 +448,15 @@
             Blockloaderhide();
         }
 
-
         function openRecycleDayModal() {
             clearForm();
             $('#recycleDayModal').modal('show');
+
+        }
+
+        function closeRecycleDayModal() {
+            clearForm();
+            $('#recycleDayModal').modal('hide');
 
         }
 
@@ -468,47 +482,47 @@
 
         function InsertUpdateRecycleDay() {
             Blockloadershow();
-            var errorMsg = "";
-            var fields = "";
+            const requiredFields = [
+                { id: 'ddlCSOLogPhase', name: 'CSO Log Phase' },
+                { id: 'fromDate', name: 'From Date' },
+                { id: 'toDate', name: 'To Date' },
+                { id: 'txtRecDay', name: 'Recycle Days' }
+            ];
 
-            if ($("#FromDate").val() == '' || $("#FromDate").val() == null || $("#FromDate").val() == undefined) {
-                fields += " - From Date" + "<br>";
-            }
+            let isValid = true;
+            let missingFields = [];
 
-             if ($("#ToDate").val() == '' || $("#ToDate").val() == null || $("#ToDate").val() == undefined) {
-                fields += " - To Date" + "<br>";
-            }
+            requiredFields.forEach(field => {
+                const element = $('#' + field.id);
+                if (!element.val()) {
+                    isValid = false;
+                    missingFields.push(field.name);
+                    element.addClass('missing-field');
+                }
+            });
 
-             if ($("#RecDay").val() == '' || $("#RecDay").val() == null || $("#RecDay").val() == undefined) {
-                fields += " - Recycle Days" + "<br>";
-            }
-
-            if (fields != "") {
-                errorMsg = "Please fill following mandatory field(s):" + "<br><br>" + fields;
-            }
-            if (errorMsg != "") {
+            if (!isValid) {
+                const missingFieldsList = missingFields.map(field => `<li>${field}</li>`).join('');
+                const alertMessage = `
+                        <p>Please fill out the following required field(s):</p>
+                        <ul>${missingFieldsList}</ul>
+                    `;
+                showDangerAlert(alertMessage);
                 Blockloaderhide();
-                showDangerAlert(errorMsg);
                 return false;
-            }
-
-            var ajaxUrl = "";
-            if ($("#hdnId").val() != "0") {
-                ajaxUrl = '@Url.Action("Update", "RecycleDay")';
-            }
-            else {
-                ajaxUrl = '@Url.Action("Create", "RecycleDay")';
             }
 
             var Model = {
                 Id: $("#hdnId").val(),
-                FromDate: $("#FromDate").val(),
-                ToDate: $("#ToDate").val(),
-                ThresholdDays: $("#RecDay").val()
+                CSOLogPhase: $("#ddlCSOLogPhase").val(),
+                FromDate: $("#fromDate").val(),
+                ToDate: $("#toDate").val(),
+                ThresholdDays: $("#txtRecDay").val()
             };
+
             $.ajax({
+                url: '@Url.Action("InsertUpdateRecycleDays", "RecycleDay")',
                 type: "POST",
-                url: ajaxUrl,
                 data: Model,
                 success: function (response) {
                     Blockloaderhide();
@@ -523,19 +537,16 @@
                             window.location.reload();
                         }, 2500);
                     }
-                    else if (response.message == "Exist") {
-                        showDangerAlert("Recycle Day Configuration already exist.");
-                    }
                     else {
                         var errorMessg = "";
-                        for (var error in response.errors) {
+                        for (var error of response.errors) {
                             errorMessg += error + "\n";
                         }
                         if (errorMessg != "") {
                             showDangerAlert(errorMessg);
                         }
                         else {
-                            showDangerAlert(response.Message);
+                            showDangerAlert(response.message);
                         }
                     }
                 },
@@ -604,9 +615,11 @@
                     if (data) {
                         console.log(data);
                         $("#hdnId").val(data.id);
-                        $("#FromDate").val(formatDate(data.fromDate));
-                        $("#ToDate").val(formatDate(data.toDate));
-                        $("#RecDay").val(data.thresholdDays);
+                        $("#ddlCSOLogPhase").val(data.csoLogPhase);
+                        $("#ddlCSOLogPhase").trigger('change');
+                        $("#fromDate").val(formatDate(data.fromDate));
+                        $("#toDate").val(formatDate(data.toDate));
+                        $("#txtRecDay").val(data.thresholdDays);
                     } else {
                         showDangerAlert('No data received.');
                     }

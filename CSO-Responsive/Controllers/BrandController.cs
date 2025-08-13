@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSO_Responsive.Controllers
 {
-    public class BrandController : Controller
+    public class BrandController : BaseController
     {
         private readonly IBrandRepository _brandRepository;
         private readonly IDivisionRepository _divisionRepository;

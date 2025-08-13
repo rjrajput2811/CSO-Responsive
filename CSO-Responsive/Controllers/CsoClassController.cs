@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSO_Responsive.Controllers
 {
-    public class CsoClassController : Controller
+    public class CsoClassController : BaseController
     {
         private readonly ICSOClassRepository _csoClassRepository;
         private readonly ISystemLogService _systemLogService;

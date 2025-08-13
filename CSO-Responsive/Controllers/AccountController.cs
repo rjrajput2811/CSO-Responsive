@@ -1,28 +1,30 @@
-﻿using CSO.Core.DatabaseContext;
-using CSO.Core.Models;
+﻿using CSO.Core.Models;
+using CSO.Core.Repositories.SecurityActionRepo;
 using CSO.Core.Repositories.UserRepo;
 using CSO.Core.Repositories.UsersRoleRepo;
 using CSO.Core.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata;
-using System.Runtime.InteropServices.JavaScript;
 using System.Security.Claims;
 
 namespace CSO_Responsive.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly IUserRepository _usersRepository;
         private readonly IUsersRoleRepository _usersRoleRepository;
+        private readonly ISecurityActionRepository _securityActionRepository;
         public AccountController(IUserRepository usersRepository,
                                  IUserRepository userService,
-                                 IUsersRoleRepository usersRoleRepository)
+                                 IUsersRoleRepository usersRoleRepository,
+                              ISecurityActionRepository securityActionRepository)
         {
             _usersRepository = usersRepository;
             _usersRoleRepository = usersRoleRepository;
+            _securityActionRepository = securityActionRepository;
         }
 
         public IActionResult Login(string? returnUrl = null)
@@ -39,10 +41,23 @@ namespace CSO_Responsive.Controllers
                 var loginUser = await _usersRepository.Login(user);
                 if (loginUser != null)
                 {
+                    var ua = HttpContext.Request.Headers["User-Agent"].ToString();
+                    var isMobile = ua.Contains("Mobi") || ua.Contains("Android") || ua.Contains("iPhone");
+
+                    // === Dashboard ===
+                    var canDashboardShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_DASHBOARD, loginUser.RoleId);
+                    var canDashboardShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_DASHBOARD, loginUser.RoleId);
+                    var canViewDashboard = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_DASHBOARD, loginUser.RoleId);
+
+                    // === CSOLOG ===
+                    var canCSOLogShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CSOLOG, loginUser.RoleId);
+                    var canCSOLogShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CSOLOG, loginUser.RoleId);
+                    var canViewCSOLog = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CSOLOG, loginUser.RoleId);
+
                     HttpContext.Session.SetInt32("UserId", loginUser.Id);
                     HttpContext.Session.SetInt32("Role", loginUser.RoleId);
                     HttpContext.Session.SetString("FullName", loginUser.Name ?? "");
-                    HttpContext.Session.SetInt32("UserRole", (int)loginUser.RoleId);
+                    HttpContext.Session.SetInt32("UserRole", loginUser.RoleId);
                     HttpContext.Session.SetString("RoleName", await _usersRoleRepository.GetRoleName(loginUser.RoleId));
                     HttpContext.Session.SetString("Designation", loginUser.Designation);
                     HttpContext.Session.SetInt32("UserType", loginUser.UserType);
@@ -79,12 +94,22 @@ namespace CSO_Responsive.Controllers
                         authProperties
                     );
 
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) && returnUrl != "/")
                         return Redirect(returnUrl);
 
-                    return RedirectToAction("Index", "DashBoard");
-                    
-                    
+                    if ((canDashboardShowOnMobile || canDashboardShowOnDesktop) && canViewDashboard)
+                    {
+                        return RedirectToAction("Index", "Dashboard");
+                    }
+                    else if ((canCSOLogShowOnMobile || canCSOLogShowOnDesktop) && canViewCSOLog)
+                    {
+                        return RedirectToAction("Index", "CSOLog");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Welcome", "Home");
+                    }
+
                 }
                 ModelState.AddModelError("WrongCredentials", "Incorrect email address or password.");
             }

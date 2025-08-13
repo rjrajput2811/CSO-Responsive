@@ -261,7 +261,7 @@ function InsertUpdateUser() {
             Blockloaderhide();
             if (!response.success) {
                 var errorMessg = "";
-                for (var error in response.errors) {
+                for (var error of response.errors) {
                     errorMessg += error + "\n";
                 }
                 if (errorMessg != "") {

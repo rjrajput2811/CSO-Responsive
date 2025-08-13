@@ -2,7 +2,7 @@
 
 namespace CSO_Responsive.Controllers;
 
-public class DashBoardController : Controller
+public class DashBoardController : BaseController
 {
     public IActionResult Index()
     {

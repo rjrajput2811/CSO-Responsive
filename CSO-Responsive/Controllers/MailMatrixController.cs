@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CSO_Responsive.Controllers;
 
-public class MailMatrixController : Controller
+public class MailMatrixController : BaseController
 {
     private readonly IMailMatrixRepository _mailMatrixRepository;
     private readonly IUserRepository _userRepository;

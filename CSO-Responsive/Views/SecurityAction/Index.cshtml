@@ -9,8 +9,8 @@
 
     var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
 
-    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_USERS, (int)userRoleId);
-    var canDelete = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DELETE_USERS, (int)userRoleId);
+    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_USERS, userRoleId ?? 0);
+    var canDelete = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DELETE_USERS, userRoleId ?? 0);
 }
 
 

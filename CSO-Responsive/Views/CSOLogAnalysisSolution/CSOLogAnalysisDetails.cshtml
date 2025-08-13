@@ -11,20 +11,20 @@
 
     var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
 
-    var canViewRootCause = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_ROOTCAUSE, (int)userRoleId);
-    var canViewMonitor = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_MONITOR, (int)userRoleId);
-    var canViewApprove = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_APPROVE, (int)userRoleId);
-    var canViewClouser = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CLOSURE, (int)userRoleId);
+    var canViewRootCause = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_ROOTCAUSE, userRoleId ?? 0);
+    var canViewMonitor = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_MONITOR, userRoleId ?? 0);
+    var canViewApprove = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_APPROVE, userRoleId ?? 0);
+    var canViewClouser = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CLOSURE, userRoleId ?? 0);
 
-    var canAddRootCause = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_ROOTCAUSE, (int)userRoleId);
-    var canAddMonitor = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_MONITOR, (int)userRoleId);
-    var canAddApprove = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_APPROVE, (int)userRoleId);
-    var canAddClouser = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_CLOSURE, (int)userRoleId);
+    var canAddRootCause = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_ROOTCAUSE, userRoleId ?? 0);
+    var canAddMonitor = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_MONITOR, userRoleId ?? 0);
+    var canAddApprove = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_APPROVE, userRoleId ?? 0);
+    var canAddClouser = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_CLOSURE, userRoleId ?? 0);
 
-    var canEditRootCause = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_ROOTCAUSE, (int)userRoleId);
-    var canEditMonitor = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_MONITOR, (int)userRoleId);
-    var canEditApprove = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_APPROVE, (int)userRoleId);
-    var canEditClouser = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_CLOSURE, (int)userRoleId);
+    var canEditRootCause = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_ROOTCAUSE, userRoleId ?? 0);
+    var canEditMonitor = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_MONITOR, userRoleId ?? 0);
+    var canEditApprove = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_APPROVE, userRoleId ?? 0);
+    var canEditClouser = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_CLOSURE, userRoleId ?? 0);
 }
 
 <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />

@@ -23,7 +23,7 @@ using System.Text;
 
 namespace CSO_Responsive.Controllers
 {
-    public class CSOLogAnalysisSolutionController : Controller
+    public class CSOLogAnalysisSolutionController : BaseController
     {
         private readonly ICSOLogAnalysisRepository _csoLogAnalRepository;
         private readonly ISystemLogService _systemLogService;
@@ -70,7 +70,7 @@ namespace CSO_Responsive.Controllers
             _csoLogHistoryRepository = csoLogHistoryRepository;
             _mailMatrixRepository = mailMatrixRepository;
         }
-        public IActionResult CSOLogAnalysisSolution()
+        public IActionResult Index()
         {
             return View();
         }
@@ -88,7 +88,7 @@ namespace CSO_Responsive.Controllers
         //    return View();
         //}
 
-        public async Task<IActionResult> CSOLogAnalysisDetails(string id)
+        public async Task<IActionResult> CSOLogAnalysisDetailsAsync(string id)
         {
             var userId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
