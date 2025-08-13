@@ -9,9 +9,9 @@
 
     var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
 
-    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_DIVISION, (int)userRoleId);
-    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_DIVISION, (int)userRoleId);
-    var canDelete = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DELETE_DIVISION, (int)userRoleId);
+    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_DIVISION, userRoleId ?? 0);
+    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_DIVISION, userRoleId ?? 0);
+    var canDelete = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DELETE_DIVISION, userRoleId ?? 0);
 }
 
 
@@ -494,7 +494,7 @@
                     }
                     else {
                         var errorMessg = "";
-                        for (var error in response.errors) {
+                        for (var error of response.errors) {
                             errorMessg += error + "\n";
                         }
                         if (errorMessg != "") {

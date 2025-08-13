@@ -3,6 +3,7 @@
 public class RecycleDayViewModel
 {
     public int Id { get; set; }
+    public int CSOLogPhase { get; set; }
     public DateTime FromDate { get; set; }
     public DateTime ToDate { get; set; }
     public int ThresholdDays { get; set; }
@@ -11,4 +12,5 @@ public class RecycleDayViewModel
     public DateTime AddedDate { get; set; }
     public int? ModifiedBy { get; set; }
     public DateTime? ModifiedDate { get; set; }
+    public string? CSOLogPhaseName { get; set; }
 }

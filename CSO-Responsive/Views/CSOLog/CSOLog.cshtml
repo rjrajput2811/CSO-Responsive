@@ -13,8 +13,8 @@
 
     var userRoleId = HttpContextAccessor.HttpContext.Session.GetInt32("UserRole");
 
-    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_CSOLOG, (int)userRoleId);
-    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_CSOLOG, (int)userRoleId);
+    var canAdd = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_ADD_CSOLOG, userRoleId ?? 0);
+    var canEdit = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_EDIT_CSOLOG, userRoleId ?? 0);
     var isNew = Model.Id == 0;
 }
 <link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
@@ -141,19 +141,22 @@
                 <div class="row g-3">
                     @Html.HiddenFor(m => m.Id)
                     @Html.HiddenFor(m => m.FinancialYear)
-                    <div class="col-md-2">
-                        <label class=" custom-label required">CSO No.</label>
-                        @{
-                            string CSONo = string.Empty;
-                            if (Model.CSONo > 0 && Model.FinancialYear > 0)
-                            {
-                                CSONo = Model.CSONo + "/" + Model.FinancialYear;
+                    @if(Model.Id > 0)
+                    {
+                        <div class="col-md-2">
+                            <label class=" custom-label required">CSO No.</label>
+                            @{
+                                string CSONo = string.Empty;
+                                if (Model.CSONo > 0 && Model.FinancialYear > 0)
+                                {
+                                    CSONo = Model.CSONo + "/" + Model.FinancialYear;
+                                }
                             }
-                        }
 
-                        @Html.TextBox("CSONo", CSONo, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
-                        @Html.ValidationMessageFor(m => m.CSONo, "", new { @class = "text-danger" })
-                    </div>
+                            @Html.TextBox("CSONo", CSONo, new { @class = "form-control font-weight-bold", @disabled = "disabled" })
+                            @Html.ValidationMessageFor(m => m.CSONo, "", new { @class = "text-danger" })
+                        </div>
+                    }
                     <div class="col-md-4">
                         <label class=" required select2 custom-label">Division/BU</label>
 

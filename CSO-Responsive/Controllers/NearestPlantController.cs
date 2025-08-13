@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSO_Responsive.Controllers
 {
-    public class NearestPlantController : Controller
+    public class NearestPlantController : BaseController
     {
         private readonly INearestPlantRepository _nearestPlantRepository;
         private readonly ISystemLogService _systemLogService;

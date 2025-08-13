@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSO_Responsive.Controllers;
 
-public class CategoryController : Controller
+public class CategoryController : BaseController
 {
     private readonly ICategoryRepository _categoryRepository;
     private readonly ISystemLogService _systemLogService;

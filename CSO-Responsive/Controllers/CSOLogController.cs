@@ -20,7 +20,7 @@ using System.Text;
 
 namespace CSO_Responsive.Controllers;
 
-public class CSOLogController : Controller
+public class CSOLogController : BaseController
 {
     private readonly ICSOLogRepository _csoLogRepository;
     private readonly ISystemLogService _systemLogService;

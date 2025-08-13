@@ -131,7 +131,7 @@ function InsertUpdateCSOLog() {
         { id: 'DivisionId', name: 'Division/BU' },
         { id: 'CategoryId', name: 'Category/Function' },
         { id: 'BrandId', name: 'Brand' },
-        { id: 'ProductTypeId', name: 'ProductType' },
+        { id: 'ProductTypeId', name: 'Product Type' },
         { id: 'SKUDetails', name: 'SKU Details' },
         { id: 'Batch', name: 'Batch' },
         { id: 'PKDDate', name: 'PKD Date' },
@@ -212,7 +212,7 @@ function InsertUpdateCSOLog() {
             Blockloaderhide();
             if (!response.success) {
                 var errorMessg = "";
-                for (var error in response.errors) {
+                for (var error of response.errors) {
                     errorMessg += error + "\n";
                 }
                 if (errorMessg != "") {

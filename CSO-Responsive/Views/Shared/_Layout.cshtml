@@ -12,109 +12,109 @@
     var isMobile = ua.Contains("Mobi") || ua.Contains("Android") || ua.Contains("iPhone");
 
     // === Dashboard ===
-    var canDashboardShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_DASHBOARD, (int)userRoleId);
-    var canDashboardShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_DASHBOARD, (int)userRoleId);
-    var canViewDashboard = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_DASHBOARD, (int)userRoleId);
+    var canDashboardShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_DASHBOARD, userRoleId ?? 0);
+    var canDashboardShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_DASHBOARD, userRoleId ?? 0);
+    var canViewDashboard = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_DASHBOARD, userRoleId ?? 0);
 
     // === Users ===
-    var canUsersShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_USERS, (int)userRoleId);
-    var canUsersShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_USERS, (int)userRoleId);
-    var canViewUsers = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_USERS, (int)userRoleId);
+    var canUsersShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_USERS, userRoleId ?? 0);
+    var canUsersShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_USERS, userRoleId ?? 0);
+    var canViewUsers = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_USERS, userRoleId ?? 0);
 
     // === CSOLOG ===
-    var canCSOLogShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CSOLOG, (int)userRoleId);
-    var canCSOLogShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CSOLOG, (int)userRoleId);
-    var canViewCSOLog = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CSOLOG, (int)userRoleId);
+    var canCSOLogShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CSOLOG, userRoleId ?? 0);
+    var canCSOLogShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CSOLOG, userRoleId ?? 0);
+    var canViewCSOLog = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CSOLOG, userRoleId ?? 0);
 
     // === ROOTCAUSE ===
-    var canRootCauseShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_ROOTCAUSE, (int)userRoleId);
-    var canRootCauseShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_ROOTCAUSE, (int)userRoleId);
-    var canViewRootCause = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_ROOTCAUSE, (int)userRoleId);
+    var canRootCauseShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_ROOTCAUSE, userRoleId ?? 0);
+    var canRootCauseShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_ROOTCAUSE, userRoleId ?? 0);
+    var canViewRootCause = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_ROOTCAUSE, userRoleId ?? 0);
 
     // === MONITOR ===
-    var canMonitorShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_MONITOR, (int)userRoleId);
-    var canMonitorShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_MONITOR, (int)userRoleId);
-    var canViewMonitor = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_MONITOR, (int)userRoleId);
+    var canMonitorShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_MONITOR, userRoleId ?? 0);
+    var canMonitorShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_MONITOR, userRoleId ?? 0);
+    var canViewMonitor = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_MONITOR, userRoleId ?? 0);
 
     // === APPROVE ===
-    var canApproveShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_APPROVE, (int)userRoleId);
-    var canApproveShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_APPROVE, (int)userRoleId);
-    var canViewApprove = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_APPROVE, (int)userRoleId);
+    var canApproveShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_APPROVE, userRoleId ?? 0);
+    var canApproveShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_APPROVE, userRoleId ?? 0);
+    var canViewApprove = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_APPROVE, userRoleId ?? 0);
 
     // === CLOSURE ===
-    var canClosureShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CLOSURE, (int)userRoleId);
-    var canClosureShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CLOSURE, (int)userRoleId);
-    var canViewClosure = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CLOSURE, (int)userRoleId);
+    var canClosureShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CLOSURE, userRoleId ?? 0);
+    var canClosureShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CLOSURE, userRoleId ?? 0);
+    var canViewClosure = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CLOSURE, userRoleId ?? 0);
 
     // === MIS ===
-    var canMISShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_MIS, (int)userRoleId);
-    var canMISShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_MIS, (int)userRoleId);
-    var canViewMIS = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_MIS, (int)userRoleId);
+    var canMISShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_MIS, userRoleId ?? 0);
+    var canMISShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_MIS, userRoleId ?? 0);
+    var canViewMIS = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_MIS, userRoleId ?? 0);
 
     // === CSOLOG_REPORT ===
-    var canCSOLogReportShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CSOLOG_REPORT, (int)userRoleId);
-    var canCSOLogReportShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CSOLOG_REPORT, (int)userRoleId);
-    var canViewCSOLogReport = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CSOLOG_REPORT, (int)userRoleId);
+    var canCSOLogReportShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CSOLOG_REPORT, userRoleId ?? 0);
+    var canCSOLogReportShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CSOLOG_REPORT, userRoleId ?? 0);
+    var canViewCSOLogReport = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CSOLOG_REPORT, userRoleId ?? 0);
 
     // === MAILMATRIX ===
-    var canMailMatrixShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_MAILMATRIX, (int)userRoleId);
-    var canMailMatrixShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_MAILMATRIX, (int)userRoleId);
-    var canViewMailMatrix = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_MAILMATRIX, (int)userRoleId);
+    var canMailMatrixShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_MAILMATRIX, userRoleId ?? 0);
+    var canMailMatrixShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_MAILMATRIX, userRoleId ?? 0);
+    var canViewMailMatrix = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_MAILMATRIX, userRoleId ?? 0);
 
     // === EMAIL_SMTP_SETTINGS ===
-    var canEmailSmtpSettingsShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_EMAIL_SMTP_SETTINGS, (int)userRoleId);
-    var canEmailSmtpSettingsShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_EMAIL_SMTP_SETTINGS, (int)userRoleId);
-    var canViewEmailSmtpSettings = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_EMAIL_SMTP_SETTINGS, (int)userRoleId);
+    var canEmailSmtpSettingsShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_EMAIL_SMTP_SETTINGS, userRoleId ?? 0);
+    var canEmailSmtpSettingsShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_EMAIL_SMTP_SETTINGS, userRoleId ?? 0);
+    var canViewEmailSmtpSettings = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_EMAIL_SMTP_SETTINGS, userRoleId ?? 0);
 
     // === DIVISION ===
-    var canDivisionShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_DIVISION, (int)userRoleId);
-    var canDivisionShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_DIVISION, (int)userRoleId);
-    var canViewDivision = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_DIVISION, (int)userRoleId);
+    var canDivisionShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_DIVISION, userRoleId ?? 0);
+    var canDivisionShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_DIVISION, userRoleId ?? 0);
+    var canViewDivision = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_DIVISION, userRoleId ?? 0);
 
     // === CATEGORY ===
-    var canCategoryShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CATEGORY, (int)userRoleId);
-    var canCategoryShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CATEGORY, (int)userRoleId);
-    var canViewCategory = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CATEGORY, (int)userRoleId);
+    var canCategoryShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CATEGORY, userRoleId ?? 0);
+    var canCategoryShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CATEGORY, userRoleId ?? 0);
+    var canViewCategory = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CATEGORY, userRoleId ?? 0);
 
     // === COMPLAIN_TYPE ===
-    var canComplainTypeShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_COMPLAIN_TYPE, (int)userRoleId);
-    var canComplainTypeShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_COMPLAIN_TYPE, (int)userRoleId);
-    var canViewComplainType = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_COMPLAIN_TYPE, (int)userRoleId);
+    var canComplainTypeShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_COMPLAIN_TYPE, userRoleId ?? 0);
+    var canComplainTypeShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_COMPLAIN_TYPE, userRoleId ?? 0);
+    var canViewComplainType = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_COMPLAIN_TYPE, userRoleId ?? 0);
 
     // === CSO_CLASS ===
-    var canCSOClassShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CSO_CLASS, (int)userRoleId);
-    var canCSOClassShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CSO_CLASS, (int)userRoleId);
-    var canViewCSOClass = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CSO_CLASS, (int)userRoleId);
+    var canCSOClassShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_CSO_CLASS, userRoleId ?? 0);
+    var canCSOClassShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_CSO_CLASS, userRoleId ?? 0);
+    var canViewCSOClass = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_CSO_CLASS, userRoleId ?? 0);
 
     // === BRAND ===
-    var canBrandShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_BRAND, (int)userRoleId);
-    var canBrandShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_BRAND, (int)userRoleId);
-    var canViewBrand = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_BRAND, (int)userRoleId);
+    var canBrandShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_BRAND, userRoleId ?? 0);
+    var canBrandShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_BRAND, userRoleId ?? 0);
+    var canViewBrand = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_BRAND, userRoleId ?? 0);
 
     // === PRODUCT_TYPE ===
-    var canProductTypeShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_PRODUCT_TYPE, (int)userRoleId);
-    var canProductTypeShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_PRODUCT_TYPE, (int)userRoleId);
-    var canViewProductType = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_PRODUCT_TYPE, (int)userRoleId);
+    var canProductTypeShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_PRODUCT_TYPE, userRoleId ?? 0);
+    var canProductTypeShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_PRODUCT_TYPE, userRoleId ?? 0);
+    var canViewProductType = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_PRODUCT_TYPE, userRoleId ?? 0);
 
     // === PLANT ===
-    var canPlantShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_PLANT, (int)userRoleId);
-    var canPlantShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_PLANT, (int)userRoleId);
-    var canViewPlant = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_PLANT, (int)userRoleId);
+    var canPlantShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_PLANT, userRoleId ?? 0);
+    var canPlantShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_PLANT, userRoleId ?? 0);
+    var canViewPlant = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_PLANT, userRoleId ?? 0);
 
     // === NEAREST_PLANT ===
-    var canNearestPlantShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_NEAREST_PLANT, (int)userRoleId);
-    var canNearestPlantShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_NEAREST_PLANT, (int)userRoleId);
-    var canViewNearestPlant = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_NEAREST_PLANT, (int)userRoleId);
+    var canNearestPlantShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_NEAREST_PLANT, userRoleId ?? 0);
+    var canNearestPlantShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_NEAREST_PLANT, userRoleId ?? 0);
+    var canViewNearestPlant = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_NEAREST_PLANT, userRoleId ?? 0);
 
     // === RECYCLE_DAYS_CONFIGURATION ===
-    var canRecycleDaysConfigurationShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_RECYCLE_DAYS_CONFIGURATION, (int)userRoleId);
-    var canRecycleDaysConfigurationShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_RECYCLE_DAYS_CONFIGURATION, (int)userRoleId);
-    var canViewRecycleDaysConfiguration = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_RECYCLE_DAYS_CONFIGURATION, (int)userRoleId);
+    var canRecycleDaysConfigurationShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_RECYCLE_DAYS_CONFIGURATION, userRoleId ?? 0);
+    var canRecycleDaysConfigurationShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_RECYCLE_DAYS_CONFIGURATION, userRoleId ?? 0);
+    var canViewRecycleDaysConfiguration = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_RECYCLE_DAYS_CONFIGURATION, userRoleId ?? 0);
 
     // === SECURITY_ACTIONS ===
-    var canSecurityActionsShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_SECURITY_ACTIONS, (int)userRoleId);
-    var canSecurityActionsShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_SECURITY_ACTIONS, (int)userRoleId);
-    var canViewSecurityActions = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_SECURITY_ACTIONS, (int)userRoleId);
+    var canSecurityActionsShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_SECURITY_ACTIONS, userRoleId ?? 0);
+    var canSecurityActionsShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_SECURITY_ACTIONS, userRoleId ?? 0);
+    var canViewSecurityActions = await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_VIEW_SECURITY_ACTIONS, userRoleId ?? 0);
 
     var canShowCSOLogAnalysisAndSolutions = ((canRootCauseShowOnMobile || canRootCauseShowOnDesktop) || (canMonitorShowOnMobile || canMonitorShowOnDesktop)
                                              || (canApproveShowOnMobile || canApproveShowOnDesktop) || (canClosureShowOnMobile || canClosureShowOnDesktop))
@@ -489,7 +489,7 @@
                     @if (canShowCSOLogAnalysisAndSolutions)
                     {
                         <li class="nav-item">
-                            <a asp-controller="CSOLogAnalysisSolution" asp-action="CSOLogAnalysisSolution" class="nav-link" id="CSOLogAnalysisSolution" title="Analysis & Solution">
+                                <a asp-controller="CSOLogAnalysisSolution" asp-action="Index" class="nav-link" id="CSOLogAnalysisSolution" title="Analysis & Solution">
                                 <i class="fas fa-clipboard-list"></i>
                                 <span>
                                     Analysis & Solution
@@ -584,7 +584,7 @@
                                     }
                                     @if((canRecycleDaysConfigurationShowOnMobile || canRecycleDaysConfigurationShowOnDesktop) && canViewRecycleDaysConfiguration)
                                     {
-                                        <li class="nav-item"><a title="Recycle Days" asp-controller="RecycleDay" asp-action="RecycleDay" class="nav-link">Recycle Days Configuration</a></li>
+                                        <li class="nav-item"><a title="Recycle Days" asp-controller="RecycleDay" asp-action="Index" class="nav-link">Recycle Days Configuration</a></li>
                                     }
                                     @if((canSecurityActionsShowOnMobile || canSecurityActionsShowOnDesktop) && canViewSecurityActions)
                                     {

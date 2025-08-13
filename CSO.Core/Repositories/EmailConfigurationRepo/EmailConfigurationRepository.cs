@@ -1,4 +1,5 @@
 using CSO.Core.DatabaseContext;
+using CSO.Core.Models;
 using CSO.Core.Repositories.Shared;
 using CSO.Core.Security;
 using CSO.Core.Services.SystemLogs;
@@ -20,6 +21,83 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
     {
         _dbContext = dbContext;
         _systemLogService = systemLogService;
+    }
+
+    public async Task<EmailConfigurationViewModel> GetEmailConfiguration()
+    {
+        try
+        {
+            var result = await _dbContext.EmailConfigurations
+                .Select(x => new EmailConfigurationViewModel
+                {
+                    Id = x.Id,
+                    From = x.From,
+                    SMTPUserName = x.UserName,
+                    SMTPPassword = x.Password,
+                    SmtpServer = x.SmtpServer,
+                    Port = x.Port,
+                    SslRequired = x.SslRequired
+                })
+                .FirstOrDefaultAsync();
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<OperationResult> CreateEmailConfiguration(EmailConfigurationViewModel emailConfigurationModel)
+    {
+        try
+        {
+            var newEmailConfig = new EmailConfiguration
+            {
+                From = emailConfigurationModel.From,
+                UserName = emailConfigurationModel.SMTPUserName,
+                Password = emailConfigurationModel.SMTPPassword,
+                SmtpServer = emailConfigurationModel.SmtpServer,
+                Port = emailConfigurationModel.Port,
+                SslRequired = emailConfigurationModel.SslRequired,
+                AddedBy = emailConfigurationModel.AddedBy,
+                AddedOn = emailConfigurationModel.AddedOn
+
+            };
+
+            var result = await base.CreateAsync<EmailConfiguration>(newEmailConfig);
+            return result; ;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<OperationResult> UpdateEmailConfiguration(EmailConfigurationViewModel emailConfigurationModel)
+    {
+        try
+        {
+            var emailConfigToUpdate = await base.GetByIdAsync<EmailConfiguration>(emailConfigurationModel.Id);
+            emailConfigToUpdate.From = emailConfigurationModel.From;
+            emailConfigToUpdate.UserName = emailConfigurationModel.SMTPUserName;
+            emailConfigToUpdate.Password = emailConfigurationModel.SMTPPassword;
+            emailConfigToUpdate.SmtpServer = emailConfigurationModel.SmtpServer;
+            emailConfigToUpdate.Port = emailConfigurationModel.Port;
+            emailConfigToUpdate.SslRequired = emailConfigurationModel.SslRequired;
+            emailConfigToUpdate.UpdatedBy = emailConfigurationModel.UpdatedBy;
+            emailConfigToUpdate.UpdatedOn = emailConfigurationModel.UpdatedOn;
+
+            var result = await base.UpdateAsync<EmailConfiguration>(emailConfigToUpdate);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
     }
 
     public async Task<bool> SendForgotPassword(string tempPassword, string userEmail)
