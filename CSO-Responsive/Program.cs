@@ -108,4 +108,8 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}");
 
+app.MapControllerRoute(
+    name: "withId",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.Run();
