@@ -518,6 +518,17 @@
                             </ul>
                         </li>
                     }
+                        @if ((canMailMatrixShowOnMobile || canMailMatrixShowOnDesktop) && canViewMailMatrix)
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="MailMatrix" asp-action="Index" class="nav-link" id="MailMatrix" title="Mail Matrix">
+                                    <i class="fas fa-envelope-square"></i>
+                                    <span>
+                                        Mail Matrix
+                                    </span>
+                                </a>
+                            </li>
+                        }
                     @if((canEmailSmtpSettingsShowOnMobile || canEmailSmtpSettingsShowOnDesktop) && canViewEmailSmtpSettings)
                     {
                         <li class="nav-item">
@@ -532,10 +543,12 @@
                     @if(canShowMasters)
                     {
                         <li class="nav-item nav-item-submenu">
-                            <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Utility</span></a>
-                            <ul class="nav nav-group-sub" data-submenu-title="Configuration">
-                                <li class="nav-item nav-item-submenu">
-                                    <a href="#" class="nav-link">Masters</a>
+                            <a href="#" class="nav-link" title="Master">
+                                <i class="icon-file-eye"></i>
+                                <span>
+                                    Master
+                                </span>
+                            </a>
                                     <ul class="nav nav-group-sub">
                                     @if((canDivisionShowOnMobile || canDivisionShowOnDesktop) && canViewDivision)
                                     {
@@ -579,21 +592,9 @@
                                     }
                                     </ul>
                                 </li>
-                            </ul>
-
-                        </li>
+                           
                     }
-                    @if ((canMailMatrixShowOnMobile || canMailMatrixShowOnDesktop) && canViewMailMatrix)
-                    {
-                        <li class="nav-item">
-                            <a asp-controller="MailMatrix" asp-action="Index" class="nav-link" id="MailMatrix" title="Mail Matrix">
-                                <i class="fas fa-envelope-square"></i>
-                                <span>
-                                    Mail Matrix
-                                </span>
-                            </a>
-                        </li>
-                    }
+                    
                         
                     </ul>
                 </div>
