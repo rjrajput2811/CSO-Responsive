@@ -1,1 +1,179 @@
-﻿<img src="/uploads/TDSImages/UnderConstruction.png" class="img-fluid" alt="Responsive image">
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSO Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .card-status {
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .card-status i {
+                font-size: 2rem;
+                opacity: 0.7;
+            }
+
+        .filters {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+            .filters > * {
+                margin-right: 1rem;
+            }
+    </style>
+</head>
+<body>
+    <div class="container-fluid p-4">
+        <h3 class="text-primary mb-4">📊 CSO Dashboard</h3>
+
+        <!-- Top Status Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-sm-4 col-md-2">
+                <div class="card-status bg-primary"><div><h6>Open</h6><h4>0</h4></div><i class="fas fa-folder-open"></i></div>
+            </div>
+            <div class="col-6 col-sm-4 col-md-2">
+                <div class="card-status bg-danger"><div><h6>Root Caused</h6><h4>0</h4></div><i class="fas fa-bug"></i></div>
+            </div>
+            <div class="col-6 col-sm-4 col-md-2">
+                <div class="card-status bg-warning text-dark"><div><h6>Monitored</h6><h4>0</h4></div><i class="fas fa-eye"></i></div>
+            </div>
+            <div class="col-6 col-sm-4 col-md-2">
+                <div class="card-status bg-info"><div><h6>Approved</h6><h4>0</h4></div><i class="fas fa-check-circle"></i></div>
+            </div>
+            <div class="col-6 col-sm-4 col-md-2">
+                <div class="card-status bg-success"><div><h6>Closed</h6><h4>0</h4></div><i class="fas fa-lock"></i></div>
+            </div>
+            <div class="col-6 col-sm-4 col-md-2">
+                <div class="card-status" style="background-color: orange;"><div><h6>All</h6><h4>0</h4></div><i class="fas fa-layer-group"></i></div>
+            </div>
+        </div>
+
+        <!-- Filters and Export Buttons -->
+        <div class="filters d-flex align-items-center mb-4">
+            <select class="form-select w-auto">
+                <option selected>Division</option>
+                <option>Division A</option>
+                <option>Division B</option>
+            </select>
+            <select class="form-select w-auto">
+                <option selected>Plant</option>
+                <option>Plant A</option>
+                <option>Plant B</option>
+            </select>
+            <select class="form-select w-auto">
+                <option selected>Status</option>
+                <option>Open</option>
+                <option>Closed</option>
+            </select>
+            <input type="date" class="form-control w-auto">
+            <input type="date" class="form-control w-auto">
+            <button class="btn btn-primary">Apply</button>
+            <button class="btn btn-outline-secondary">🔄 Refresh</button>
+            <button class="btn btn-outline-success" onclick="exportToExcel()">📥 Excel</button>
+            <button class="btn btn-outline-danger" onclick="exportToPDF()">📄 PDF</button>
+            <button class="btn btn-outline-dark" onclick="window.print()">🖨️ Print</button>
+        </div>
+
+        <!-- Charts -->
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card p-3">
+                    <h6 class="mb-2">CSO Monthwise</h6>
+                    <canvas id="monthwiseChart"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card p-3">
+                    <h6 class="mb-2">CSO by Plants</h6>
+                    <canvas id="plantwiseChart"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card p-3">
+                    <h6 class="mb-2">CSO > 45 Days</h6>
+                    <canvas id="agingChart"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card p-3">
+                    <h6 class="mb-2">Open vs Closed</h6>
+                    <canvas id="openCloseChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const monthwiseChart = new Chart("monthwiseChart", {
+          type: "bar",
+          data: {
+            labels: ["Apr", "May", "Jun", "Jul", "Aug"],
+            datasets: [{ label: "Count", data: [2, 4, 1, 3, 0], backgroundColor: "#0d6efd" }]
+          },
+          options: { responsive: true, scales: { y: { beginAtZero: true } } }
+        });
+
+        const plantwiseChart = new Chart("plantwiseChart", {
+          type: "doughnut",
+          data: {
+            labels: ["Plant A", "Plant B", "Plant C"],
+            datasets: [{ data: [3, 2, 1], backgroundColor: ["#198754", "#ffc107", "#0dcaf0"] }]
+          }
+        });
+
+        const agingChart = new Chart("agingChart", {
+          type: "bar",
+          data: {
+            labels: ["Plant A", "Plant B"],
+            datasets: [{ label: "> 45 days", data: [1, 0], backgroundColor: "#dc3545" }]
+          }
+        });
+
+        const openCloseChart = new Chart("openCloseChart", {
+          type: "pie",
+          data: {
+            labels: ["Open", "Closed"],
+            datasets: [{ data: [4, 2], backgroundColor: ["#0dcaf0", "#198754"] }]
+          }
+        });
+
+        function exportToExcel() {
+          const wb = XLSX.utils.book_new();
+          const ws = XLSX.utils.aoa_to_sheet([
+            ["Chart", "Value"],
+            ["Open", 0], ["Closed", 0], ["> 45 Days", 0]
+          ]);
+          XLSX.utils.book_append_sheet(wb, ws, "CSO Stats");
+          XLSX.writeFile(wb, "CSO_Dashboard.xlsx");
+        }
+
+        function exportToPDF() {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+          doc.text("CSO Dashboard Summary", 10, 10);
+          doc.text("Open: 0", 10, 20);
+          doc.text("Closed: 0", 10, 30);
+          doc.text("> 45 Days: 0", 10, 40);
+          doc.save("CSO_Dashboard.pdf");
+        }
+    </script>
+</body>
+</html>
