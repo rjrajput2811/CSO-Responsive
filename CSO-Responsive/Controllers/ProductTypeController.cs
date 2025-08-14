@@ -30,6 +30,13 @@ namespace CSO_Responsive.Controllers
         }
 
         [HttpGet]
+        public async Task<JsonResult> GetProdType()
+        {
+            var brandList = await _productTypeRepository.GetAllProdTypeList();
+            return Json(brandList);
+        }
+
+        [HttpGet]
         public async Task<JsonResult> GetById(int Id)
         {
             var brandbyId = await _productTypeRepository.GetByIdAsync(Id);

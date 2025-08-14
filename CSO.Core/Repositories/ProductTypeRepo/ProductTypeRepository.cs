@@ -114,6 +114,71 @@ public class ProductTypeRepository : SqlTableRepository, IProductTypeRepository
     {
         try
         {
+            var productTypes = await _dbContext.ProductTypes.Where(x => x.IsActive).ToListAsync();
+            var brands = await _dbContext.Brands.Where(x => x.IsActive).ToListAsync();
+            var divisions = await _dbContext.Divisions.Where(x => x.IsActive).ToListAsync();
+
+            var list = productTypes.Select(pt =>
+            {
+                var brandIds = pt.BrandId?.Split(",", StringSplitOptions.RemoveEmptyEntries)
+                                          .Select(int.Parse)
+                                          .ToList() ?? new List<int>();
+
+                var divisionNames = new List<string>();
+                var brandNames = new List<string>();
+
+                foreach (var brandId in brandIds)
+                {
+                    var brand = brands.FirstOrDefault(b => b.Id == brandId);
+                    if (brand != null)
+                    {
+                        brandNames.Add(brand.Name);  // Collect brand name
+
+                        var divIds = brand.DivisionId?.Split(",", StringSplitOptions.RemoveEmptyEntries)
+                                                      .Select(int.Parse)
+                                                      .ToList() ?? new List<int>();
+
+                        foreach (var divId in divIds)
+                        {
+                            var division = divisions.FirstOrDefault(d => d.Id == divId);
+                            if (division != null)
+                            {
+                                divisionNames.Add(division.Name);
+                            }
+                        }
+                    }
+                }
+
+                return new ProductTypeViewModel
+                {
+                    Id = pt.Id,
+                    Name = pt.Name,
+                    BrandId = pt.BrandId,
+                    BrandName = string.Join(", ", brandNames.Distinct()),
+                    DivisionName = string.Join(", ", divisionNames.Distinct()),
+                    AddedOn = pt.AddedOn,
+                    AddedBy = pt.AddedBy,
+                    UpdatedOn = pt.UpdatedOn,
+                    UpdatedBy = pt.UpdatedBy,
+                    IsActive = pt.IsActive
+                };
+            })
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            return list;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<List<ProductTypeViewModel>> GetAllProdTypeList()
+    {
+        try
+        {
             //var list = await _dbContext.ProductTypes
             //    .Select(x => new ProductTypeViewModel
             //    {
@@ -174,7 +239,8 @@ public class ProductTypeRepository : SqlTableRepository, IProductTypeRepository
                     AddedOn = pt.AddedOn,
                     AddedBy = pt.AddedBy,
                     UpdatedOn = pt.UpdatedOn,
-                    UpdatedBy = pt.UpdatedBy
+                    UpdatedBy = pt.UpdatedBy,
+                    IsActive = pt.IsActive
                 };
             })
                 .OrderBy(x => x.Name)
@@ -212,6 +278,7 @@ public class ProductTypeRepository : SqlTableRepository, IProductTypeRepository
             productTypeToCreate.BrandId = productType.BrandId;
             productTypeToCreate.AddedBy = productType.AddedBy;
             productTypeToCreate.AddedOn = productType.AddedOn;
+            productTypeToCreate.IsActive = productType.IsActive;
             return await base.CreateAsync<ProductType>(productTypeToCreate, returnCreatedRecord);
         }
         catch (Exception ex)
@@ -230,6 +297,7 @@ public class ProductTypeRepository : SqlTableRepository, IProductTypeRepository
             productTypeToCreate.BrandId = productType.BrandId;
             productTypeToCreate.UpdatedBy = productType.UpdatedBy;
             productTypeToCreate.UpdatedOn = productType.UpdatedOn;
+            productTypeToCreate.IsActive = productType.IsActive;
             return await base.UpdateAsync<ProductType>(productTypeToCreate, returnUpdatedRecord);
         }
         catch (Exception ex)

@@ -6,6 +6,7 @@ namespace CSO.Core.Repositories.ComplaintTypeRepo;
 public interface IComplaintTypeRepository
 {
     Task<List<ComplaintTypeViewModel>> GetComTypeList();
+    Task<List<ComplaintTypeViewModel>> GetAllComTypeList();
     Task<ComplaintType?> GetByIdAsync(int comTypeId);
     Task<OperationResult> CreateAsync(ComplaintType comType, bool returnCreatedRecord = false);
     Task<OperationResult> UpdateAsync(ComplaintType comType, bool returnUpdatedRecord = false);

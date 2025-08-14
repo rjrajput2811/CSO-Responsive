@@ -224,9 +224,19 @@
                     </div>
                 </div>
                 <div class="col-lg-4 mb-4">
-                    <div class="form-check mt-2">
+                   @*  <div class="form-check mt-2">
                         @Html.LabelFor(m => m.IsInMailMatrix, new { @class = "mb-0 mr-2 custom-label" })
                         @Html.CheckBoxFor(m => m.IsInMailMatrix, (!canEdit && !isNew) ? new { @id = "chkIsInMailMatrix", @class = "form-control", @disabled = "disabled" } : new { @id = "chkIsInMailMatrix", @class = "form-control" })
+                    </div> *@
+
+                    <div class="custom-control custom-switch mt-2">
+                        @Html.CheckBoxFor(
+                                 m => m.IsInMailMatrix,
+                                 (!canEdit && !isNew)
+                                 ? new { @class = "custom-control-input", @disabled = "disabled" }
+                                 : new { @class = "custom-control-input" }
+                                 )
+                        @Html.LabelFor(m => m.IsInMailMatrix, new { @class = "custom-control-label mb-0 mr-2 custom-label" })
                     </div>
                 </div>
             </div>

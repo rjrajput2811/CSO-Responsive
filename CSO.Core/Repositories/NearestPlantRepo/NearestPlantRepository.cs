@@ -22,7 +22,7 @@ public class NearestPlantRepository : SqlTableRepository, INearestPlantRepositor
         try
         {
             var nearestPlantList = await _dbContext.NearestPlants
-                .Where(i => (i.PlantId ?? "").Contains(plantId.ToString()))
+                .Where(i => (i.PlantId ?? "").Contains(plantId.ToString()) && i.IsActive)
                 .Select(x => new NearestPlantViewModel
                 {
                     Id = x.Id,
@@ -68,7 +68,7 @@ public class NearestPlantRepository : SqlTableRepository, INearestPlantRepositor
 
             // Fetch all needed NearestPlants first (no filtering in SQL)
             var allNearestPlants = await _dbContext.NearestPlants
-                .Where(i => ("," + (i.PlantId ?? "") + ",").Contains(plantIdWrapped))
+                .Where(i => ("," + (i.PlantId ?? "") + ",").Contains(plantIdWrapped) && i.IsActive)
                 .Select(x => new NearestPlantViewModel
                 {
                     Id = x.Id,
@@ -92,6 +92,53 @@ public class NearestPlantRepository : SqlTableRepository, INearestPlantRepositor
     }
 
     public async Task<List<NearestPlantViewModel>> GetNearestPlantList()
+    {
+        try
+        {
+            var plants = await _dbContext.Plants.Where(x => x.IsActive).ToListAsync();
+            //var divisions = await _dbContext.Divisions.ToListAsync();
+
+            var nearestPlant = await _dbContext.NearestPlants.Where(x => x.IsActive).ToListAsync();
+
+            var list = nearestPlant.Select(b =>
+            {
+                var plantIds = b.PlantId.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                               .Select(id => Convert.ToInt32(id))
+                                               .ToList();
+
+                // find matching division names
+                var plantNames = plants
+                    .Where(d => plantIds.Contains(d.Id))
+                    .Select(d => d.Name)
+                    .ToList();
+
+                return new NearestPlantViewModel
+                {
+                    Id = b.Id,
+                    Name = b.Name,
+                    PlantId = b.PlantId,
+                    PlantName = string.Join(", ", plantNames),
+                    AddedOn = b.AddedOn,
+                    AddedBy = b.AddedBy,
+                    UpdatedOn = b.UpdatedOn,
+                    UpdatedBy = b.UpdatedBy,
+                    IsActive = b.IsActive
+                };
+            })
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            return list;
+
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<List<NearestPlantViewModel>> GetAllNearestPlantList()
     {
         try
         {
@@ -121,7 +168,8 @@ public class NearestPlantRepository : SqlTableRepository, INearestPlantRepositor
                     AddedOn = b.AddedOn,
                     AddedBy = b.AddedBy,
                     UpdatedOn = b.UpdatedOn,
-                    UpdatedBy = b.UpdatedBy
+                    UpdatedBy = b.UpdatedBy,
+                    IsActive = b.IsActive
                 };
             })
                 .OrderBy(x => x.Name)
@@ -160,6 +208,7 @@ public class NearestPlantRepository : SqlTableRepository, INearestPlantRepositor
             plantToCreate.PlantId = plant.PlantId;
             plantToCreate.AddedBy = plant.AddedBy;
             plantToCreate.AddedOn = plant.AddedOn;
+            plantToCreate.IsActive = plant.IsActive;
             return await base.CreateAsync<NearestPlant>(plantToCreate, returnCreatedRecord);
         }
         catch (Exception ex)
@@ -178,6 +227,7 @@ public class NearestPlantRepository : SqlTableRepository, INearestPlantRepositor
             plantToCreate.PlantId = plant.PlantId;
             plantToCreate.UpdatedBy = plant.UpdatedBy;
             plantToCreate.UpdatedOn = plant.UpdatedOn;
+            plantToCreate.IsActive = plant.IsActive;
             return await base.UpdateAsync<NearestPlant>(plantToCreate, returnUpdatedRecord);
         }
         catch (Exception ex)

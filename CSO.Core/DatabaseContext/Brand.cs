@@ -25,6 +25,7 @@ public class Brand : SqlTable
     public string? DivisionId { get; set; }
 
     public string? ActiveInactive { get; set; }
+    public bool IsActive { get; set; }
 
     [NotMapped]
     public Division? Divisions { get; set; }   

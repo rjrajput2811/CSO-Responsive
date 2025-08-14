@@ -348,11 +348,64 @@
             }
         }
 
+      /*   @@media (max-width: 991.98px) 
+        {
+            .sidebar.sidebar-main
+
+        {
+            position: fixed;
+            top: 56px; 
+            left: 0;
+            bottom: 0;
+            width: 280px;
+            transform: translateX(-100%) !important;
+            transition: transform .25s ease;
+            z-index: 1040;
+        }
+
+        body.sidebar-mobile-main .sidebar.sidebar-main {
+            transform: translateX(0) !important;
+        }
+
+        body.sidebar-mobile-main {
+            overflow: hidden;
+        }
+
+        }
+
+        @@media (min-width: 992px) {
+            .sidebar.sidebar-main
+
+        {
+            position: static;
+            transform: none !important;
+            width: 280px;
+        }
+
+        body.sidebar-xs .sidebar.sidebar-main {
+            width: 60px;
+        }
+
+        body.sidebar-xs .content-wrapper {
+            margin-left: 60px;
+        }
+
+        }
+
+        .nav-group-sub {
+            display: none;
+        }
+
+            .nav-group-sub.open {
+                display: block;
+            } */
+
+
     </style>
 
 </head>
 
-<body style="height:100%" class="sidebar-xs">
+<body style="height:100%">
 
     <!-- Main navbar -->
     <!-- Main navbar -->
@@ -699,6 +752,114 @@
 
     @* <script src="~/shared/master.js" type="text/javascript"></script> *@
     <script src="~/js/app.js" type="text/javascript"></script>
+    <script>
+        // $(document).on('click', '.sidebar-mobile-main-toggle', function () {
+        // $('body').toggleClass('sidebar-mobile-main'); // Mobile mode
+        // $('body').toggleClass('sidebar-xs'); // Desktop mode
+        // });
+
+        //       (function () {
+        //   var DESKTOP_BP = 992;
+        //   var $doc = $(document);
+
+        //   function isMobile() { return window.innerWidth < DESKTOP_BP; }
+
+        //   function normalizeSidebar() {
+        //     // Ensure only the relevant mode class remains
+        //     if (isMobile()) {
+        //       document.body.classList.remove('sidebar-xs');          // no desktop compact class on phones
+        //     } else {
+        //       document.body.classList.remove('sidebar-mobile-main'); // no mobile drawer state on desktop
+        //     }
+        //   }
+
+        //   // Debounce utility
+        //   function debounce(fn, wait){ var t; return function(){ clearTimeout(t); var a=arguments,c=this; t=setTimeout(function(){fn.apply(c,a)},wait); }; }
+
+        //   $(function () {
+        //     // Initial cleanup for current viewport
+        //     normalizeSidebar();
+
+        //     // Main hamburger (same button for both modes)
+        //     $doc.on('click', '.sidebar-mobile-main-toggle', function (e) {
+        //       e.preventDefault();                 // stop Bootstrap/Limitless default
+        //       e.stopPropagation();
+        //       // e.stopImmediatePropagation();   // not needed; keep other UI behaviors intact
+
+        //       if (isMobile()) {
+        //         // MOBILE: slide-in drawer
+        //         document.body.classList.toggle('sidebar-mobile-main');
+        //         document.body.classList.remove('sidebar-xs');
+        //       } else {
+        //         // DESKTOP: compact/expand
+        //         document.body.classList.toggle('sidebar-xs');
+        //         document.body.classList.remove('sidebar-mobile-main');
+        //       }
+        //     });
+
+        //     // Desktop-only expand button (optional)
+        //     $doc.on('click', '.sidebar-mobile-expand', function (e) {
+        //       if (!isMobile()) {
+        //         e.preventDefault();
+        //         document.body.classList.toggle('sidebar-xs');
+        //         document.body.classList.remove('sidebar-mobile-main');
+        //       }
+        //     });
+
+        //     // Close drawer after navigating on mobile
+        //     $doc.on('click', '.sidebar a, .nav-sidebar a', function () {
+        //       if (isMobile()) document.body.classList.remove('sidebar-mobile-main');
+        //     });
+
+        //     // ESC closes drawer on mobile
+        //     $doc.on('keydown', function (e) {
+        //       if (e.key === 'Escape' && isMobile()) document.body.classList.remove('sidebar-mobile-main');
+        //     });
+
+        //     // Keep state sane on rotate/resize
+        //     var onResize = debounce(normalizeSidebar, 120);
+        //     window.addEventListener('resize', onResize);
+        //     window.addEventListener('orientationchange', normalizeSidebar);
+        //   });
+        // })();
+                     (function () {
+          var DESKTOP_BP = 992;
+
+          function isMobile() { return window.innerWidth < DESKTOP_BP; }
+          function normalizeSidebar() {
+            if (isMobile()) document.body.classList.remove('sidebar-xs');
+            else document.body.classList.remove('sidebar-mobile-main');
+          }
+
+          // Run after theme initialized and bound its events
+          window.addEventListener('load', function () {
+            // 1) Unbind all existing click handlers on the toggle
+            $('.sidebar-mobile-main-toggle').off('click');
+            $(document).off('click', '.sidebar-mobile-main-toggle');
+
+            // 2) Bind our single handler
+            $(document).on('click', '.sidebar-mobile-main-toggle', function (e) {
+              e.preventDefault();
+              e.stopImmediatePropagation(); // ensure no other handler runs
+
+              if (isMobile()) {
+                document.body.classList.toggle('sidebar-mobile-main');
+                document.body.classList.remove('sidebar-xs');
+              } else {
+                document.body.classList.toggle('sidebar-xs');
+                document.body.classList.remove('sidebar-mobile-main');
+              }
+            });
+
+            // Keep classes sane on first load and on resize
+            normalizeSidebar();
+            var t; window.addEventListener('resize', function () {
+              clearTimeout(t); t = setTimeout(normalizeSidebar, 120);
+            });
+            window.addEventListener('orientationchange', normalizeSidebar);
+          });
+        })();
+    </script>
     @* <script src="~/js/form_checkboxes_radios.js" type="text/javascript"></script> *@
     @* <script src="~/js/ellipsis.js" type="text/javascript"></script>
     <script src="~/js/ellipsis.min.js"></script> *@
@@ -714,13 +875,7 @@
 
     <script src="~/css/bootstrap-multiselect.js"></script> *@
     @RenderSection("scripts", false)
-    <script>
-        $(document).on('click', '.sidebar-mobile-main-toggle', function () {
-        $('body').toggleClass('sidebar-mobile-main'); // Mobile mode
-        $('body').toggleClass('sidebar-xs'); // Desktop mode
-        });
-
-    </script>
+    
 </body>
 
 </html>

@@ -29,6 +29,12 @@ public class CategoryController : BaseController
         return Json(list);
     }
 
+    public async Task<ActionResult> GetCategory()
+    {
+        var list = await _categoryRepository.GetCategorysAsync();
+        return Json(list);
+    }
+
     public async Task<JsonResult> GetById(int Id)
     {
         var divbyId = await _categoryRepository.GetByIdAsync(Id);

@@ -22,7 +22,7 @@ public class BrandRepository : SqlTableRepository, IBrandRepository
         try
         {
             var brandList = await _dbContext.Brands
-                .Where(i => (i.DivisionId ?? "").Contains(divisionId.ToString()) && i.ActiveInactive == "Active")
+                .Where(i => (i.DivisionId ?? "").Contains(divisionId.ToString()) && i.IsActive == true)
                 .Select(x => new BrandViewModel
                 {
                     Id = x.Id,
@@ -68,7 +68,7 @@ public class BrandRepository : SqlTableRepository, IBrandRepository
 
             // Fetch all needed Brands first by Division (no filtering in SQL)
             var allBrands = await _dbContext.Brands
-                .Where(i => ("," + (i.DivisionId ?? "") + ",").Contains(divisionIdWrapped))
+                .Where(i => ("," + (i.DivisionId ?? "") + ",").Contains(divisionIdWrapped) && i.IsActive)
                 .Select(x => new BrandViewModel
                 {
                     Id = x.Id,
@@ -96,7 +96,7 @@ public class BrandRepository : SqlTableRepository, IBrandRepository
         try
         {
             var result = await _dbContext.Brands
-                .Where(i => i.Id == brandId && i.ActiveInactive == "Active")
+                .Where(i => i.Id == brandId && i.IsActive)
                 .Select(x => new BrandViewModel
                 {
                     Id = x.Id,
@@ -119,7 +119,7 @@ public class BrandRepository : SqlTableRepository, IBrandRepository
         {
             var divisions = await _dbContext.Divisions.ToListAsync();
 
-            var brands = await _dbContext.Brands.Where(i => i.ActiveInactive == "Active").ToListAsync();
+            var brands = await _dbContext.Brands.ToListAsync();
 
             var list = brands.Select(b =>
             {
@@ -140,6 +140,7 @@ public class BrandRepository : SqlTableRepository, IBrandRepository
                     DivisionId = b.DivisionId,
                     DivisionName = string.Join(", ", divisionNames),
                     ActiveInactive = b.ActiveInactive,
+                    IsActive = b.IsActive,
                     AddedOn = b.AddedOn,
                     AddedBy = b.AddedBy,
                     UpdatedOn = b.UpdatedOn,
@@ -164,7 +165,7 @@ public class BrandRepository : SqlTableRepository, IBrandRepository
         try
         {
             var list = await _dbContext.Brands
-                .Where(i => i.ActiveInactive == "Active")
+                .Where(i => i.IsActive == true)
                 .Select(x => new BrandViewModel
                 {
                     Id = x.Id,
@@ -206,6 +207,7 @@ public class BrandRepository : SqlTableRepository, IBrandRepository
             brandToCreate.ActiveInactive = brand.ActiveInactive;
             brandToCreate.AddedBy = brand.AddedBy;
             brandToCreate.AddedOn = brand.AddedOn;
+            brandToCreate.IsActive = brand.IsActive;
             return await base.CreateAsync<Brand>(brandToCreate, returnCreatedRecord);
         }
         catch (Exception ex)
@@ -225,6 +227,7 @@ public class BrandRepository : SqlTableRepository, IBrandRepository
             brandToCreate.ActiveInactive = brand.ActiveInactive;
             brandToCreate.UpdatedBy = brand.UpdatedBy;
             brandToCreate.UpdatedOn = brand.UpdatedOn;
+            brandToCreate.IsActive = brand.IsActive;
             return await base.UpdateAsync<Brand>(brandToCreate, returnUpdatedRecord);
         }
         catch (Exception ex)

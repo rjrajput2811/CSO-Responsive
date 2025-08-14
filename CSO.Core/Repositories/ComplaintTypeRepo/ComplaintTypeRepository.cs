@@ -30,7 +30,36 @@ public class ComplaintTypeRepository : SqlTableRepository, IComplaintTypeReposit
                     AddedOn = x.AddedOn,
                     AddedBy = x.AddedBy,
                     UpdatedOn = x.UpdatedOn,
-                    UpdatedBy = x.UpdatedBy
+                    UpdatedBy = x.UpdatedBy,
+                    IsActive = x.IsActive
+                })
+                .Where(x => x.IsActive == true)
+                .ToListAsync();
+
+            return list;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<List<ComplaintTypeViewModel>> GetAllComTypeList()
+    {
+        try
+        {
+            var list = await _dbContext.ComplaintTypes
+                 .OrderBy(x => x.Name)
+                .Select(x => new ComplaintTypeViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    AddedOn = x.AddedOn,
+                    AddedBy = x.AddedBy,
+                    UpdatedOn = x.UpdatedOn,
+                    UpdatedBy = x.UpdatedBy,
+                    IsActive = x.IsActive
                 })
                 .ToListAsync();
 
@@ -65,6 +94,7 @@ public class ComplaintTypeRepository : SqlTableRepository, IComplaintTypeReposit
             comTypeToCreate.Name = comType.Name;
             comTypeToCreate.AddedBy = comType.AddedBy;
             comTypeToCreate.AddedOn = comType.AddedOn;
+            comTypeToCreate.IsActive = comType.IsActive;
             return await base.CreateAsync<ComplaintType>(comTypeToCreate, returnCreatedRecord);
         }
         catch (Exception ex)
@@ -82,6 +112,7 @@ public class ComplaintTypeRepository : SqlTableRepository, IComplaintTypeReposit
             comTypeToCreate.Name = comType.Name;
             comTypeToCreate.UpdatedBy = comType.UpdatedBy;
             comTypeToCreate.UpdatedOn = comType.UpdatedOn;
+            comTypeToCreate.IsActive = comType.IsActive;
             return await base.UpdateAsync<ComplaintType>(comTypeToCreate, returnUpdatedRecord);
         }
         catch (Exception ex)

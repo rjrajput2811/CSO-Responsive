@@ -134,6 +134,43 @@
             margin-top: 5px;
         }
     }
+
+    .form-check-input {
+        width: 3em;
+        height: 1.3em;
+        margin-top: .25em;
+        vertical-align: top;
+        background-color: #fff;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        border: 1px solid rgba(0, 0, 0, .25);
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+    }
+
+        .form-check-input:checked {
+            background-color: #007bff !important;
+            border-block: none;
+        }
+
+    .form-switch .form-check-input {
+        width: 2.6em;
+        margin-top: 3px;
+        margin-left: 4.5em;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e");
+        background-position: left center;
+        border-radius: 2em;
+        transition: background-position .15s ease-in-out;
+    }
+
+        .form-switch .form-check-input:checked {
+            background-position: right center;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+        }
 </style>
 
 <div class="content">
@@ -201,6 +238,16 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="row form-group align-items-center mb-2">
+                            <label for="isActive" class="col-1">Active</label>
+                            <div class="col-10" style="margin-left:-40px;">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="isActive">
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </form>
                 <br />
@@ -246,7 +293,7 @@
         function loadProdTypeData() {
             Blockloadershow();
             $.ajax({
-                url: '@Url.Action("GetAllProdType", "ProductType")',
+                url: '@Url.Action("GetProdType", "ProductType")',
                 type: 'GET',
                 success: function (data) {
                     Blockloaderhide();
@@ -341,7 +388,9 @@
                         CreatedDate: formattedDate,
                         CreatedBy: item.addedBy,
                         UpdatedBy: item.updatedBy,
-                        UpdatedDate: updatedDate
+                        UpdatedDate: updatedDate,
+                        IsActive: item.isActive,
+
                     });
                 });
 
@@ -372,10 +421,11 @@
                     { title: "Name", field: "Name", responsive: 2,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
                     { title: "Brand", field: "BrandName", responsive: 4,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
                     { title: "Division", field: "DivisionName", responsive: 5,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
-                    { title: "User", field: "CreatedBy", responsive: 6,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
-                    { title: "Create Date", field: "CreatedDate", responsive: 7,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
-                    { title: "Updated By", field: "UpdatedBy", responsive: 8,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
-                    { title: "Update Date", field: "UpdatedDate", responsive: 9,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Status", field: "IsActive", responsive: 6,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center",formatter: cell => (cell.getValue() ? "Active" : "Inactive") },
+                    { title: "User", field: "CreatedBy", responsive: 7,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Create Date", field: "CreatedDate", responsive: 8,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Updated By", field: "UpdatedBy", responsive: 9,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
+                    { title: "Update Date", field: "UpdatedDate", responsive: 10,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
                 );
 
                 // // Initialize Tabulator
@@ -588,6 +638,12 @@
                         console.log(data);
                         $("#hdnId").val(data.id);
                         $("#Name").val(data.name);
+
+                        if (data.isActive == 1) {
+                            $("#isActive").prop('checked', true);
+                        } else {
+                            $("#isActive").prop('checked', false);
+                        }
 
                         var brands = data.brandId ? data.brandId.split(",") : [];
                         bindBrandDropdown(brands);

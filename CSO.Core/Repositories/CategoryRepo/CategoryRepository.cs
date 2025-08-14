@@ -31,7 +31,38 @@ public class CategoryRepository : SqlTableRepository, ICategoryRepository
                     UpdatedOn = x.UpdatedOn,
                     UpdatedBy = x.UpdatedBy,
                     AddedByUser = _dbContext.Users.Where(i => i.Id == x.AddedBy).Select(x => x.Name).FirstOrDefault(),
-                    UpdatedByUser = _dbContext.Users.Where(i => i.Id == x.UpdatedBy).Select(x => x.Name).FirstOrDefault()
+                    UpdatedByUser = _dbContext.Users.Where(i => i.Id == x.UpdatedBy).Select(x => x.Name).FirstOrDefault(),
+                    IsActive = x.IsActive
+                })
+                .Where(o => o.IsActive == true)
+                .OrderBy(o => o.Name)
+                .ToListAsync();
+
+            return list;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<List<CategorysViewModel>> GetCategorysAsync()
+    {
+        try
+        {
+            var list = await _dbContext.Categories
+                .Select(x => new CategorysViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    AddedOn = x.AddedOn,
+                    AddedBy = x.AddedBy,
+                    UpdatedOn = x.UpdatedOn,
+                    UpdatedBy = x.UpdatedBy,
+                    AddedByUser = _dbContext.Users.Where(i => i.Id == x.AddedBy).Select(x => x.Name).FirstOrDefault(),
+                    UpdatedByUser = _dbContext.Users.Where(i => i.Id == x.UpdatedBy).Select(x => x.Name).FirstOrDefault(),
+                    IsActive = x.IsActive
                 })
                 .OrderBy(o => o.Name)
                 .ToListAsync();
@@ -67,6 +98,7 @@ public class CategoryRepository : SqlTableRepository, ICategoryRepository
             categorysToCreate.Name = categorys.Name;
             categorysToCreate.AddedBy = categorys.AddedBy;
             categorysToCreate.AddedOn = categorys.AddedOn;
+            categorysToCreate.IsActive = categorys.IsActive;
             return await base.CreateAsync<Categorys>(categorysToCreate, returnCreatedRecord);
         }
         catch (Exception ex)
@@ -84,6 +116,7 @@ public class CategoryRepository : SqlTableRepository, ICategoryRepository
             categorysToCreate.Name = categorys.Name;
             categorysToCreate.UpdatedBy = categorys.UpdatedBy;
             categorysToCreate.UpdatedOn = categorys.UpdatedOn;
+            categorysToCreate.IsActive = categorys.IsActive;
             return await base.UpdateAsync<Categorys>(categorysToCreate, returnUpdatedRecord);
         }
         catch (Exception ex)

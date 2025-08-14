@@ -6,6 +6,7 @@ namespace CSO.Core.Repositories.CategoryRepo;
 public interface ICategoryRepository
 {
     Task<List<CategorysViewModel>> GetCategorysListAsync();
+    Task<List<CategorysViewModel>> GetCategorysAsync();
     Task<Categorys?> GetByIdAsync(int divId);
     Task<OperationResult> CreateAsync(Categorys categorys, bool returnCreatedRecord = false);
     Task<OperationResult> UpdateAsync(Categorys categorys, bool returnUpdatedRecord = false);

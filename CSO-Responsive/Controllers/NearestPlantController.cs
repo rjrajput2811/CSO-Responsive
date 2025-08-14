@@ -31,6 +31,13 @@ namespace CSO_Responsive.Controllers
         }
 
         [HttpGet]
+        public async Task<JsonResult> GetNearestPlant()
+        {
+            var plantList = await _nearestPlantRepository.GetAllNearestPlantList();
+            return Json(plantList);
+        }
+
+        [HttpGet]
         public async Task<JsonResult> GetById(int Id)
         {
             var brandbyId = await _nearestPlantRepository.GetByIdAsync(Id);

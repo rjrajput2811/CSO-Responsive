@@ -8,6 +8,7 @@ public interface INearestPlantRepository
     Task<List<NearestPlantViewModel>> GetNearestPlantListByPlantIdAsync(int plantId);
     Task<List<NearestPlantViewModel>> GetNearestPlantListByPlantAndUserAsync(int plantId, int userId);
     Task<List<NearestPlantViewModel>> GetNearestPlantList();
+    Task<List<NearestPlantViewModel>> GetAllNearestPlantList();
     Task<NearestPlant?> GetByIdAsync(int nearestPlantId);
     Task<OperationResult> CreateAsync(NearestPlant nearestPlant, bool returnCreatedRecord = false);
     Task<OperationResult> UpdateAsync(NearestPlant nearestPlant, bool returnUpdatedRecord = false);

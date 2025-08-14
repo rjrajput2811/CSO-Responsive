@@ -23,4 +23,5 @@ public class ProductType : SqlTable
     public DateTime? DeletedOn { get; set; }
 
     public string? BrandId { get; set; }
+    public bool IsActive { get; set; }
 }

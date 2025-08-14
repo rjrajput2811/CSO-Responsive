@@ -8,6 +8,7 @@ public interface IProductTypeRepository
     Task<List<ProductTypeViewModel>> GetProductTypeListByBrandIdAsync(int brandId);
     Task<List<ProductTypeViewModel>> GetProductTypeListByBrandAndUserAsync(int brandId, int userId);
     Task<List<ProductTypeViewModel>> GetProdTypeList();
+    Task<List<ProductTypeViewModel>> GetAllProdTypeList();
     Task<ProductType?> GetByIdAsync(int productId);
     Task<OperationResult> CreateAsync(ProductType productType, bool returnCreatedRecord = false);
     Task<OperationResult> UpdateAsync(ProductType productType, bool returnUpdatedRecord = false);

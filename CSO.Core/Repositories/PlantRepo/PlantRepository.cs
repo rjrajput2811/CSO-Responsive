@@ -22,7 +22,7 @@ public class PlantRepository : SqlTableRepository, IPlantRepository
         try
         {
             var plantList = await _dbContext.Plants
-                .Where(i => (i.DivisionId ?? "").Contains(divisionId.ToString()))
+                .Where(i => (i.DivisionId ?? "").Contains(divisionId.ToString()) && i.IsActive)
                 .Select(x => new PlantViewModel
                 {
                     Id = x.Id,
@@ -68,7 +68,7 @@ public class PlantRepository : SqlTableRepository, IPlantRepository
 
             // Fetch all needed Plants first (no filtering in SQL)
             var allPlants = await _dbContext.Plants
-                .Where(i => ("," + (i.DivisionId ?? "") + ",").Contains(divisionIdWrapped))
+                .Where(i => ("," + (i.DivisionId ?? "") + ",").Contains(divisionIdWrapped) && i.IsActive)
                 .Select(x => new PlantViewModel
                 {
                     Id = x.Id,
@@ -121,7 +121,8 @@ public class PlantRepository : SqlTableRepository, IPlantRepository
                     AddedOn = b.AddedOn,
                     AddedBy = b.AddedBy,
                     UpdatedOn = b.UpdatedOn,
-                    UpdatedBy = b.UpdatedBy
+                    UpdatedBy = b.UpdatedBy,
+                    IsActive = b.IsActive
                 };
             })
                 .OrderBy(x => x.Name)
@@ -141,7 +142,7 @@ public class PlantRepository : SqlTableRepository, IPlantRepository
     {
         try
         {
-            var list = await _dbContext.Plants
+            var list = await _dbContext.Plants.Where(x => x.IsActive)
                 .Select(x => new PlantViewModel
                 {
                     Id = x.Id,
@@ -183,6 +184,7 @@ public class PlantRepository : SqlTableRepository, IPlantRepository
             plantToCreate.IsThirdParty = plant.IsThirdParty;
             plantToCreate.AddedBy = plant.AddedBy;
             plantToCreate.AddedOn = plant.AddedOn;
+            plantToCreate.IsActive = plant.IsActive;
             return await base.CreateAsync<Plant>(plantToCreate, returnCreatedRecord);
         }
         catch (Exception ex)
@@ -202,6 +204,7 @@ public class PlantRepository : SqlTableRepository, IPlantRepository
             plantToCreate.IsThirdParty = plant.IsThirdParty;
             plantToCreate.UpdatedBy = plant.UpdatedBy;
             plantToCreate.UpdatedOn = plant.UpdatedOn;
+            plantToCreate.IsActive = plant.IsActive;
             return await base.UpdateAsync<Plant>(plantToCreate, returnUpdatedRecord);
         }
         catch (Exception ex)

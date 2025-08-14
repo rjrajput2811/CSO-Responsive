@@ -138,36 +138,41 @@
         }
     }
 
-    .form-check.form-switch .form-check-input {
+    .form-check-input {
         width: 3em;
-        height: 1.5em;
-        background-color: #ddd;
-        border-radius: 1.5em;
-        position: relative;
-        appearance: none;
+        height: 1.3em;
+        margin-top: .25em;
+        vertical-align: top;
+        background-color: #fff;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        border: 1px solid rgba(0, 0, 0, .25);
         -webkit-appearance: none;
-        outline: none;
-        transition: background-color 0.3s;
+        -moz-appearance: none;
+        appearance: none;
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
     }
 
-        .form-check.form-switch .form-check-input:checked {
-            background-color: #007bff;
+        .form-check-input:checked {
+            background-color: #007bff !important;
+            border-block: none;
         }
 
-        .form-check.form-switch .form-check-input::before {
-            content: "";
-            position: absolute;
-            top: 0.125em;
-            left: 0.125em;
-            width: 1.25em;
-            height: 1.25em;
-            background-color: #fff;
-            border-radius: 50%;
-            transition: transform 0.3s;
-        }
+    .form-switch .form-check-input {
+        width: 2.6em;
+        margin-top: 3px;
+        margin-left: 4.5em;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e");
+        background-position: left center;
+        border-radius: 2em;
+        transition: background-position .15s ease-in-out;
+    }
 
-        .form-check.form-switch .form-check-input:checked::before {
-            transform: translateX(1.5em);
+        .form-switch .form-check-input:checked {
+            background-position: right center;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
         }
 
 </style>
@@ -245,6 +250,16 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row form-group align-items-center mb-2">
+                            <label for="isActive" class="col-1">Active</label>
+                            <div class="col-10" style="margin-left:-40px;">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="isActive">
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </form>
                 <br />
@@ -385,7 +400,9 @@
                         CreatedDate: formattedDate,
                         CreatedBy: item.addedBy,
                         UpdatedBy: item.updatedBy,
-                        UpdatedDate: updatedDate
+                        UpdatedDate: updatedDate,
+                        IsActive: item.isActive,
+
                     });
                 });
 
@@ -415,6 +432,7 @@
                     },
                     { title: "Name", field: "Name", responsive: 2,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
                     { title: "Division", field: "DivisionName", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
+                    { title: "Status", field: "IsActive", responsive: 4,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center",formatter: cell => (cell.getValue() ? "Active" : "Inactive") },
                     { title: "User", field: "CreatedBy", responsive: 5,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
                     { title: "Create Date", field: "CreatedDate", responsive: 6,  sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
                     { title: "Updated By", field: "UpdatedBy", responsive: 7,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", visible: false },
@@ -538,7 +556,8 @@
                 Name: $("#Name").val(),
                 // ActiveInactive: $("#Status").val(),
                 DivisionId : $('#lstDivision').val().join(','),
-                IsThirdParty: $('#chkIsThirdParty').is(':checked') ? true : false
+                IsThirdParty: $('#chkIsThirdParty').is(':checked') ? true : false,
+                IsActive: $('#isActive').is(':checked') ? true : false,
             };
             $.ajax({
                 type: "POST",
@@ -648,6 +667,12 @@
                             $("#chkIsThirdParty").prop('checked', true);
                         } else {
                             $("#chkIsThirdParty").prop('checked', false);
+                        }
+
+                        if (data.isActive == 1) {
+                            $("#isActive").prop('checked', true);
+                        } else {
+                            $("#isActive").prop('checked', false);
                         }
 
                     } else {

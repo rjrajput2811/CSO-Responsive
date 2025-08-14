@@ -31,6 +31,13 @@ namespace CSO_Responsive.Controllers
         }
 
         [HttpGet]
+        public async Task<JsonResult> GetDivision()
+        {
+            var divisionList = await _divisionRepository.GetAllDivisionList();
+            return Json(divisionList);
+        }
+
+        [HttpGet]
         public async Task<JsonResult> GetById(int Id)
         {
             var divbyId = await _divisionRepository.GetByIdAsync(Id);

@@ -21,4 +21,5 @@ public class NearestPlant : SqlTable
     public int? DeletedBy { get; set; }
 
     public DateTime? DeletedOn { get; set; }
+    public bool IsActive { get; set; }
 }

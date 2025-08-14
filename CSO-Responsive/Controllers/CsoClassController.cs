@@ -30,6 +30,13 @@ namespace CSO_Responsive.Controllers
         }
 
         [HttpGet]
+        public async Task<JsonResult> GetCsoClass()
+        {
+            var csoClassList = await _csoClassRepository.GetAllCsoClassList();
+            return Json(csoClassList);
+        }
+
+        [HttpGet]
         public async Task<JsonResult> GetById(int Id)
         {
             var csoClassbyId = await _csoClassRepository.GetByIdAsync(Id);

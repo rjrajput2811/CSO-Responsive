@@ -24,4 +24,5 @@ public class BrandViewModel
 
     public string? DivisionName { get; set; }
     public string? ActiveInactive { get; set; }
+    public bool IsActive { get; set; }
 }

@@ -28,7 +28,35 @@ public class CSOClassRepository : SqlTableRepository, ICSOClassRepository
                     AddedOn = x.AddedOn,
                     AddedBy = x.AddedBy,
                     UpdatedOn = x.UpdatedOn,
-                    UpdatedBy = x.UpdatedBy
+                    UpdatedBy = x.UpdatedBy,
+                    IsActive = x.IsActive,
+                })
+                .Where(x => x.IsActive)
+                .ToListAsync();
+
+            return list;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<List<CSOClassViewModel>> GetAllCsoClassList()
+    {
+        try
+        {
+            var list = await _dbContext.CSOClasses
+                .Select(x => new CSOClassViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    AddedOn = x.AddedOn,
+                    AddedBy = x.AddedBy,
+                    UpdatedOn = x.UpdatedOn,
+                    UpdatedBy = x.UpdatedBy,
+                    IsActive= x.IsActive,
                 })
                 .ToListAsync();
 
@@ -63,6 +91,7 @@ public class CSOClassRepository : SqlTableRepository, ICSOClassRepository
             csoClassToCreate.Name = csoClass.Name;
             csoClassToCreate.AddedBy = csoClass.AddedBy;
             csoClassToCreate.AddedOn = csoClass.AddedOn;
+            csoClassToCreate.IsActive = csoClass.IsActive;
             return await base.CreateAsync<CSOClass>(csoClassToCreate, returnCreatedRecord);
         }
         catch (Exception ex)
@@ -80,6 +109,7 @@ public class CSOClassRepository : SqlTableRepository, ICSOClassRepository
             csoClassToCreate.Name = csoClass.Name;
             csoClassToCreate.UpdatedBy = csoClass.UpdatedBy;
             csoClassToCreate.UpdatedOn = csoClass.UpdatedOn;
+            csoClassToCreate.IsActive = csoClass.IsActive;
             return await base.UpdateAsync<CSOClass>(csoClassToCreate, returnUpdatedRecord);
         }
         catch (Exception ex)

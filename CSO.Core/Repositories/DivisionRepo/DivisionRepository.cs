@@ -31,7 +31,38 @@ public class DivisionRepository : SqlTableRepository, IDivisionRepository
                     UpdatedOn = x.UpdatedOn,
                     UpdatedBy = x.UpdatedBy,
                     AddedByUser = _dbContext.Users.Where(i => i.Id == x.AddedBy).Select(x => x.Name).FirstOrDefault(),
-                    UpdatedByUser = _dbContext.Users.Where(i => i.Id == x.UpdatedBy).Select(x => x.Name).FirstOrDefault()
+                    UpdatedByUser = _dbContext.Users.Where(i => i.Id == x.UpdatedBy).Select(x => x.Name).FirstOrDefault(),
+                    IsActive = x.IsActive
+                })
+                .Where(o => o.IsActive)
+                .OrderBy(o => o.Name)
+                .ToListAsync();
+
+            return list;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<List<DivisionViewModel>> GetAllDivisionList()
+    {
+        try
+        {
+            var list = await _dbContext.Divisions
+                .Select(x => new DivisionViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    AddedOn = x.AddedOn,
+                    AddedBy = x.AddedBy,
+                    UpdatedOn = x.UpdatedOn,
+                    UpdatedBy = x.UpdatedBy,
+                    AddedByUser = _dbContext.Users.Where(i => i.Id == x.AddedBy).Select(x => x.Name).FirstOrDefault(),
+                    UpdatedByUser = _dbContext.Users.Where(i => i.Id == x.UpdatedBy).Select(x => x.Name).FirstOrDefault(),
+                    IsActive = x.IsActive
                 })
                 .OrderBy(o => o.Name)
                 .ToListAsync();
@@ -71,12 +102,13 @@ public class DivisionRepository : SqlTableRepository, IDivisionRepository
                 return new List<DivisionViewModel>();
 
             // Fetch all needed divisions first (no filtering in SQL)
-            var allDivisions = await _dbContext.Divisions
+            var allDivisions = await _dbContext.Divisions.Where(x => x.IsActive)
                 .Select(x => new DivisionViewModel
                 {
                     Id = x.Id,
                     Name = x.Name
                 })
+                
                 .ToListAsync();
 
             // Filter in-memory (LINQ to Objects)
@@ -117,6 +149,7 @@ public class DivisionRepository : SqlTableRepository, IDivisionRepository
             divisionToCreate.Name = division.Name;
             divisionToCreate.AddedBy = division.AddedBy;
             divisionToCreate.AddedOn = division.AddedOn;
+            divisionToCreate.IsActive = division.IsActive;
             return await base.CreateAsync<Division>(divisionToCreate, returnCreatedRecord);
         }
         catch (Exception ex)
@@ -134,6 +167,7 @@ public class DivisionRepository : SqlTableRepository, IDivisionRepository
             divisionToCreate.Name = division.Name;
             divisionToCreate.UpdatedBy = division.UpdatedBy;
             divisionToCreate.UpdatedOn = division.UpdatedOn;
+            divisionToCreate.IsActive = division.IsActive;
             return await base.UpdateAsync<Division>(divisionToCreate, returnUpdatedRecord);
         }
         catch (Exception ex)

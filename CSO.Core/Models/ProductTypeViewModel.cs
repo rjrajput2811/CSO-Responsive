@@ -23,4 +23,5 @@ public class ProductTypeViewModel
     public string? BrandId { get; set; }
     public string? BrandName { get; set; }
     public string? DivisionName { get; set; }
+    public bool IsActive { get; set; }
 }
