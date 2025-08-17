@@ -198,7 +198,7 @@
                                 <td>Dashboard</td>
                                 <td>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input action-checkbox action-checkbox dashboard_mobile" type="checkbox" id="dashboard_mobile"
+                                        <input class="form-check-input action-checkbox dashboard_mobile" type="checkbox" id="dashboard_mobile"
                                                value = "@((int)SecurityActionsEnum.SEC_MOBILE_DASHBOARD)"
                                                @(Model.SecurityActionsViewModel.Any(i => i.Action == (int)SecurityActionsEnum.SEC_MOBILE_DASHBOARD) ? "checked" : "") @Html.Raw(disableCheck) />
                                     </div>
@@ -335,7 +335,6 @@
                                     </div>
                                 </td>
                             </tr>
-
 
                             <tr class="child-row csoLogAnal">
                                 <td class="ps-4">Root Cause Analysis</td>
@@ -500,29 +499,20 @@
                             <tr class="parent-row">
                                 <td><span class="expand-icon" onclick="toggleChildren('reports')"><i class="fas fa-chevron-right" id="icon-reports"></i> Reports</span></td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="report_mobile_parent" onchange="toggleParentChild('reports', 'mobile', this.checked)" @Html.Raw(disableCheck) />
+                                        <input class="form-check-input" type="checkbox" id="reports_mobile_parent" onchange="toggleParentChild('reports', 'mobile', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="report_desktop_parent" onchange="toggleParentChild('reports', 'desktop', this.checked)" @Html.Raw(disableCheck) />
+                                        <input class="form-check-input" type="checkbox" id="reports_desktop_parent" onchange="toggleParentChild('reports', 'desktop', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
                                 <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="report_view_parent" onchange="toggleParentChild('reports', 'view', this.checked)" @Html.Raw(disableCheck) />
+                                        <input class="form-check-input" type="checkbox" id="reports_view_parent" onchange="toggleParentChild('reports', 'view', this.checked)" @Html.Raw(disableCheck) />
                                     </div>
                                 </td>
-                                <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="report_add_parent" onchange="toggleParentChild('reports', 'add', this.checked)" @Html.Raw(disableCheck) />
-                                    </div>
-                                </td>
-                                <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="report_edit_parent" onchange="toggleParentChild('reports', 'edit', this.checked)" @Html.Raw(disableCheck) />
-                                    </div>
-                                </td>
-                                <td><div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="report_delete_parent" onchange="toggleParentChild('reports', 'delete', this.checked)" @Html.Raw(disableCheck) />
-                                    </div>
-                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
 
                             <tr class="child-row reports">
@@ -1097,7 +1087,47 @@
 </div>
 
 @section Scripts {
-    <script>
+    <script asp-append-version="true">
+        $(document).ready(function () {
+            // Handle the change event on all child checkboxes
+            $('.child-row .action-checkbox').on('change', function() {
+                const $this = $(this);
+
+                // Use the tr's class to get the parentId (e.g., 'reports')
+                const parentId = $this.closest('tr').attr('class').split(' ').find(c => c !== 'child-row');
+
+                // Use the checkbox's id to get the columnClass (e.g., 'mobile', 'desktop')
+                // The id is in the format reports_Mis_mobile
+                const columnClass = $this.attr('id').split('_').pop();
+
+                // Update the correct parent checkbox
+                updateParentCheckbox(parentId, columnClass);
+            });
+
+            // Initial check on page load for all parent-child groups
+            $('.parent-row').each(function() {
+                const parentId = $(this).find('.expand-icon').attr('onclick').replace("toggleChildren('", "").replace("')", "");
+                ['mobile', 'desktop', 'view', 'add', 'edit', 'delete'].forEach(columnClass => {
+                    updateParentCheckbox(parentId, columnClass);
+                });
+            });
+        });
+
+        // A reusable function to update a single parent checkbox for a specific group and column
+        function updateParentCheckbox(parentId, columnClass) {
+            // Find all child checkboxes belonging to this specific parent group and column
+            const $childCheckboxes = $(`.child-row.${parentId} .action-checkbox.${parentId}_${columnClass}`);
+            var test = `${parentId}_${columnClass}_parent`;
+            // Find the parent checkbox for this specific group and column
+            const $parentCheckbox = $(`#${parentId}_${columnClass}_parent`);
+
+            // Check if all children in this group's column are checked
+            const allChildrenChecked = $childCheckboxes.length === $childCheckboxes.filter(':checked').length;
+
+            // Set the parent checkbox state
+            $parentCheckbox.prop('checked', allChildrenChecked);
+        }
+
         function toggleChildren(section) {
             $('.child-row.' + section).toggleClass('visible');
             let icon = $('#icon-' + section);
