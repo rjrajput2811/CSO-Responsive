@@ -211,17 +211,7 @@ function InsertUpdateCSOLogAnay() {
         success: function (response) {
             Blockloaderhide();
             if (!response.success) {
-                var errorMessg = "";
-                for (var error of response.errors) {
-                    errorMessg += error + "\n";
-                }
-                if (errorMessg != "") {
-                    showDangerAlert(errorMessg);
-                }
-                else {
-                    showDangerAlert(response.message);
-                }
-                return false;
+                showDangerAlert(response.message);
             }
             else {
                 showSuccessAlert("CSO Log Updated Successfully.");
@@ -304,17 +294,7 @@ function UpdateCSOLogRootCause(status) {
         success: function (response) {
             Blockloaderhide();
             if (!response.success) {
-                var errorMessg = "";
-                for (var error of response.errors) {
-                    errorMessg += error + "\n";
-                }
-                if (errorMessg != "") {
-                    showDangerAlert(errorMessg);
-                }
-                else {
-                    showDangerAlert(response.message);
-                }
-                return false;
+                showDangerAlert(response.message);
             }
             else {
                 if (status == 'Save') {
@@ -400,17 +380,7 @@ function UpdateCSOLogMonitor(status) {
         success: function (response) {
             Blockloaderhide();
             if (!response.success) {
-                var errorMessg = "";
-                for (var error of response.errors) {
-                    errorMessg += error + "\n";
-                }
-                if (errorMessg != "") {
-                    showDangerAlert(errorMessg);
-                }
-                else {
-                    showDangerAlert(response.message);
-                }
-                return false;
+                showDangerAlert(response.message);
             }
             else {
                 if (status == 'Save') {
@@ -475,17 +445,7 @@ function UpdateCSOLogApproveReject(status) {
         success: function (response) {
             Blockloaderhide();
             if (!response.success) {
-                var errorMessg = "";
-                for (var error of response.errors) {
-                    errorMessg += error + "\n";
-                }
-                if (errorMessg != "") {
-                    showDangerAlert(errorMessg);
-                }
-                else {
-                    showDangerAlert(response.message);
-                }
-                return false;
+                showDangerAlert(response.message);
             }
             else {
                 if (status == 'Save') {
@@ -548,17 +508,7 @@ function UpdateCSOLogClose(status) {
         success: function (response) {
             Blockloaderhide();
             if (!response.success) {
-                var errorMessg = "";
-                for (var error of response.errors) {
-                    errorMessg += error + "\n";
-                }
-                if (errorMessg != "") {
-                    showDangerAlert(errorMessg);
-                }
-                else {
-                    showDangerAlert(response.message);
-                }
-                return false;
+                showDangerAlert(response.message);
             }
             else {
                 if (status == 'Save') {
