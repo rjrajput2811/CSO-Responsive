@@ -1,8 +1,11 @@
 ﻿$(function () {
-    $('.select2').select2({
-        placeholder: "", // Placeholder text
-        allowClear: true,
-        width: '100%'
+    $('.select2').each(function () {
+        var placeholderText = $(this).attr('title') || "";
+        $(this).select2({
+            placeholder: placeholderText,
+            allowClear: true,
+            width: '100%'
+        });
     });
 
     GetDivisionList();
@@ -187,6 +190,7 @@ function InsertUpdateUser() {
         { id: 'ddlRole', name: 'Role' },
         { id: 'ddlUserType', name: 'User Type' },
         { id: 'lstDivision', name: 'Division' },
+        { id: 'ddlReportsTo', name: 'Reports To' },
         { id: 'lstPlant', name: 'Plant' }, ,
         { id: 'lstBrand', name: 'Brand' },
         { id: 'lstProductType', name: 'Product Type' },

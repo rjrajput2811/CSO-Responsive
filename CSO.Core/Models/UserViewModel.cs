@@ -63,4 +63,7 @@ public class UserViewModel
 
     [DisplayName("Is In Mail Matrix")]
     public bool IsInMailMatrix { get; set; }
+
+    [DisplayName("Reports To")]
+    public int? ReportsTo { get; set; }
 }

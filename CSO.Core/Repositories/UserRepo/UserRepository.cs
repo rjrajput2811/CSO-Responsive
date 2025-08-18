@@ -72,7 +72,8 @@ public class UserRepository : SqlTableRepository, IUserRepository
                     BrandId = x.BrandId,
                     ProductTypeId = x.ProductTypeId,
                     IsInMailMatrix = x.IsInMailMatrix,
-                    ADid = x.ADid
+                    ADid = x.ADid,
+                    ReportsTo = x.ReportsTo
                 })
                 .FirstOrDefaultAsync();
 
@@ -108,7 +109,8 @@ public class UserRepository : SqlTableRepository, IUserRepository
                 Password = user.ADid,
                 AddedBy = user.AddedBy,
                 AddedOn = user.AddedOn,
-                Rights = ""
+                Rights = "",
+                ReportsTo = user.ReportsTo
             };
 
             var result = await base.CreateAsync<User>(userDetails);
@@ -150,6 +152,7 @@ public class UserRepository : SqlTableRepository, IUserRepository
             userDetails.Password = user.ADid;
             userDetails.UpdatedBy = user.UpdatedBy;
             userDetails.UpdatedOn = user.UpdatedOn;
+            userDetails.ReportsTo = user.ReportsTo;
 
             var result = await base.UpdateAsync<User>(userDetails);
             return result;

@@ -48,6 +48,7 @@ public class UsersController : BaseController
     public async Task<ActionResult> GetUsersListAsync()
     {
         var usersList = await _userRepository.GetAllUsersAsync();
+        usersList = usersList.Where(u => u.Id != 1).ToList();
         return Json(usersList);
     }
 
@@ -90,6 +91,17 @@ public class UsersController : BaseController
         })
         .ToList();
         ViewBag.DivisionList = divisionList;
+
+        var reportToUser = await _userRepository.GetAllUsersAsync();
+        var reportToUserList = reportToUser
+            .Where(i => i.Id != Id)
+            .Select(x => new SelectListItem
+            {
+                Value = x.Id.ToString(),
+                Text = x.Name
+            })
+            .ToList();
+        ViewBag.ReportToUserList = reportToUserList;
 
         if (Id > 0)
         {

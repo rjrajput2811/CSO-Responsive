@@ -9,7 +9,7 @@ namespace CSO.Core.Repositories.CSOLogAnalysisRepo
 {
     public interface ICSOLogAnalysisRepository
     {
-        Task<List<CSOLogGridModel>> GetCSOLogListAsync(string fYear);
+        Task<List<CSOLogGridModel>> GetCSOLogListAsync(string fYear, int userId);
         Task<OperationResult> CreateCSOLogAnyaAsync(CSOLogViewModel model);
         Task<OperationResult> UpdateCSOLogAnyaAsync(CSOLogViewModel model);
         Task<OperationResult> UpdateCSOLogAnalysisForRootCauseAsync(CSOLogViewModel model);

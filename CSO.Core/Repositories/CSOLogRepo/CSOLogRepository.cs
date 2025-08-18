@@ -23,13 +23,14 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
         _dbConnection = dbConnection;
     }
 
-    public async Task<List<CSOLogGridModel>> GetCSOLogListAsync(string fYear)
+    public async Task<List<CSOLogGridModel>> GetCSOLogListAsync(string fYear, int userId)
     {
         try
         {
 
             var parameters = new DynamicParameters();
             parameters.Add("@FinYear", fYear);
+            parameters.Add("@UserId", userId);
 
             var result = await _dbConnection.QueryAsync<CSOLogViewModel>("sp_Get_CSOLogs_Details", parameters, commandType: CommandType.StoredProcedure);
 
