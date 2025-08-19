@@ -79,7 +79,8 @@ namespace CSO_Responsive.Controllers
         public async Task<JsonResult> GetCSOLogAnalListAsync()
         {
             string fYear = HttpContext.Session.GetString("FYear") ?? "";
-            var csoList = await _csoLogAnalRepository.GetCSOLogListAsync(fYear);
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            var csoList = await _csoLogAnalRepository.GetCSOLogListAsync(fYear, userId);
             return Json(csoList);
         }
 

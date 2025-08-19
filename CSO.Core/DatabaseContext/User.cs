@@ -49,4 +49,5 @@ public class User : SqlTable
     public int UserType { get; set; }
 
     public bool IsInMailMatrix { get; set; }
+    public int? ReportsTo { get; set; }
 }

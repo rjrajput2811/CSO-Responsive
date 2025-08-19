@@ -67,7 +67,8 @@ public class CSOLogController : BaseController
     public async Task<JsonResult> GetCSOLogListAsync()
     {
         string fYear = HttpContext.Session.GetString("FYear") ?? "";
-        var csoList = await _csoLogRepository.GetCSOLogListAsync(fYear);
+        int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+        var csoList = await _csoLogRepository.GetCSOLogListAsync(fYear, userId);
         return Json(csoList);
     }
 

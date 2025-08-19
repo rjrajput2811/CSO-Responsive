@@ -28,12 +28,13 @@ namespace CSO.Core.Repositories.CSOLogAnalysisRepo
             _dbConnection = dbConnection;
         }
 
-        public async Task<List<CSOLogGridModel>> GetCSOLogListAsync(string fYear)
+        public async Task<List<CSOLogGridModel>> GetCSOLogListAsync(string fYear, int userId)
         {
             try
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@FinYear", fYear);
+                parameters.Add("@UserId", userId);
 
                 var result = await _dbConnection.QueryAsync<CSOLogGridModel>("sp_Get_CSOLogAnal_Details", parameters, commandType: CommandType.StoredProcedure);
 
