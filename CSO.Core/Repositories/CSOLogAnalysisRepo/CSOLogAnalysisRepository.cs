@@ -5,6 +5,7 @@ using CSO.Core.Repositories.Shared;
 using CSO.Core.Security;
 using CSO.Core.Services.SystemLogs;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -53,7 +54,6 @@ namespace CSO.Core.Repositories.CSOLogAnalysisRepo
                     ComplainTypeName = data.ComplainTypeName,
                     Description = data.Description,
                     PendingDays = data.PendingDays,
-                    DaysCompleted = 45 - (data.Logdate.AddDays(45).Date - DateTime.Now.Date).Days < 0 ? 45 + Math.Abs((data.Logdate.AddDays(45).Date - DateTime.Now.Date).Days) : (data.Logdate.AddDays(45).Date - DateTime.Now.Date).Days,
                     Status = Enum.IsDefined(typeof(Status), data.Status1) ? ((Status)data.Status1).ToString() : "",
                     RootStatus = data.RootStatus,
                     MonitorStatus = data.MonitorStatus,
@@ -63,6 +63,195 @@ namespace CSO.Core.Repositories.CSOLogAnalysisRepo
                 }).ToList();
 
                 return csoLogList;
+            }
+            catch (Exception ex)
+            {
+                _systemLogService.WriteLog(ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<CSOLogViewModel> GetCSOLogById(int id)
+        {
+            try
+            {
+                var csoLogDetails = await base.GetByIdAsync<CSOLog>(id);
+                var result = new CSOLogViewModel
+                {
+                    Id = csoLogDetails.Id,
+                    UserId = csoLogDetails.UserId,
+                    UserName = _dbContext.Users.Where(i => i.Id == csoLogDetails.UserId).Select(x => x.Name).FirstOrDefault(),
+                    Logdate = csoLogDetails.Logdate,
+                    CSONo = 100 + csoLogDetails.Id,
+                    DivisionId = csoLogDetails.DivisionId,
+                    CategoryId = csoLogDetails.CategoryId,
+                    ComplaintTypeId = csoLogDetails.ComplaintTypeId,
+                    Description = csoLogDetails.Description,
+                    SourceofComplaint = csoLogDetails.SourceofComplaint,
+                    CSOClassId = csoLogDetails.CSOClassId,
+                    BrandId = csoLogDetails.BrandId,
+                    ProductTypeId = csoLogDetails.ProductTypeId,
+                    PlantId = csoLogDetails.PlantId,
+                    NearestPlantId = csoLogDetails.NearestPlantId,
+                    Batch = csoLogDetails.Batch,
+                    PKDDate = csoLogDetails.PKDDate,
+                    Quantity = csoLogDetails.Quantity,
+                    SuppliedQuantity = csoLogDetails.SuppliedQuantity,
+                    CatReference = csoLogDetails.CatReference,
+                    IsSampleShipped = csoLogDetails.IsSampleShipped,
+                    TrackingNo = csoLogDetails.TrackingNo,
+                    Status1 = csoLogDetails.Status1,
+                    Review1 = csoLogDetails.Review1,
+                    Status2 = csoLogDetails.Status2,
+                    Review2 = csoLogDetails.Review2,
+                    AddedBy = csoLogDetails.AddedBy,
+                    SKUDetails = csoLogDetails.SKUDetails,
+                    FinancialYear = csoLogDetails.FinancialYear,
+                    RootCauseAnalysisDescription = csoLogDetails.RootCauseAnalysisDescription,
+                    PreventiveActionDescription = csoLogDetails.PreventiveActionDescription,
+                    CorrectiveActionDescription = csoLogDetails.CorrectiveActionDescription,
+                    MonitoringofCorrectiveActionDescription = csoLogDetails.MonitoringofCorrectiveActionDescription,
+                    IsRootCauseSubmitted = csoLogDetails.IsRootCauseSubmitted,
+                    IsMonitorSubmitted = csoLogDetails.IsMonitorSubmitted,
+                    IsApproveSubmitted = csoLogDetails.IsApproveSubmitted,
+                };
+
+                var csoLogHistory = await _dbContext.CSOLogHistories
+                    .Where(i => i.CSOLogId == id)
+                    .FirstOrDefaultAsync();
+
+                if (csoLogHistory != null)
+                {
+                    var rootRecycleDays = await _dbContext.RecycleDays
+                        .Where(i => i.CSOLogPhase == (int)Status.RootCause && result.Logdate >= i.FromDate && result.Logdate <= i.ToDate)
+                        .FirstOrDefaultAsync();
+
+                    if(csoLogHistory.RootCauseOn.HasValue && result.IsRootCauseSubmitted)
+                    {
+                        result.IsRcaComplete = true;
+                        result.RcaDate = csoLogHistory.RootCauseOn.Value;
+                        result.RcaUserName = _dbContext.Users.Where(i => i.Id == csoLogHistory.RootCauseBy).Select(x => x.Name).FirstOrDefault();
+                    }
+                    else
+                    {
+                        result.IsRcaInProgress = true;
+                        if(rootRecycleDays != null)
+                        {
+                            result.RcaDaysProgressed = (int)Math.Floor((DateTime.Now - result.Logdate).TotalDays);
+                            result.RcaThresholdDays = rootRecycleDays.ThresholdDays;
+                        }
+                        else
+                        {
+                            result.RcaDaysProgressed = (int)Math.Floor((DateTime.Now - result.Logdate).TotalDays);
+                            result.RcaThresholdDays = 45;
+                        }
+
+                        if(result.RcaDaysProgressed > result.RcaThresholdDays)
+                        {
+                            result.IsRcaOverdue = true;
+                        }
+                    }
+
+                    if(result.IsRootCauseSubmitted)
+                    {
+                        var monitoringRecycleDay = await _dbContext.RecycleDays
+                            .Where(i => i.CSOLogPhase == (int)Status.Monitor && result.Logdate >= i.FromDate && result.Logdate <= i.ToDate)
+                            .FirstOrDefaultAsync();
+
+                        if (csoLogHistory.MonitoringOn.HasValue && result.IsMonitorSubmitted)
+                        {
+                            result.IsMonitoringComplete = true;
+                            result.MonitoringDate = csoLogHistory.MonitoringOn.Value;
+                            result.MonitoringUserName = _dbContext.Users.Where(i => i.Id == csoLogHistory.MonitoringBy).Select(x => x.Name).FirstOrDefault();
+                        }
+                        else
+                        {
+                            result.IsMonitoringInProgress = true;
+                            if (monitoringRecycleDay != null)
+                            {
+                                result.MonitoringDaysProgressed = (int)Math.Floor((DateTime.Now - csoLogHistory.RootCauseOn.Value).TotalDays);
+                                result.MonitoringThresholdDays = monitoringRecycleDay.ThresholdDays;
+                            }
+                            else
+                            {
+                                result.MonitoringDaysProgressed = (int)Math.Floor((DateTime.Now - result.Logdate).TotalDays);
+                                result.MonitoringThresholdDays = 45;
+                            }
+
+                            if (result.MonitoringDaysProgressed > result.MonitoringThresholdDays)
+                            {
+                                result.IsMonitoringOverdue = true;
+                            }
+                        }
+                    }
+
+                    if(result.IsMonitorSubmitted)
+                    {
+                        var reviewRecycleDay = await _dbContext.RecycleDays
+                            .Where(i => i.CSOLogPhase == (int)Status.Approve && result.Logdate >= i.FromDate && result.Logdate <= i.ToDate)
+                            .FirstOrDefaultAsync();
+
+                        if (csoLogHistory.ReviewOn.HasValue && result.IsApproveSubmitted)
+                        {
+                            result.IsReviewComplete = true;
+                            result.ReviewDate = csoLogHistory.ReviewOn.Value;
+                            result.ReviewUserName = _dbContext.Users.Where(i => i.Id == csoLogHistory.ReviewBy).Select(x => x.Name).FirstOrDefault();
+                        }
+                        else
+                        {
+                            result.IsReviewInProgress = true;
+                            if (reviewRecycleDay != null)
+                            {
+                                result.ReviewDaysProgressed = (int)Math.Floor((DateTime.Now - csoLogHistory.MonitoringOn.Value).TotalDays);
+                                result.ReviewThresholdDays = reviewRecycleDay.ThresholdDays;
+                            }
+                            else
+                            {
+                                result.ReviewDaysProgressed = (int)Math.Floor((DateTime.Now - result.Logdate).TotalDays);
+                                result.ReviewThresholdDays = 45;
+                            }
+                        }
+
+                        if (result.ReviewDaysProgressed > result.ReviewThresholdDays)
+                        {
+                            result.IsReviewOverdue = true;
+                        }
+                    }
+
+                    if(result.IsApproveSubmitted)
+                    {
+                        var closeRecycleDay = await _dbContext.RecycleDays
+                            .Where(i => i.CSOLogPhase == (int)Status.Close && result.Logdate >= i.FromDate && result.Logdate <= i.ToDate)
+                            .FirstOrDefaultAsync();
+
+                        if (csoLogHistory.CloseOn.HasValue && result.IsApproveSubmitted)
+                        {
+                            result.IsCloseComplete = true;
+                            result.CloseDate = csoLogHistory.CloseOn.Value;
+                            result.CloseUserName = _dbContext.Users.Where(i => i.Id == csoLogHistory.CloseBy).Select(x => x.Name).FirstOrDefault();
+                        }
+                        else
+                        {
+                            result.IsCloseInProgress = true;
+                            if (closeRecycleDay != null)
+                            {
+                                result.CloseDaysProgressed = (int)Math.Floor((DateTime.Now - csoLogHistory.ReviewOn.Value).TotalDays);
+                                result.CloseThresholdDays = closeRecycleDay.ThresholdDays;
+                            }
+                            else
+                            {
+                                result.CloseDaysProgressed = (int)Math.Floor((DateTime.Now - result.Logdate).TotalDays);
+                                result.CloseThresholdDays = 45;
+                            }
+                        }
+
+                        if (result.CloseDaysProgressed > result.CloseThresholdDays)
+                        {
+                            result.IsCloseOverdue = true;
+                        }
+                    }
+                }
+                return result;
             }
             catch (Exception ex)
             {
@@ -228,18 +417,24 @@ namespace CSO.Core.Repositories.CSOLogAnalysisRepo
                         csoLogData.Status1 = (int)Status.RootCause;
                         csoLogData.UpdatedBy = model.UpdatedBy;
                         csoLogData.UpdatedOn = model.UpdatedOn;
+                        csoLogData.IsMonitorSubmitted = false;
+                        csoLogData.IsApproveSubmitted = false;
                     }
                     if(model.RejectRevertStatus == "monitor")
                     {
                         csoLogData.Status1 = (int)Status.Monitor;
                         csoLogData.UpdatedBy = model.UpdatedBy;
                         csoLogData.UpdatedOn = model.UpdatedOn;
+                        csoLogData.IsApproveSubmitted = false;
                     }
                     if(model.RejectRevertStatus == "log")
                     {
                         csoLogData.Status1 = (int)Status.Open;
                         csoLogData.UpdatedBy = model.UpdatedBy;
                         csoLogData.UpdatedOn = model.UpdatedOn;
+                        csoLogData.IsRootCauseSubmitted = false;
+                        csoLogData.IsMonitorSubmitted = false;
+                        csoLogData.IsApproveSubmitted = false;
                     }
                 }
 

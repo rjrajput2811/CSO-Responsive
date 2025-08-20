@@ -9,7 +9,7 @@ public class CSOLogViewModel
 {
     [Key]
     public int Id { get; set; }
-
+    public int csoLogId { get; set; }
 
     public int CSONo { get; set; }
 
@@ -100,6 +100,42 @@ public class CSOLogViewModel
     public bool IsRootCauseSubmitted { get; set; }
     public bool IsMonitorSubmitted { get; set; }
     public bool IsApproveSubmitted { get; set; }
+
+    // Root Cause Analysis
+    public bool IsRcaComplete { get; set; }
+    public bool IsRcaInProgress { get; set; }
+    public bool IsRcaOverdue { get; set; }
+    public DateTime? RcaDate { get; set; }
+    public string? RcaUserName { get; set; }
+    public int RcaDaysProgressed { get; set; }
+    public int RcaThresholdDays { get; set; }
+
+    // Monitoring and CA
+    public bool IsMonitoringComplete { get; set; }
+    public bool IsMonitoringInProgress { get; set; }
+    public bool IsMonitoringOverdue { get; set; }
+    public DateTime? MonitoringDate { get; set; }
+    public string? MonitoringUserName { get; set; }
+    public int MonitoringDaysProgressed { get; set; }
+    public int MonitoringThresholdDays { get; set; }
+
+    // Approved (Review)
+    public bool IsReviewComplete { get; set; }
+    public bool IsReviewInProgress { get; set; }
+    public bool IsReviewOverdue { get; set; }
+    public DateTime? ReviewDate { get; set; }
+    public string? ReviewUserName { get; set; }
+    public int ReviewDaysProgressed { get; set; }
+    public int ReviewThresholdDays { get; set; }
+
+    // Closure
+    public bool IsCloseComplete { get; set; }
+    public bool IsCloseInProgress { get; set; }
+    public bool IsCloseOverdue { get; set; }
+    public DateTime? CloseDate { get; set; }
+    public string? CloseUserName { get; set; }
+    public int CloseDaysProgressed { get; set; }
+    public int CloseThresholdDays { get; set; }
 
     public string? BaseUrl { get; set; }
 }

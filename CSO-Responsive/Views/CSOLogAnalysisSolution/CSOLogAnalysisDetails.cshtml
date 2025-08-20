@@ -121,6 +121,11 @@
             font-weight: bold;
         }
 
+        .timeline-table .overdue {
+            color: darkred;
+            font-weight: bold;
+        }
+
         .timeline-table i {
             margin-right: 5px;
         }
@@ -367,11 +372,83 @@
                     <tbody>
                         <tr>
 
-                            <td class="complete"><i class="fas fa-check-circle"></i>Complete<br><span style="color:#333; font-weight:normal;">15/02/2025<br>Admin<br>Day 2 of 45</span></td>
-                            <td class="progressed"><i class="fas fa-hourglass-half"></i>In Progress<br><span style="color:#333; font-weight:normal;">Day 6 of 45</span></td>
-                            <td class="pending"><i class="fas fa-times-circle"></i>Pending<br><span style="color:#555; font-weight:normal;">Not Started</span></td>
-                            <td class="pending"><i class="fas fa-times-circle"></i>Pending<br><span style="color:#555; font-weight:normal;">Not Started</span></td>
-                            <td class="pending"><i class="fas fa-times-circle"></i>Pending<br><span style="color:#555; font-weight:normal;">Not Started</span></td>
+                            <td class="complete"><i class="fas fa-check-circle"></i>Complete<br><span style="color:#333; font-weight:normal;">@Model.Logdate.ToString("dd/MM/yyyy")</span><br>@Model.UserName</td>
+                            @if(Model.IsRcaComplete)
+                            {
+                                <td class="complete"><i class="fas fa-check-circle"></i>Complete<br><span style="color:#333; font-weight:normal;">@Model.RcaDate?.ToString("dd/MM/yyyy")</span><br>@Model.RcaUserName</td>
+                            }
+                            else if (Model.IsRcaInProgress)
+                            {
+                                if (Model.IsRcaOverdue)
+                                {
+                                    <td class="overdue"><i class="fas fa-exclamation-triangle"></i>Overdue<br><span style="color:#333; font-weight:normal;">Day @Model.RcaDaysProgressed of @Model.RcaThresholdDays</span></td>
+                                }
+                                else
+                                {
+                                    <td class="progressed"><i class="fas fa-hourglass-half"></i>In Progress<br><span style="color:#333; font-weight:normal;">@Model.RcaDaysProgressed of @Model.RcaThresholdDays</span></td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="pending"><i class="fas fa-times-circle"></i>Pending<br><span style="color:#555; font-weight:normal;">Not Started</span></td>
+                            }
+                            @if(Model.IsMonitoringComplete)
+                            {
+                                <td class="complete"><i class="fas fa-check-circle"></i>Complete<br><span style="color:#333; font-weight:normal;">@Model.MonitoringDate?.ToString("dd/MM/yyyy")</span><br>@Model.MonitoringUserName</td>
+                            }
+                            else if (Model.IsMonitoringInProgress)
+                            {
+                                if (Model.IsMonitoringOverdue)
+                                {
+                                    <td class="overdue"><i class="fas fa-exclamation-triangle"></i>Overdue<br><span style="color:#333; font-weight:normal;">Day @Model.MonitoringDaysProgressed of @Model.MonitoringThresholdDays</span></td>
+                                }
+                                else
+                                {
+                                    <td class="progressed"><i class="fas fa-hourglass-half"></i>In Progress<br><span style="color:#333; font-weight:normal;">@Model.MonitoringDaysProgressed of @Model.MonitoringThresholdDays</span></td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="pending"><i class="fas fa-times-circle"></i>Pending<br><span style="color:#555; font-weight:normal;">Not Started</span></td>
+                            }
+                            @if(Model.IsReviewComplete)
+                            {
+                                <td class="complete"><i class="fas fa-check-circle"></i>Complete<br><span style="color:#333; font-weight:normal;">@Model.ReviewDate?.ToString("dd/MM/yyyy")</span><br>@Model.ReviewUserName</td>
+                            }
+                            else if (Model.IsReviewInProgress)
+                            {
+                                if (Model.IsReviewOverdue)
+                                {
+                                    <td class="overdue"><i class="fas fa-exclamation-triangle"></i>Overdue<br><span style="color:#333; font-weight:normal;">Day @Model.ReviewDaysProgressed of @Model.ReviewThresholdDays</span></td>
+                                }
+                                else
+                                {
+                                    <td class="progressed"><i class="fas fa-hourglass-half"></i>In Progress<br><span style="color:#333; font-weight:normal;">@Model.ReviewDaysProgressed of @Model.ReviewThresholdDays</span></td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="pending"><i class="fas fa-times-circle"></i>Pending<br><span style="color:#555; font-weight:normal;">Not Started</span></td>
+                            }
+                            @if(Model.IsCloseComplete)
+                            {
+                                <td class="complete"><i class="fas fa-check-circle"></i>Complete<br><span style="color:#333; font-weight:normal;">@Model.CloseDate?.ToString("dd/MM/yyyy")</span><br>@Model.CloseUserName</td>
+                            }
+                            else if (Model.IsCloseInProgress)
+                            {
+                                if (Model.IsCloseOverdue)
+                                {
+                                    <td class="overdue"><i class="fas fa-exclamation-triangle"></i>Overdue<br><span style="color:#333; font-weight:normal;">Day @Model.CloseDaysProgressed of @Model.CloseThresholdDays</span></td>
+                                }
+                                else
+                                {
+                                    <td class="progressed"><i class="fas fa-hourglass-half"></i>In Progress<br><span style="color:#333; font-weight:normal;">@Model.CloseDaysProgressed of @Model.CloseThresholdDays</span></td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="pending"><i class="fas fa-times-circle"></i>Pending<br><span style="color:#555; font-weight:normal;">Not Started</span></td>
+                            }
                         </tr>
                     </tbody>
                 </table>
@@ -633,7 +710,6 @@
                         <div class="card p-4">
                             <div class="d-flex justify-content-between mb-3">
                                 <h5 class="section-label">Root Cause Analysis</h5>
-                                <span class="badge bg-success badge-status">Submitted</span>
                             </div>
                             <form id="CSOLogRootCause-form" method="post" asp-action="UpdateCSOLogForRootCause" asp-controller="CSOLogAnalysisSolution">
                                 <div class="mb-3">
@@ -710,7 +786,6 @@
                 <div class="card p-4">
                     <div class="d-flex justify-content-between mb-3">
                         <h5 class="section-label">Final Review - Approve / Reject</h5>
-                        <span class="badge bg-warning text-dark badge-status">Pending Review</span>
                     </div>
                     <form id="CSOLogApproveReject-form" method="post" asp-action="UpdateCSOLogForApproveReject" asp-controller="CSOLogAnalysisSolution">
                         <div class="row g-4">
@@ -748,7 +823,6 @@
                 <div class="card p-4">
                     <div class="d-flex justify-content-between mb-3">
                         <h5 class="section-label">Log Closure</h5>
-                        <span class="badge bg-secondary badge-status">Final Step</span>
                     </div>
                     <form id="CSOLogClose-form" method="post" asp-action="UpdateCSOLogForClose" asp-controller="CSOLogAnalysisSolution">
                         <div class="mb-3">
