@@ -162,7 +162,7 @@ namespace CSO_Responsive.Controllers
                 string decryptedText = DecryptFromAes(encryptedBytes);
                 if (!int.TryParse(decryptedText, out int Id))
                     return BadRequest("Invalid decrypted ID");
-                model = await _csoLogRepository.GetCSOLogById(Id);
+                model = await _csoLogAnalRepository.GetCSOLogById(Id);
             }
             else
             {
@@ -242,6 +242,10 @@ namespace CSO_Responsive.Controllers
 
         public async Task<ActionResult> InsertUpdateCSOLogAnayAsync(CSOLogViewModel model)
         {
+            if(model.Id == 0)
+            {
+                model.Id = model.csoLogId;
+            }
             model.UpdatedBy = HttpContext.Session.GetInt32("UserId");
             var result = await _csoLogAnalRepository.UpdateCSOLogAnyaAsync(model);
 
@@ -293,6 +297,11 @@ namespace CSO_Responsive.Controllers
 
         public async Task<ActionResult> UpdateCSOLogForRootCauseAsync(CSOLogViewModel model)
         {
+            if (model.Id == 0)
+            {
+                model.Id = model.csoLogId;
+            }
+
             if (model.Status == "Submit")
             {
                 model.Status1 = (int)Status.RootCause;
@@ -361,13 +370,21 @@ namespace CSO_Responsive.Controllers
                 if (!result.Success) { return Json(result); }
             }
 
-            result = await _mailMatrixRepository.CSOMailTrigger(model.Id, (int)MailType.CsoMovement, model.BaseUrl);
+            if(model.Status == "Submit")
+            {
+                result = await _mailMatrixRepository.CSOMailTrigger(model.Id, (int)MailType.CsoMovement, model.BaseUrl);
+            }
 
             return Json(result);
         }
 
         public async Task<ActionResult> UpdateCSOLogForMonitorAsync(CSOLogViewModel model)
         {
+            if (model.Id == 0)
+            {
+                model.Id = model.csoLogId;
+            }
+
             if (model.Status == "Submit")
             {
                 model.Status1 = (int)Status.Monitor;
@@ -423,14 +440,22 @@ namespace CSO_Responsive.Controllers
                 if (!result.Success) { return Json(result); }
             }
 
-            result = await _mailMatrixRepository.CSOMailTrigger(model.Id, (int)MailType.CsoMovement, model.BaseUrl);
+            if (model.Status == "Submit")
+            {
+                result = await _mailMatrixRepository.CSOMailTrigger(model.Id, (int)MailType.CsoMovement, model.BaseUrl);
+            }
 
             return Json(result);
         }
 
         public async Task<ActionResult> UpdateCSOLogForApproveRejectAsync(CSOLogViewModel model)
         {
-            if(model.Status == "Approve")
+            if (model.Id == 0)
+            {
+                model.Id = model.csoLogId;
+            }
+
+            if (model.Status == "Approve")
             {
                 model.Status1 = (int)Status.Approve;
                 model.IsApproveSubmitted = true;
@@ -448,20 +473,28 @@ namespace CSO_Responsive.Controllers
             var csoLogHistory = new CSOLogHistoryViewModel
             {
                 CSOLogId = model.Id,
-                MonitoringBy = HttpContext.Session.GetInt32("UserId") ?? 0,
-                MonitoringOn = DateTime.Now
+                ReviewBy = HttpContext.Session.GetInt32("UserId") ?? 0,
+                ReviewOn = DateTime.Now
             };
 
             result = await _csoLogHistoryRepository.UpdateCSOLogHistoryForApproveRejectAsync(csoLogHistory);
             if (!result.Success) { return Json(result); }
 
-            result = await _mailMatrixRepository.CSOMailTrigger(model.Id, (int)MailType.CsoMovement, model.BaseUrl);
+            if (model.Status == "Submit")
+            {
+                result = await _mailMatrixRepository.CSOMailTrigger(model.Id, (int)MailType.CsoMovement, model.BaseUrl);
+            }
 
             return Json(result);
         }
 
         public async Task<ActionResult> UpdateCSOLogForCloseAsync(CSOLogViewModel model)
         {
+            if (model.Id == 0)
+            {
+                model.Id = model.csoLogId;
+            }
+
             if (model.Status == "Submit")
             {
                 model.Status1 = (int)Status.Close;
@@ -475,14 +508,17 @@ namespace CSO_Responsive.Controllers
             var csoLogHistory = new CSOLogHistoryViewModel
             {
                 CSOLogId = model.Id,
-                MonitoringBy = HttpContext.Session.GetInt32("UserId") ?? 0,
-                MonitoringOn = DateTime.Now
+                CloseBy = HttpContext.Session.GetInt32("UserId") ?? 0,
+                CloseOn = DateTime.Now
             };
 
             result = await _csoLogHistoryRepository.UpdateCSOLogHistoryForCloseAsync(csoLogHistory);
             if (!result.Success) { return Json(result); }
 
-            result = await _mailMatrixRepository.CSOMailTrigger(model.Id, (int)MailType.CsoClosure, model.BaseUrl);
+            if (model.Status == "Submit")
+            {
+                result = await _mailMatrixRepository.CSOMailTrigger(model.Id, (int)MailType.CsoClosure, model.BaseUrl);
+            }
 
             return Json(result);
         }

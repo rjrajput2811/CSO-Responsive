@@ -184,7 +184,7 @@ function InsertUpdateCSOLogAnay() {
     const form = $('#CSOLogAnay-form')[0];
     const formData = new FormData(form);
 
-    formData.append('Id', csoLogId);
+    formData.append('csoLogId', csoLogId);
 
     const maxFileSizeMB = 5;
     const maxFileSizeBytes = maxFileSizeMB * 1024 * 1024;

@@ -121,7 +121,7 @@ public class CSOLogHistoryRepository : SqlTableRepository, ICSOLogHistoryReposit
             csoLogHistory.CloseBy = model.CloseBy;
             csoLogHistory.CloseOn = model.CloseOn;
 
-            var result = await base.CreateAsync<CSOLogHistory>(csoLogHistory);
+            var result = await base.UpdateAsync<CSOLogHistory>(csoLogHistory);
             return result;
         }
         catch (Exception ex)
