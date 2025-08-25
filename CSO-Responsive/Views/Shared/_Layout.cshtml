@@ -562,11 +562,11 @@
                             <ul class="nav nav-group-sub" data-submenu-title="Reports">
                             @if((canMISShowOnMobile || canMISShowOnDesktop) && canViewMIS)
                             {
-                                <li class="nav-item"><a asp-controller="MIS" asp-action="Index" class="nav-link" title="MIS">MIS</a></li>
+                                <li class="nav-item"><a asp-controller="Reports" asp-action="MIS" class="nav-link" title="MIS">MIS</a></li>
                             }
                             @if((canCSOLogReportShowOnMobile || canCSOLogReportShowOnDesktop) && canViewCSOLogReport)
                             {
-                                <li class="nav-item"><a asp-controller="CSOLogReport" asp-action="Index" class="nav-link" title="CSO Log Report">CSO Log Report</a></li>
+                                <li class="nav-item"><a asp-controller="Reports" asp-action="CSOLogReport" class="nav-link" title="CSO Log Report">CSO Log Report</a></li>
                             }                                    
                             </ul>
                         </li>

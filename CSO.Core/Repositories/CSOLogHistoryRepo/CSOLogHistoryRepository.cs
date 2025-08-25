@@ -36,13 +36,12 @@ public class CSOLogHistoryRepository : SqlTableRepository, ICSOLogHistoryReposit
     {
         try
         {
-            var csoLogData = await base.GetByIdAsync<CSOLog>(model.CSOLogId);
 
             var csoLogHistory = new CSOLogHistory
             {
                 CSOLogId = model.CSOLogId,
-                CSOLogBy = csoLogData.AddedBy,
-                CSOLogOn = csoLogData.AddedOn
+                CSOLogBy = model.CSOLogBy,
+                CSOLogOn = model.CSOLogOn
             };
 
             var result = await base.CreateAsync<CSOLogHistory>(csoLogHistory);

@@ -3,6 +3,7 @@ using CSO.Core.Models;
 using CSO.Core.Repositories.BrandRepo;
 using CSO.Core.Repositories.CategoryRepo;
 using CSO.Core.Repositories.CSOLogFileRepo;
+using CSO.Core.Repositories.CSOLogHistoryRepo;
 using CSO.Core.Repositories.CSOLogRepo;
 using CSO.Core.Repositories.DivisionRepo;
 using CSO.Core.Repositories.MailMatrixRepo;
@@ -33,6 +34,7 @@ public class CSOLogController : BaseController
     private readonly IUserRepository _userRepository;
     private readonly ICSOLogFileRepository _csoLogFileRepository;
     private readonly IMailMatrixRepository _mailMatrixRepository;
+    private readonly ICSOLogHistoryRepository _csoLogHistoryRepository;
 
     public CSOLogController(ICSOLogRepository csoLogRepository,
                             ISystemLogService systemLogService,
@@ -44,7 +46,8 @@ public class CSOLogController : BaseController
                             IProductTypeRepository productTypeRepository,
                             IUserRepository userRepository,
                             ICSOLogFileRepository csoLogFileRepository,
-                            IMailMatrixRepository mailMatrixRepository)
+                            IMailMatrixRepository mailMatrixRepository,
+                            ICSOLogHistoryRepository csoLogHistoryRepository)
     {
         _csoLogRepository = csoLogRepository;
         _systemLogService = systemLogService;
@@ -57,6 +60,7 @@ public class CSOLogController : BaseController
         _userRepository = userRepository;
         _csoLogFileRepository = csoLogFileRepository;
         _mailMatrixRepository = mailMatrixRepository;
+        _csoLogRepository = csoLogRepository;
     }
     public IActionResult Index()
     {
@@ -214,6 +218,16 @@ public class CSOLogController : BaseController
             model.AddedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
             model.UserId = HttpContext.Session.GetInt32("UserId") ?? 0;
             result = await _csoLogRepository.CreateCSOLogAsync(model);
+            if (!result.Success) { return Json(result); }
+
+            var csoLogHistory = new CSOLogHistoryViewModel
+            {
+                CSOLogId = model.Id,
+                CSOLogBy = HttpContext.Session.GetInt32("UserId") ?? 0,
+                CSOLogOn = DateTime.Now
+            };
+
+            result = await _csoLogHistoryRepository.CreateCSOLogHistoryAsync(csoLogHistory);
         }
 
         if (!result.Success) { return Json(result); }

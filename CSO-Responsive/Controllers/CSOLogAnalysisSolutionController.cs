@@ -251,14 +251,6 @@ namespace CSO_Responsive.Controllers
 
             if (!result.Success) { return Json(result); }
 
-            var csoLogHistory = new CSOLogHistoryViewModel
-            {
-                CSOLogId = model.Id
-            };
-
-            result = await _csoLogHistoryRepository.CreateCSOLogHistoryAsync(csoLogHistory);
-            if (!result.Success) { return Json(result); }
-
             var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
             var uploadFolder = "CSOLogandAnalysisSolutionFiles";
             var uploadPath = Path.Combine(wwwRootPath, uploadFolder);
