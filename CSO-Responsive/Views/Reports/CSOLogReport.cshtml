@@ -1,0 +1,509 @@
+﻿@{
+    ViewData["Title"] = "CSO Log Report";
+}
+
+<link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
+<link href="~/css/tabulator/tabulator.min.css" rel="stylesheet" />
+<link href="~/css/tabulator/tabulator_bootstrap4.min.css" rel="stylesheet" />
+<script src="~/js/jquery.min.js"></script>
+<script src="~/js/jquery.datatables.js"></script>
+<link href="~/css/pnotify.css" rel="stylesheet" />
+<script src="~/js/pnotify.js"></script>
+<script src="~/js/pnotify.confirm.js"></script>
+<script src="~/lib/bootstrap/dist/js/popupAlert.js"></script>
+<script src="~/lib/bootstrap/dist/js/buttons.html5.min.js"></script>
+<script src="~/js/common.js"></script>
+<script src="~/js/xlsx.min.js"></script>
+@* <script src="~/js/tabulator.min.js"></script> *@
+<script src="~/js/aes.js"></script>
+
+<style>
+
+    .form-control {
+        padding: 0 10px !important;
+        border: 0;
+        border-bottom: 1px solid #cccccc;
+        border-radius: 0px;
+    }
+
+    label {
+        margin-bottom: 0;
+        margin-top: .3rem;
+    }
+
+    #scrollToTopBtn:hover {
+        background-color: #0056b3; /* Darker blue */
+    }
+
+    #scrollToTopBtn {
+        outline: none; /* Removes the focus border */
+    }
+
+    .tabulator .tabulator-header .tabulator-col {
+        font-size: 14px;
+        background-color: #D6E4F0;
+        font-weight: 600;
+        border-right: 1px solid #ccc;
+    }
+
+    .tabulator-row .tabulator-cell {
+        padding: 5px 5px;
+        font-size: 14px;
+        height: 30px;
+    }
+
+    .tabulator-cell:hover {
+        color: #4682B4 !important;
+        cursor: pointer !important;
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 0.5rem; /* Reduce space between each input group */
+    }
+
+    .custom-header {
+        background-color: #bec6e1 !important; /* Attractive blue background */
+        color: black; /* White text */
+        border-radius: 4px 4px 0 0; /* Rounded corners */
+        font-weight: bold;
+    }
+
+    /* Responsive pagination styling */
+    .tabulator-paginator {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 10px 15px;
+        background: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        font-size: 14px;
+    }
+
+    .tabulator-page,
+    .tabulator-page.active,
+    .tabulator-page.disabled {
+        padding: 6px 12px;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        background-color: #ffffff;
+        color: #495057;
+        cursor: pointer;
+        margin-right: .3rem;
+    }
+
+        .tabulator-page.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .tabulator-page.disabled {
+            color: #adb5bd;
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+
+    .tabulator-page-size {
+        height: 32px;
+        padding: 4px 8px;
+        font-size: 14px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        margin-right: 1rem;
+    }
+
+    @@media (max-width: 576px) {
+        .tabulator-paginator {
+            justify-content: center;
+        }
+
+        .tabulator-page-size {
+            width: 100%;
+            margin-top: 5px;
+        }
+    }
+
+    /*  body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            padding: 2rem;
+        } */
+
+    .badge-success {
+        background-color: #28a745;
+    }
+
+    .badge-warning {
+        background-color: #ffc107;
+        color: black;
+    }
+
+    .badge-secondary {
+        background-color: #6c757d;
+    }
+
+    .badge-danger {
+        background-color: #dc3545;
+    }
+
+    .tabulator .tabulator-cell .badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 6px;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    @@media screen and (max-width: 768px) {
+        #filter-module {
+            width: 100% !important;
+        }
+    }
+
+    .card {
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(17, 122, 139, 0.4);
+    }
+
+</style>
+
+<div class="content">
+    <div class="card" style="margin-top:10px;">
+        <div class="card-body d-flex justify-content-between align-items-center" style=" padding-top:8px;padding-bottom:8px;">
+            <div style="font-size:18px; font-weight: 600;">
+                CSO Log Report
+            </div>
+            <div>
+                <button id="backButton" class="btn btn-outline-primary ">
+                    <i class="fas fa-arrow-left"></i>Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body d-flex flex-column">
+                    <div class="form-group">
+                        <button id="export-to-excel" class="btn btn-outline-success float-right">
+                            <i class="fa fa-file-excel"></i> Export To Excel
+                        </button>
+                    </div>
+                    <div class="form-group row">
+                        <div id="div_CsoLogReportTable"></div>
+                        <div id="pager" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/tabulator.js"></script>
+    <script src="~/js/tabulator.min.js"></script>
+    @* <script src="~/js/select2.min.js"></script> *@
+    <script>
+        var tabledata = [];
+        var table = '';
+        const searchTerms = {};
+        $(document).ready(function () {
+
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('backButton').addEventListener('click', function () {
+                    window.history.back();
+                });
+            });
+
+            loadCSOLogReportData();
+        });
+
+        function loadCSOLogReportData() {
+            Blockloadershow();
+            $.ajax({
+                url: '@Url.Action("GetCSOLogReport", "Reports")',
+                type: 'GET',
+                data: { financialYear: $("#ddlFinancialYear").val() },
+                success: function (data) {
+                    Blockloaderhide();
+                    if (data && Array.isArray(data)) {
+                        OnCSOLogReportGridLoad(data);
+                    }
+                    else {
+                        showDangerAlert('No data available to load.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showDangerAlert('Error retrieving data: ' + error);
+                    Blockloaderhide();
+                }
+            });
+        }
+
+                //define column header menu as column visibility toggle
+        var headerMenu = function () {
+            var menu = [];
+            var columns = this.getColumns();
+
+            for (let column of columns) {
+
+                //create checkbox element using font awesome icons
+                let icon = document.createElement("i");
+                icon.classList.add("fas");
+                icon.classList.add(column.isVisible() ? "fa-check-square" : "fa-square");
+
+                //build label
+                let label = document.createElement("span");
+                let title = document.createElement("span");
+
+                title.textContent = " " + column.getDefinition().title;
+
+                label.appendChild(icon);
+                label.appendChild(title);
+
+                //create menu item
+                menu.push({
+                    label: label,
+                    action: function (e) {
+                        //prevent menu closing
+                        e.stopPropagation();
+
+                        //toggle current column visibility
+                        column.toggle();
+
+                        //change menu item icon
+                        if (column.isVisible()) {
+                            icon.classList.remove("fa-square");
+                            icon.classList.add("fa-check-square");
+                        } else {
+                            icon.classList.remove("fa-check-square");
+                            icon.classList.add("fa-square");
+                        }
+                    }
+                });
+            }
+
+            return menu;
+        };
+
+        const formatStatus = (cell) => {
+            const value = cell.getValue();
+
+            const map = {
+                "Completed": { cls: "badge-success", icon: "✔" },
+                "In Progress": { cls: "badge-secondary", icon: "⏳" },
+                "Pending": { cls: "badge-warning", icon: "🕒" },
+                "Overdue": { cls: "badge-danger", icon: "⚠️" }
+            };
+            const status = map[value] || { cls: "badge-secondary", icon: "" };
+            return `<span class="badge ${status.cls}">${status.icon} ${value}</span>`;
+        };
+
+        function OnCSOLogReportGridLoad(response) {
+            debugger;
+            Blockloadershow();
+
+            tabledata = [];
+            let columns = [];
+
+            // Map the response to the table format
+            if (response.length > 0) {
+                $.each(response, function (index, item) {
+                    let logedDate = "";
+                    let csoLogOn = "";
+                    let rootCauseOn = "";
+                    let monitoringOn = "";
+                    let reviewOn = "";
+                    let closeOn = "";
+                    if (item.logdate) {
+                        const logedDateObj = new Date(item.logdate);
+                        logedDate = logedDateObj.toLocaleDateString("en-GB");
+                    }
+                    if (item.csoLogOn) {
+                        const csoLogOnDateObj = new Date(item.logdate);
+                        csoLogOn = csoLogOnDateObj.toLocaleDateString("en-GB");
+                    }
+                    if (item.rootCauseOn) {
+                        const rootCauseOnDateObj = new Date(item.logdate);
+                        rootCauseOn = rootCauseOnDateObj.toLocaleDateString("en-GB");
+                    }
+                    if (item.monitoringOn) {
+                        const monitoringOnDateObj = new Date(item.logdate);
+                        monitoringOn = monitoringOnDateObj.toLocaleDateString("en-GB");
+                    }
+                    if (item.reviewOn) {
+                        const reviewOnDateObj = new Date(item.logdate);
+                        reviewOn = reviewOnDateObj.toLocaleDateString("en-GB");
+                    }
+                    if (item.closeOn) {
+                        const closeOnDateObj = new Date(item.logdate);
+                        closeOn = closeOnDateObj.toLocaleDateString("en-GB");
+                    }
+
+                    tabledata.push({
+                        Sr_No: index + 1,
+                        CSONo: item.csoNo || '',
+                        Status1: item.status1 || '',
+                        FinancialYear: item.financialYear || '',
+                        PlantId: item.plantId || '',
+                        DivisionId: item.divisionId || '',
+                        BrandId: item.brandId || '',
+                        ProductTypeId: item.productTypeId || '',
+                        NearestPlantId: item.nearestPlantId || '',
+                        Logdate: logedDate || '',
+                        UserId: item.addedBy || '',
+                        Division: item.division || '',
+                        Plant: item.plant || '',
+                        Brand: item.brand || '',
+                        ProductType: item.productType || '',
+                        NearestPlant: item.nearestPlant || '',
+                        ComplaintTypeName: item.complaintTypeName || '',
+                        ClassName: item.className || '',
+                        CategoryName: item.categoryName || '',
+                        Description: item.description || '',
+                        SourceofComplaint: item.sourceofComplaint || '',
+                        Batch: item.batch || '',
+                        Quantity: item.quantity || '',
+                        SuppliedQuantity: item.suppliedQuantity || '',
+                        CatReference: item.catReference || '',
+                        IsSampleShipped: item.isSampleShipped == true ? "Yes" : "No",
+                        TrackingNo: item.trackingNo || '',
+                        CorrectiveActionDescription: item.correctiveActionDescription || '',
+                        MonitoringofCorrectiveActionDescription: item.monitoringofCorrectiveActionDescription || '',
+                        PreventiveActionDescription: item.preventiveActionDescription || '',
+                        RootCauseAnalysisDescription: item.rootCauseAnalysisDescription || '',
+                        SKUDetails: item.skuDetails || '',
+                        PKDDate: item.pkdDate || '',
+                        Review1: item.review1 || '',
+                        Review2: item.review2 || '',
+                        CSOLogId: item.csoLogId || '',
+                        CSOLogOn: csoLogOn || '',
+                        RootCauseOn: rootCauseOn || '',
+                        MonitoringOn: monitoringOn || '',
+                        ReviewOn: reviewOn || '',
+                        CloseOn: closeOn || '',
+                        CSOLogUserName: item.csoLogUserName || '',
+                        RootCauseUserName: item.rootCauseUserName || '',
+                        MonitorUserName: item.monitorUserName || '',
+                        ApproveUserName: item.approveUserName || '',
+                        CloseUserName: item.closeUserName || '',
+                        RootStatus: item.rootStatus || '',
+                        RootCompletedInDays: item.rootCompletedInDays || '',
+                        RootPendingDays: item.rootPendingDays || '',
+                        MonitorStatus: item.monitorStatus || '',
+                        MonitorCompletedInDays: item.monitorCompletedInDays || '',
+                        MonitorPendingDays: item.monitorPendingDays || '',
+                        ApprovalStatus: item.approvalStatus || '',
+                        ApprovalCompletedInDays: item.approvalCompletedInDays || '',
+                        ApprovalPendingDays: item.approvalPendingDays || '',
+                        ClosureStatus: item.closureStatus || '',
+                        ClosureCompletedInDays: item.closureCompletedInDays || '',
+                        ClosurePendingDays: item.closurePendingDays || ''
+                    });
+                });
+
+                columns.push(
+                    { title: "SNo", field: "Sr_No", width: 50, responsive: 0,  sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left", width: 100 },
+                    { title: "CSO No", field: "CSONo", responsive: 1,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "Logged Date", field: "Logdate", responsive: 2, sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "Logged By", field: "CSOLogUserName", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Root Cause", field: "RootStatus", responsive: 4, headerMenu: headerMenu, headerFilter: "input",formatter: formatStatus, hozAlign: "center", width: 130 },
+                    { title: "Root Cause Pending Days", field: "RootPendingDays", responsive: 5,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "Root Cause Completed In Days", field: "RootCompletedInDays", responsive: 6,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "Monitoring", field: "MonitorStatus", responsive: 7,headerMenu: headerMenu, headerFilter: "input", formatter: formatStatus, hozAlign: "center", width: 130 },
+                    { title: "Monitoring Pending Days", field: "MonitorPendingDays", responsive: 8,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "Monitoring Completed In Days", field: "MonitorCompletedInDays", responsive: 9,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "Approval", field: "ApprovalStatus", responsive: 9, headerMenu: headerMenu, headerFilter: "input",formatter: formatStatus, hozAlign: "center", width: 120 },
+                    { title: "Approval Pending Days", field: "ApprovalPendingDays", responsive: 10,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "Approval Completed In Days", field: "ApprovalCompletedInDays", responsive: 11,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "Closure", field: "ClosureStatus", responsive: 12, headerMenu: headerMenu, headerFilter: "input",formatter: formatStatus, hozAlign: "center", width: 120 },
+                    { title: "Closur Pending Days", field: "ClosurePendingDays", responsive: 13,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "Closur Completed In Days", field: "ClosureCompletedInDays", responsive: 14,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "Division", field: "Division", responsive:15,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Brand Name", field: "Brand", responsive: 16,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Product Type", field: "ProductType", responsive: 17,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Plant Name", field: "Plant", responsive: 18,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Plant/Dept Responsible", field: "NearestPlant", responsive: 19,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Complaint Type Name", field: "ComplaintTypeName", responsive: 20,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Description", field: "Description", responsive: 21,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Source of Complaint", field: "SourceofComplaint", responsive: 22,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Class", field: "ClassName", responsive: 23,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Category", field: "CategoryName", responsive: 24,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Batch", field: "Batch", responsive: 25,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Cat Reference", field: "CatReference", responsive: 26,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Quantity", field: "Quantity", responsive: 27,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Supplied Qty", field: "SuppliedQuantity", responsive: 28,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "SKU Details", field: "SKUDetails", responsive: 29,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "PKD Date", field: "PKDDate", responsive: 30,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Tracking #", field: "TrackingNo", responsive: 31,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Root Cause Analysis", field: "RootCauseAnalysisDescription", responsive: 32,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Corrective", field: "CorrectiveActionDescription", responsive: 33,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Preventive", field: "PreventiveActionDescription", responsive: 34,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Monitor", field: "MonitoringofCorrectiveActionDescription", responsive: 35,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "CSO Logged By", field: "CSOLogUserName", responsive: 36,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Monitored On", field: "CSOLogOn", responsive: 37,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center", width: 100 },
+                    { title: "Root Caused By", field: "RootCauseUserName", responsive: 38,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Root Caused On", field: "RootCauseOn", responsive: 39,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center", width: 100 },
+                    { title: "Monitored By", field: "MonitorUserName", responsive: 40,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Monitored On", field: "MonitoringOn", responsive: 41,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center", width: 100 },
+                    { title: "Approved By", field: "ApproveUserName", responsive: 42,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Approved On", field: "ReviewOn", responsive: 43,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center", width: 100 },
+                    { title: "Approver Remarks", field: "Review1", responsive: 44,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Closed By", field: "CloseUserName", responsive: 45,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "Closed On", field: "CloseOn", responsive: 46,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center", width: 100 },
+                    { title: "Closure Remarks", field: "Review2", responsive: 47,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                );
+
+                // // Initialize Tabulator
+                table = new Tabulator("#div_CsoLogReportTable", {
+                    data: tabledata,
+                    layout: "fitColumns",
+                    responsiveLayout: false,
+                    height: "auto",
+                    movableColumns: true,
+                    pagination: "local",
+                    paginationSize: 10,
+                    paginationSizeSelector: [50, 100, 500, 1500, 2000],
+                    paginationCounter: "rows",
+                        paginationElement: document.getElementById("pager"),
+                    dataEmpty: "<div style='text-align: center; font-size: 1rem; color: gray;'>No data available</div>", // Placeholder message
+                    columns: columns
+                });
+
+                $("#export-to-excel").on('click', function() {
+                    Blockloadershow();
+                    const timestamp = getTimestamp();
+                    const filename = `CSO_Log_Report_${timestamp}.xlsx`;
+                    table.download("xlsx", filename, {
+                        sheetName: "CSO Log Report"
+                    });
+                    Blockloaderhide();
+                });
+            }
+            else {
+                showDangerAlert('No data available.');
+            }
+
+            // Hide loader
+            Blockloaderhide();
+        }
+
+        // Function to get a formatted timestamp
+        function getTimestamp() {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+            const year = now.getFullYear();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${day}${month}${year}${hours}${minutes}${seconds}`;
+        }
+    </script>
+}

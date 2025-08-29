@@ -36,13 +36,12 @@ public class CSOLogHistoryRepository : SqlTableRepository, ICSOLogHistoryReposit
     {
         try
         {
-            var csoLogData = await base.GetByIdAsync<CSOLog>(model.CSOLogId);
 
             var csoLogHistory = new CSOLogHistory
             {
                 CSOLogId = model.CSOLogId,
-                CSOLogBy = csoLogData.AddedBy,
-                CSOLogOn = csoLogData.AddedOn
+                CSOLogBy = model.CSOLogBy,
+                CSOLogOn = model.CSOLogOn
             };
 
             var result = await base.CreateAsync<CSOLogHistory>(csoLogHistory);
@@ -121,7 +120,7 @@ public class CSOLogHistoryRepository : SqlTableRepository, ICSOLogHistoryReposit
             csoLogHistory.CloseBy = model.CloseBy;
             csoLogHistory.CloseOn = model.CloseOn;
 
-            var result = await base.CreateAsync<CSOLogHistory>(csoLogHistory);
+            var result = await base.UpdateAsync<CSOLogHistory>(csoLogHistory);
             return result;
         }
         catch (Exception ex)

@@ -145,36 +145,39 @@ public class MailMatrixRepository : SqlTableRepository, IMailMatrixRepository
             var allUsers = await _dbContext.Users.Where(i => i.IsInMailMatrix == true).ToListAsync();
 
             var finalUserList = allUsers
-                .Where(i => i.DivisionId
+                .Where(i => (i.DivisionId ?? "")
                     .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(int.Parse)
+                    .Select(s => int.TryParse(s, out var result) ? result : -1)
                     .Contains(csoLogData.DivisionId) &&
-                    i.PlantId
+                (i.PlantId ?? "")
                     .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(int.Parse)
+                    .Select(s => int.TryParse(s, out var result) ? result : -1)
                     .Contains(csoLogData.PlantId) &&
-                    i.NearestPlantId
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(int.Parse)
-                    .Contains(csoLogData.NearestPlantId) &&
-                    (
-                        i.ProductTypeId.Contains('[')
-                            ? i.ProductTypeId
+                (
+                    (csoLogData.NearestPlantId == 0 && string.IsNullOrWhiteSpace(i.NearestPlantId)) ||
+                    (i.NearestPlantId ?? "")
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => int.TryParse(s, out var result) ? result : -1)
+                        .Contains(csoLogData.NearestPlantId)
+                ) &&
+                (
+                    (i.ProductTypeId ?? "").Contains('[')
+                        ? (i.ProductTypeId ?? "")
+                            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Contains($"[{csoLogData.BrandId}-{csoLogData.ProductTypeId}]")
+                        : (
+                            (i.BrandId ?? "")
                                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                .Contains($"[{csoLogData.BrandId}-{csoLogData.ProductTypeId}]")
-                            : (
-                                i.BrandId
-                                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                    .Select(int.Parse)
-                                    .Contains(csoLogData.BrandId) &&
-                                i.ProductTypeId
-                                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                    .Select(int.Parse)
-                                    .Contains(csoLogData.ProductTypeId)
-                            )
-                    )
+                                .Select(s => int.TryParse(s, out var result) ? result : -1)
+                                .Contains(csoLogData.BrandId) &&
+                            (i.ProductTypeId ?? "")
+                                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                .Select(s => int.TryParse(s, out var result) ? result : -1)
+                                .Contains(csoLogData.ProductTypeId)
+                        )
                 )
-                .ToList();
+            )
+            .ToList();
 
             var usersList = new List<string>();
 
