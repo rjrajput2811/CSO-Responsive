@@ -194,7 +194,12 @@
     <div class="row">
         <div class="col-12">
             <div class="card shadow">
-                <div class="card-body">
+                <div class="card-body d-flex flex-column">
+                    <div class="form-group">
+                        <button id="export-to-excel" class="btn btn-outline-success float-right">
+                            <i class="fa fa-file-excel"></i> Export To Excel
+                        </button>
+                    </div>
                     <div class="form-group row">
                         <div id="div_CsoLogAnalTable"></div>
                         <div id="pager" class="mt-2"></div>
@@ -407,6 +412,16 @@
                     }
                 });
 
+                $("#export-to-excel").on('click', function() {
+                    Blockloadershow();
+                    const timestamp = getTimestamp();
+                    const filename = `CSO_Log_Analysis_Solutions_${timestamp}.xlsx`;
+                    table.download("xlsx", filename, {
+                        sheetName: "CSO Log Analysis & Solutions"
+                    });
+                    Blockloaderhide();
+                });
+
                 let savedFilters = sessionStorage.getItem("CSOLogAnalysisHeaderFilters");
                 if (savedFilters) {
                     const filters = JSON.parse(savedFilters);
@@ -553,6 +568,18 @@
             var urlSafe = encryptedBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
             var url = "@Url.Action("CSOLogAnalysisDetails", "CSOLogAnalysisSolution")" + "/" + urlSafe;
             window.open(url, '_self');
+        }
+
+        // Function to get a formatted timestamp
+        function getTimestamp() {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+            const year = now.getFullYear();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${day}${month}${year}${hours}${minutes}${seconds}`;
         }
     </script>
 }
