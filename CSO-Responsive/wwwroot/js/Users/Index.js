@@ -208,15 +208,16 @@ function OnDivGridLoad(response) {
                     actionButtons += `<i data-toggle="modal" onclick="delConfirm(${rowData.Id})" class="fas fa-trash-alt mr-2 fa-1x" title="Delete" style="color:red;cursor:pointer;margin-left: 5px;"></i>`
 
                     return actionButtons;
-                }
+                   
+                },visible: false
             });
         }
 
         columns.push(
             {
-                title: "SNo", field: "Sr_No", width: 100, responsive: 1, sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
+                title: "SNo", field: "Sr_No", responsive: 1, sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
             },
-            { title: "Name", field: "Name", responsive: 2, headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
+            { title: "Name", field: "Name",responsive: 2, headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
             { title: "ADid", field: "ADid", responsive: 3, headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
             { title: "Email", field: "Email", responsive: 4, headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
             { title: "MobileNo", field: "MobileNo", responsive: 5, headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
@@ -228,7 +229,7 @@ function OnDivGridLoad(response) {
         // // Initialize Tabulator
         table = new Tabulator("#div_Table", {
             data: tabledata,
-            layout: "fitDataTable",
+            ayout: "fitColumns",
             responsiveLayout: false,
             height: "auto",
             //responsiveLayoutCollapseFormatter: function (data) {
