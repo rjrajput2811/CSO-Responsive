@@ -355,19 +355,64 @@
                     }
                 });
 
-                // table.on("cellClick", function (e, cell) {
-                //     let columnField = cell.getColumn().getField();
+                let savedFilters = sessionStorage.getItem("SecurityActionsHeaderFilters");
+                if (savedFilters) {
+                    const filters = JSON.parse(savedFilters);
 
-                //     if (columnField !== "Action") {
-                //         let rowData = cell.getRow().getData();
-                //         showEditVendor(rowData.Id);
-                //     }
-                // });
+                    // Apply filters to the table
+                    table.setFilter(filters);
 
-                // Export to Excel on button click
-                // document.getElementById("exportExcel").addEventListener("click", function () {
-                //     table.download("xlsx", "ProductCode_Data.xlsx", { sheetName: "Product Code Data" });
-                // });
+                    // After table is fully built, set header filter inputs
+                    table.on("tableBuilt", function () {
+                        filters.forEach(f => {
+                            if (f.field && f.value !== undefined) {
+                                table.setHeaderFilterValue(f.field, f.value);
+                            }
+                        });
+                    });
+                }
+
+                table.on("dataFiltered", function (filters) {
+
+                    if (filters.length === 0) {
+                        return false;
+                    }
+                    // only store header filters, not programmatic ones
+                    let headerFilters = table.getHeaderFilters();
+
+                    // If all header inputs are empty, force-clear filters
+                    if (headerFilters.length === 0) {
+                        table.clearFilter(true); // true = silent clear (prevents loops)
+                        sessionStorage.removeItem("SecurityActionsHeaderFilters");
+                        return;
+                    }
+
+                    // Otherwise, save unique filters
+                    let unique = [];
+                    let seen = new Set();
+
+                    headerFilters.forEach(f => {
+                        if (f.value !== "" && !seen.has(f.field)) {
+                            seen.add(f.field);
+                            unique.push(f);
+                        }
+                    });
+
+                    if (unique.length > 0) {
+                        sessionStorage.setItem("SecurityActionsHeaderFilters", JSON.stringify(unique));
+                    } else {
+                        sessionStorage.removeItem("SecurityActionsHeaderFilters");
+                    }
+                });
+
+                // Force refresh when inputs are cleared
+                table.on("headerFilterBlur", function () {
+                    let headerFilters = table.getHeaderFilters();
+
+                    if (headerFilters.length === 0) {
+                        table.clearFilter(); // unfilter table
+                    }
+                });
             }
             else {
                 showDangerAlert('No data available.');

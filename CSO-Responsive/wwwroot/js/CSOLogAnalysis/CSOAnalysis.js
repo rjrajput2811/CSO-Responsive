@@ -227,10 +227,13 @@ function InsertUpdateCSOLogAnay() {
 function UpdateCSOLogRootCause(status) {
     Blockloadershow();
     const requiredFields = [
-        { id: 'RootCauseAnalysisDescription', name: 'Root Cause Analysis Description' },
-        { id: 'CorrectiveActionDescription', name: 'Corrective Action Description' },
-        { id: 'PreventiveActionDescription', name: 'Preventive Action Description' },
+        { id: 'RootCauseAnalysisDescription', name: 'Root Cause Analysis Description' }
     ];
+
+    if (status == 'Submit') {
+        requiredFields.push({ id: 'CorrectiveActionDescription', name: 'Corrective Action Description' });
+        requiredFields.push({ id: 'PreventiveActionDescription', name: 'Preventive Action Description' });
+    }
 
     let isValid = true;
     let missingFields = [];

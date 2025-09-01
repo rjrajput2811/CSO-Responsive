@@ -829,10 +829,6 @@
                             @Html.Label("Closure Comments")
                             @Html.TextAreaFor(m => m.Review2, 4, 40, (!canAddClouser && !canEditClouser) ? new { @class = "form-control", @disabled = "disabled" } : new { @class = "form-control" })
                         </div>
-                        <div class="mb-3">
-                            <label class="section-label">Closure Date</label>
-                            <input type="date" class="form-control" @Html.Raw((!canAddClouser && canEditClouser) ? "disabled" : "")>
-                        </div>
                     </form>
                     <div class="text-end">
                         @if (canAddClouser || canEditClouser)

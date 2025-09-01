@@ -253,6 +253,65 @@ function OnDivGridLoad(response) {
                 editUser(rowData.Id);
             }
         });
+
+        let savedFilters = sessionStorage.getItem("UsersHeaderFilters");
+        if (savedFilters) {
+            const filters = JSON.parse(savedFilters);
+
+            // Apply filters to the table
+            table.setFilter(filters);
+
+            // After table is fully built, set header filter inputs
+            table.on("tableBuilt", function () {
+                filters.forEach(f => {
+                    if (f.field && f.value !== undefined) {
+                        table.setHeaderFilterValue(f.field, f.value);
+                    }
+                });
+            });
+        }
+
+        table.on("dataFiltered", function (filters) {
+
+            if (filters.length === 0) {
+                return false;
+            }
+            // only store header filters, not programmatic ones
+            let headerFilters = table.getHeaderFilters();
+
+            // If all header inputs are empty, force-clear filters
+            if (headerFilters.length === 0) {
+                table.clearFilter(true); // true = silent clear (prevents loops)
+                sessionStorage.removeItem("UsersHeaderFilters");
+                return;
+            }
+
+            // Otherwise, save unique filters
+            let unique = [];
+            let seen = new Set();
+
+            headerFilters.forEach(f => {
+                if (f.value !== "" && !seen.has(f.field)) {
+                    seen.add(f.field);
+                    unique.push(f);
+                }
+            });
+
+            if (unique.length > 0) {
+                sessionStorage.setItem("UsersHeaderFilters", JSON.stringify(unique));
+            } else {
+                sessionStorage.removeItem("UsersHeaderFilters");
+            }
+        });
+
+        // Force refresh when inputs are cleared
+        table.on("headerFilterBlur", function () {
+            let headerFilters = table.getHeaderFilters();
+
+            if (headerFilters.length === 0) {
+                table.clearFilter(); // unfilter table
+            }
+        });
     }
     else {
         showDangerAlert('No data available.');
