@@ -229,7 +229,7 @@ function OnDivGridLoad(response) {
         // // Initialize Tabulator
         table = new Tabulator("#div_Table", {
             data: tabledata,
-            ayout: "fitColumns",
+            layout: "fitColumns",
             responsiveLayout: false,
             height: "auto",
             //responsiveLayoutCollapseFormatter: function (data) {

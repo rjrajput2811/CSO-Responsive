@@ -79,6 +79,21 @@
         font-size: 18px;
     }
 
+    .sticky-buttons {
+        position: fixed;
+        right: 28px; /* distance from right side */
+        top: 200px; /* distance from bottom (you can change to top: 20px; if needed) */
+        z-index: 1050;
+    }
+
+    @@media (max-width: 576px) {
+    .sticky-buttons {
+        top: 200px;
+        /* right: 10px; */
+        flex-direction: column;  /* stack vertically if needed */
+        align-items: flex-end;
+    }
+}
 </style>
 
 <input id="hf_GetBrandListAndPlantListByDivisinAndUser" type="hidden" value='@Url.Action("GetBrandListAndPlantListByDivisinAndUser", "CSOLog")'>
@@ -114,9 +129,8 @@
                 </strong>
             </div>
 
-            <!-- Buttons -->
-            <div>
-                @if ((canAdd && isNew) || (canEdit && !isNew) )
+            <div class="sticky-buttons">
+                @if ((canAdd && isNew) || (canEdit && !isNew))
                 {
                     <button type="button" id="saveButton" onclick="InsertUpdateCSOLog()" class="btn btn-primary">
                         <i class="fas fa-floppy-disk mr-2"></i>Save
@@ -126,8 +140,10 @@
                     <i class="fas fa-arrow-left mr-2"></i>Back
                 </button>
             </div>
+
         </div>
     </div>
+   
 
     <form id="CSOLog-form" method="post" asp-action="InsertUpdateCSOLog" asp-controller="CSOLog">
         <div class="card">
@@ -311,8 +327,11 @@
                     </ul>
                 </div>
             </div>
+            
+        <!-- Buttons -->
+      </div>
 
-        </div>
+           
 
 
     </form>
