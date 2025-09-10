@@ -47,69 +47,68 @@
         <!-- Top Status Cards -->
         <div class="row g-3 mb-4">
             <div class="col-6 col-sm-4 col-md-2">
-                <div class="card-status bg-primary"><div><h6>Open</h6><h4>0</h4></div><i class="fas fa-folder-open"></i></div>
+                <div class="card-status bg-primary"><div><h6>Open</h6><h4 id="openCount">0</h4></div><i class="fas fa-folder-open"></i></div>
             </div>
             <div class="col-6 col-sm-4 col-md-2">
-                <div class="card-status bg-danger"><div><h6>Root Caused</h6><h4>0</h4></div><i class="fas fa-bug"></i></div>
+                <div class="card-status bg-danger"><div><h6>Root Caused</h6><h4 id="rootCausedCount">0</h4></div><i class="fas fa-bug"></i></div>
             </div>
             <div class="col-6 col-sm-4 col-md-2">
-                <div class="card-status bg-warning text-dark"><div><h6>Monitored</h6><h4>0</h4></div><i class="fas fa-eye"></i></div>
+                <div class="card-status bg-warning text-dark"><div><h6>Monitored</h6><h4 id="monitoredCount">0</h4></div><i class="fas fa-eye"></i></div>
             </div>
             <div class="col-6 col-sm-4 col-md-2">
-                <div class="card-status bg-info"><div><h6>Approved</h6><h4>0</h4></div><i class="fas fa-check-circle"></i></div>
+                <div class="card-status bg-info"><div><h6>Approved</h6><h4 id="approvedCount">0</h4></div><i class="fas fa-check-circle"></i></div>
             </div>
             <div class="col-6 col-sm-4 col-md-2">
-                <div class="card-status bg-success"><div><h6>Closed</h6><h4>0</h4></div><i class="fas fa-lock"></i></div>
+                <div class="card-status bg-success"><div><h6>Closed</h6><h4 id="closedCount">0</h4></div><i class="fas fa-lock"></i></div>
             </div>
             <div class="col-6 col-sm-4 col-md-2">
-                <div class="card-status" style="background-color: orange;"><div><h6>All</h6><h4>0</h4></div><i class="fas fa-layer-group"></i></div>
+                <div class="card-status" style="background-color: orange;"><div><h6>All</h6><h4 id="allCount">0</h4></div><i class="fas fa-layer-group"></i></div>
             </div>
         </div>
 
         <!-- Filters and Export Buttons -->
-        <div class="filters d-flex align-items-center mb-4">
-            <select class="form-select w-auto">
-                <option selected>Division</option>
-                <option>Division A</option>
-                <option>Division B</option>
-            </select>
-            <select class="form-select w-auto">
-                <option selected>Plant</option>
-                <option>Plant A</option>
-                <option>Plant B</option>
-            </select>
-            <select class="form-select w-auto">
-                <option selected>Status</option>
-                <option>Open</option>
-                <option>Closed</option>
-            </select>
-            <input type="date" class="form-control w-auto">
-            <input type="date" class="form-control w-auto">
-            <button class="btn btn-primary">Apply</button>
-            <button class="btn btn-outline-secondary">🔄 Refresh</button>
-            <button class="btn btn-outline-success" onclick="exportToExcel()">📥 Excel</button>
-            <button class="btn btn-outline-danger" onclick="exportToPDF()">📄 PDF</button>
-            <button class="btn btn-outline-dark" onclick="window.print()">🖨️ Print</button>
+        <div class="row align-items-center mb-4 overflow-hidden">
+            <div class="col-sm-3">
+                <label class="fw-bold">Division</label>
+                <select tabindex="-1" class="listDivision select2" multiple="multiple" id="listDivision" title="Select Division">
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <label class="fw-bold">Plant</label>
+                <select tabindex="-1" class="listPlant select2" multiple="multiple" id="listPlant" title="Select Plant">
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <label class="fw-bold">From</label>
+                <input id="FromDate" type="date" class="form-control">
+            </div>
+            <div class="col-sm-2">
+                <label class="fw-bold">To</label>
+                <input id="ToDate" type="date" class="form-control">
+            </div>
+            <div class="col-sm-2">
+                <button class="btn btn-outline-success" onclick="exportToExcel()">📥 Excel</button>
+            </div>
         </div>
 
         <!-- Charts -->
         <div class="row g-4">
             <div class="col-lg-6">
                 <div class="card p-3">
-                    <h6 class="mb-2">CSO Monthwise</h6>
+                    <h6 class="mb-2">CSO Logs Monthwise</h6>
                     <canvas id="monthwiseChart"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card p-3">
+                    <h6 class="mb-2">CSO Logs Phase Wise</h6>
+                    <canvas id="phaseWiseAgingChart"></canvas>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="card p-3">
                     <h6 class="mb-2">CSO by Plants</h6>
                     <canvas id="plantwiseChart"></canvas>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card p-3">
-                    <h6 class="mb-2">CSO > 45 Days</h6>
-                    <canvas id="agingChart"></canvas>
                 </div>
             </div>
             <div class="col-lg-6">
@@ -121,59 +120,296 @@
         </div>
     </div>
 
-    <script>
-        const monthwiseChart = new Chart("monthwiseChart", {
-          type: "bar",
-          data: {
-            labels: ["Apr", "May", "Jun", "Jul", "Aug"],
-            datasets: [{ label: "Count", data: [2, 4, 1, 3, 0], backgroundColor: "#0d6efd" }]
-          },
-          options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    <script asp-append-version="true">
+        $(document).ready(function () {
+            $('.select2').each(function () {
+                var placeholderText = $(this).attr('title') || "";
+                $(this).select2({
+                    placeholder: placeholderText,
+                    allowClear: true,
+                    width: '100%'
+                });
+            });
+
+            GetDivisionList();
+
+            var fYear = $("#ddlFinancialYear").val();
+            var fDate = "20" + fYear.slice(0, 2)  + "-04-01";
+            var tDate = "20" + fYear.slice(-2) + "-03-31";
+            $("#FromDate").val(fDate);
+            $("#ToDate").val(tDate);
+
+            setTimeout(() => {
+                getDashboardData();
+            }, 100);
+
+            $("#listDivision").on('change', function () {
+                Blockloadershow();
+                var items = '';
+                $('.listDivision option:selected').each(function (i) {
+                    items += $(this).val() + ','
+                });
+
+                $.ajax({
+                    url: '@Url.Action("GetPlantList", "DashBoard")',
+                    type: "GET",
+                    data: { divisionIds: items },
+                    success: function (response) {
+                        Blockloaderhide();
+                        $('#listPlant').empty();
+                        if (response.plantList.length > 0) {
+                            response.plantList.forEach(function (item) {
+                                var option = new Option(item.text, item.value, false, false);
+                                if (item.disabled) option.disabled = true;
+                                $('#listPlant').append(option);
+                            });
+                        }
+                        getDashboardData();
+                    },
+                    error: function (xhr, status, error) {
+                        Blockloaderhide();
+                        showDangerAlert('Error retrieving data: ' + error);
+                    }
+                });
+            });
+
+            $("#listPlant").on('change', function () {
+                var plantId = $('#listPlant').val();
+                if (plantId) {
+                    getDashboardData();
+                }
+            });
+
+            $("#FromDate").on('change', function () {
+                var fromDate = $('#FromDate').val();
+                var toDate = $('#ToDate').val();
+                if(fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
+                    showDangerAlert("From Date cannot be greater than To Date.");
+                    return false;
+                }
+                getDashboardData();
+            });
+
+            $("#ToDate").on('change', function () {
+                var fromDate = $('#FromDate').val();
+                var toDate = $('#ToDate').val();
+                if(fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
+                    showDangerAlert("From Date cannot be greater than To Date.");
+                    return false;
+                }
+                getDashboardData();
+            });
         });
 
-        const plantwiseChart = new Chart("plantwiseChart", {
-          type: "doughnut",
-          data: {
-            labels: ["Plant A", "Plant B", "Plant C"],
-            datasets: [{ data: [3, 2, 1], backgroundColor: ["#198754", "#ffc107", "#0dcaf0"] }]
-          }
-        });
+        let monthwiseChartInstance;
+        let phaseWiseAgingChartInstance;
+        let plantwiseChartInstance;
+        let openCloseChartInstance;
 
-        const agingChart = new Chart("agingChart", {
-          type: "bar",
-          data: {
-            labels: ["Plant A", "Plant B"],
-            datasets: [{ label: "> 45 days", data: [1, 0], backgroundColor: "#dc3545" }]
-          }
-        });
-
-        const openCloseChart = new Chart("openCloseChart", {
-          type: "pie",
-          data: {
-            labels: ["Open", "Closed"],
-            datasets: [{ data: [4, 2], backgroundColor: ["#0dcaf0", "#198754"] }]
-          }
-        });
-
-        function exportToExcel() {
-          const wb = XLSX.utils.book_new();
-          const ws = XLSX.utils.aoa_to_sheet([
-            ["Chart", "Value"],
-            ["Open", 0], ["Closed", 0], ["> 45 Days", 0]
-          ]);
-          XLSX.utils.book_append_sheet(wb, ws, "CSO Stats");
-          XLSX.writeFile(wb, "CSO_Dashboard.xlsx");
+        function GetDivisionList() {
+            Blockloadershow();
+            $.ajax({
+                url: '@Url.Action("GetDivisionList", "DashBoard")',
+                type: "GET",
+                success: function (response) {
+                    Blockloaderhide();
+                    $('#listDivision').empty();
+                    if (response.length > 0) {
+                        response.forEach(function (item) {
+                            var option = new Option(item.text, item.value, false, false);
+                            if (item.disabled) option.disabled = true;
+                            $('#listDivision').append(option);
+                        });
+                    }
+                    getDashboardData();
+                },
+                error: function (xhr, status, error) {
+                    Blockloaderhide();
+                    showDangerAlert('Error retrieving data: ' + error);
+                }
+            });
         }
 
-        function exportToPDF() {
-          const { jsPDF } = window.jspdf;
-          const doc = new jsPDF();
-          doc.text("CSO Dashboard Summary", 10, 10);
-          doc.text("Open: 0", 10, 20);
-          doc.text("Closed: 0", 10, 30);
-          doc.text("> 45 Days: 0", 10, 40);
-          doc.save("CSO_Dashboard.pdf");
+        function getDashboardData() {
+            Blockloadershow();
+
+            var divisions = '';
+            $('.listDivision option:selected').each(function (i) {
+                divisions += $(this).val() + ','
+            });
+
+            var plants = '';
+            $('.listPlant option:selected').each(function (i) {
+                plants += $(this).val() + ','
+            });
+
+            $.ajax({
+                url: '@Url.Action("GetDashboardData", "DashBoard")',
+                type: 'GET',
+                data: { fYear: $("#ddlFinancialYear").val(), divisionIds: divisions, plantIds: plants, fromDate: $("#FromDate").val(), toDate: $("#ToDate").val() },
+                success: function (response) {
+                    Blockloaderhide();
+                    if (response) {
+                        $('#openCount').text(response.openCount);
+                        $('#rootCausedCount').text(response.rootCausedCount);
+                        $('#monitoredCount').text(response.monitoredCount);
+                        $('#approvedCount').text(response.approvedCount);
+                        $('#closedCount').text(response.closedCount);
+                        $('#allCount').text(response.allCount);
+
+                        // Destroy old chart if it exists
+                        if (monthwiseChartInstance) {
+                            monthwiseChartInstance.destroy();
+                        }
+                        if (phaseWiseAgingChartInstance) {
+                            phaseWiseAgingChartInstance.destroy();
+                        }
+                        if (plantwiseChartInstance) {
+                            plantwiseChartInstance.destroy();
+                        }
+                        if (openCloseChartInstance) {
+                            openCloseChartInstance.destroy();
+                        }
+
+                        monthwiseChartInstance = new Chart("monthwiseChart", {
+                          type: "bar",
+                          data: {
+                            labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"],
+                            datasets: [
+                                { 
+                                  label: "CSO Logs", 
+                                  data: [
+                                      response.april_AllCount,
+                                      response.may_AllCount,
+                                      response.june_AllCount,
+                                      response.july_AllCount,
+                                      response.august_AllCount,
+                                      response.september_AllCount,
+                                      response.october_AllCount,
+                                      response.november_AllCount,
+                                      response.december_AllCount,
+                                      response.january_AllCount,
+                                      response.february_AllCount,
+                                      response.march_AllCount
+                                  ], 
+                                  backgroundColor: "#0d6efd" 
+                                }
+                            ]
+                          },
+                          options: { responsive: true, scales: { y: { beginAtZero: true, title: { display: true, text: 'Number of CSO Logs' } }, x: { title: { display: true, text: 'Month' } } } }
+                        });
+
+                        phaseWiseAgingChartInstance = new Chart("phaseWiseAgingChart", {
+                          type: "bar",
+                          data: {
+                              labels: ["Root Cause", "Monitor", "Approve/Reject", "Close"],
+                              datasets: [
+                                  {
+                                      label: "Root Cause > " + response.rootCauseThresholdDays,
+                                      data: [response.rootCauseOverdueCount, 0, 0, 0],
+                                      backgroundColor: "#dc3545" // Red for Root Cause
+                                  },
+                                  {
+                                      label: "Monitor > " + response.monitorThresholdDays,
+                                      data: [0, response.monitorOverdueCount, 0, 0],
+                                      backgroundColor: "#ffc107" // Yellow for Monitor
+                                  },
+                                  {
+                                      label: "Approve/Reject > " + response.approveThresholdDays,
+                                      data: [0, 0, response.approveOverdueCount, 0],
+                                      backgroundColor: "#007bff" // Blue for Approve
+                                  },
+                                  {
+                                      label: "Close > " + response.closureThresholdDays,
+                                      data: [0, 0, 0, response.closureOverdueCount],
+                                      backgroundColor: "#28a745" // Green for Close
+                                  }
+                              ]
+                          },
+                          options: {
+                              scales: {
+                                  x: {
+                                      stacked: true
+                                  },
+                                  y: {
+                                      stacked: true
+                                  }
+                              }
+                          }
+                        });
+
+                        // Extract plant names for labels and counts for data
+                        const plantLabels = response.plantData.map(plant => plant.plantName);
+                        const plantData = response.plantData.map(plant => plant.allCount);
+
+                        // Dynamically generate colors for each plant
+                        const dynamicColors = plantData.map(() => generateRandomColor());
+
+                        plantwiseChartInstance = new Chart("plantwiseChart", {
+                            type: "doughnut",
+                            data: {
+                                labels: plantLabels,
+                                datasets: [{
+                                    data: plantData,
+                                    backgroundColor: dynamicColors
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    }
+                                }
+                            }
+                        });
+
+                        openCloseChartInstance = new Chart("openCloseChart", {
+                            type: "pie",
+                            data: {
+                              labels: ["Open", "Closed"],
+                              datasets: [{ data: [response.overallOpenCount, response.overallClosedCount], backgroundColor: ["#0dcaf0", "#198754"] }]
+                            }
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showDangerAlert('Error retrieving data: ' + error);
+                    Blockloaderhide();
+                }
+            });
         }
+
+        // Function to generate a random, vibrant hex color
+        function generateRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // function exportToExcel() {
+        //   const wb = XLSX.utils.book_new();
+        //   const ws = XLSX.utils.aoa_to_sheet([
+        //     ["Chart", "Value"],
+        //     ["Open", 0], ["Closed", 0], ["> 45 Days", 0]
+        //   ]);
+        //   XLSX.utils.book_append_sheet(wb, ws, "CSO Stats");
+        //   XLSX.writeFile(wb, "CSO_Dashboard.xlsx");
+        // }
+
+        // function exportToPDF() {
+        //   const { jsPDF } = window.jspdf;
+        //   const doc = new jsPDF();
+        //   doc.text("CSO Dashboard Summary", 10, 10);
+        //   doc.text("Open: 0", 10, 20);
+       
+        //   doc.text("Closed: 0", 10, 30);
+        //   doc.text("> 45 Days: 0", 10, 40);
+        //   doc.save("CSO_Dashboard.pdf");
+        // }
     </script>
 </body>
 </html>

@@ -18,6 +18,7 @@ using CSO.Core.Repositories.SecurityActionRepo;
 using CSO.Core.Repositories.UserRepo;
 using CSO.Core.Repositories.UsersRoleRepo;
 using CSO.Core.Services.ActiveDirectoryUserRoleManagerService;
+using CSO.Core.Services.DashboardService;
 using CSO.Core.Services.ReportService.CSOLogReportService;
 using CSO.Core.Services.SystemLogs;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -61,6 +62,7 @@ builder.Services.AddTransient<ICSOLogHistoryRepository, CSOLogHistoryRepository>
 builder.Services.AddTransient<IEmailConfigurationRepository, EmailConfigurationRepository>();
 builder.Services.AddTransient<IActiveDirectoryUserRoleManager, ActiveDirectoryUserRoleManager>();
 builder.Services.AddTransient<ICSOLogReport, CSOLogReport>();
+builder.Services.AddTransient<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IDbConnection>(db => new SqlConnection(connstring));
 
 
