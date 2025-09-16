@@ -18,4 +18,6 @@ public interface IUserRepository
     Task<int> SendEmailToForgotPassword(string username);
     Task<int> SendOTPEmailToForgotPassword(string username, string OTP);
     Task<int> ChangePassword(string username, string password);
+    Task<OperationResult> CheckValidWorkEmail(string email);
+    Task<User> GetUserDetailsByEmailAsync(string email);
 }

@@ -1,6 +1,4 @@
-﻿@model CSO.Core.Models.LoginViewModel
-
-@{
+﻿@{
     Layout = "~/Views/Shared/_Account.cshtml";
     ViewData["Title"] = "Login";
 }
@@ -54,8 +52,8 @@
 <!-- Content area -->
 <div class="content d-flex justify-content-center align-items-center">
     <!-- Login card -->
-    <form class="login-form" sp-controller="Account" asp-action="Login" method="post">
-        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+    <form class="login-form">
+        <input type="hidden" id="returnUrl" name="returnUrl" value="@ViewData["ReturnUrl"]" />
         <div class="card mb-0 shadow" style="border-radius: 15px; overflow: hidden; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);">
             <div class="text-center bg-white p-3">
                 <a>
@@ -69,28 +67,25 @@
 
             <div class="card-body">
                 <div class="form-group form-group-feedback form-group-feedback-left">
-                    <input asp-for="Email" class="form-control rounded-pill" placeholder="Email">
+                    <input type="email" id="txtEmail" class="form-control rounded-pill" placeholder="Email">
                     <div class="form-control-feedback">
-                        <i class="icon-user text-muted"></i>
+                        <i class="icon-envelope text-muted"></i>
                     </div>
-                    <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
-                <div class="form-group form-group-feedback form-group-feedback-left">
-                    <input asp-for="Password" class="form-control rounded-pill" placeholder="Password">
+                <div id="txtOTP" class="form-group form-group-feedback form-group-feedback-left d-none">
+                    <input type="text" id="txtOTP" class="form-control rounded-pill" placeholder="OTP">
                     <div class="form-control-feedback">
                         <i class="icon-lock2 text-muted"></i>
                     </div>
-                    <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
-                <span asp-validation-for="WrongCredentials" class="text-danger"></span>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-block rounded-pill">Sign in <i class="icon-circle-right2 ml-2"></i></button>
+                    <button id="btnLogin" type="button" class="btn btn-primary btn-block rounded-pill">Send OTP</button>
                 </div>
 
-                <div class="form-group d-flex align-items-center">
+                @* <div class="form-group d-flex align-items-center">
                     <a href="@Url.Action("ForgotPassword", "Account")" id="forgotpassword" class="ml-auto">Forgot password?</a>
-                </div>
+                </div> *@
             </div>
         </div>
     </form>
@@ -98,4 +93,67 @@
 
 </div>
 <!-- /content area -->
+
+<script asp-append-version="true">
+    $(document).ready(function () {
+        $('#txtOTP').on('input', function() {
+            const otpValue = $(this).val();
+            if (otpValue.length === 6 && /^\d{6}$/.test(otpValue)) {
+                $('#btnLogin').prop('disabled', false);
+            } else {
+                $('#btnLogin').prop('disabled', true);
+            }
+        });
+
+        $("#btnLogin").on('click', function () {
+            Blockloadershow();
+            if ($("#btnLogin").html() == 'Send OTP') {
+                if ($("#txtEmail").val() == '' || !isEmail($("#txtEmail").val())) {
+                    Blockloaderhide();
+                    showDangerAlert("Please enter valid email.");
+                    return false;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("GenerateAndStoreOtp", "Account")',
+                    type: "GET",
+                    data: { email: $("#txtEmail").val() },
+                    success: function (response) {
+                        Blockloaderhide();
+                        if (!response.success) {
+                            showDangerAlert(response.message);
+                        }
+                        else {
+                            $("#txtOTP").removeClass('d-none');
+                            $("#btnLogin").html('Verify & Sign in');
+                            $('#btnLogin').prop('disabled', true);
+                            showSuccessAlert(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Blockloaderhide();
+                        showDangerAlert('Error retrieving data: ' + error);
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Action("LoginWithOTP", "Account")',
+                    type: "GET",
+                    data: { userEmail: $("#txtEmail").val(), otp: $("#txtOTP").val(), returnUrl: $("#returnUrl").val() },
+                    success: function (response) {
+                        Blockloaderhide();
+                        if (!response.success) {
+                            showDangerAlert(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Blockloaderhide();
+                        showDangerAlert('Error retrieving data: ' + error);
+                    }
+                });
+            }
+        });
+    });
+</script>
 

@@ -27,4 +27,5 @@ public class CSOResponsiveDbContext : DbContext
     public DbSet<RecycleDay> RecycleDays { get; set; }
     public DbSet<EmailConfiguration> EmailConfigurations { get; set; }
     public DbSet<SecurityAction> SecurityActions { get; set; }
+    public DbSet<EmailOTP> EmailOTPs { get; set; }
 }

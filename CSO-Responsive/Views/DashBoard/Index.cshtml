@@ -87,7 +87,7 @@
                 <input id="ToDate" type="date" class="form-control">
             </div>
             <div class="col-sm-2">
-                <button class="btn btn-outline-success" onclick="exportToExcel()">📥 Excel</button>
+                <button class="btn btn-outline-success" onclick="">📥 Excel</button>
             </div>
         </div>
 
@@ -389,27 +389,6 @@
             }
             return color;
         }
-
-        // function exportToExcel() {
-        //   const wb = XLSX.utils.book_new();
-        //   const ws = XLSX.utils.aoa_to_sheet([
-        //     ["Chart", "Value"],
-        //     ["Open", 0], ["Closed", 0], ["> 45 Days", 0]
-        //   ]);
-        //   XLSX.utils.book_append_sheet(wb, ws, "CSO Stats");
-        //   XLSX.writeFile(wb, "CSO_Dashboard.xlsx");
-        // }
-
-        // function exportToPDF() {
-        //   const { jsPDF } = window.jspdf;
-        //   const doc = new jsPDF();
-        //   doc.text("CSO Dashboard Summary", 10, 10);
-        //   doc.text("Open: 0", 10, 20);
-       
-        //   doc.text("Closed: 0", 10, 30);
-        //   doc.text("> 45 Days: 0", 10, 40);
-        //   doc.save("CSO_Dashboard.pdf");
-        // }
     </script>
 </body>
 </html>

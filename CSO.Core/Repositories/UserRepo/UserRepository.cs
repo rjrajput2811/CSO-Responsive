@@ -352,4 +352,43 @@ public class UserRepository : SqlTableRepository, IUserRepository
 
         return result > 0 ? 1 : -1;
     }
+
+    public async Task<OperationResult> CheckValidWorkEmail(string email)
+    {
+        try
+        {
+            var validWorkEmail = await _dbContext.Users
+            .AnyAsync(i => i.Email == email);
+
+            if (!validWorkEmail)
+            {
+                return new OperationResult
+                {
+                    Success = false,
+                    Message = "Email is not valid. Please enter your work email."
+                };
+            }
+
+            return new OperationResult { Success = true };
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<User> GetUserDetailsByEmailAsync(string email)
+    {
+        try
+        {
+            var result = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
 }
