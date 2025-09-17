@@ -84,12 +84,12 @@ public class EmailOTPsRepository : SqlTableRepository, IEmailOTPsRepository
         }
     }
 
-    public async Task<OperationResult> CheckEmailAndOTPAsync(string email, int otp, DateTime expirationTime)
+    public async Task<OperationResult> CheckEmailAndOTPAsync(string email, string otp, DateTime expirationTime)
     {
         try
         {
             var result = await _dbContext.EmailOTPs
-                .AnyAsync(i => i.Email == email && i.OTP == otp && i.ExpiresAt <= expirationTime);
+                .AnyAsync(i => i.Email == email && i.OTP == otp && i.ExpiresAt >= expirationTime);
 
             if (result)
             {

@@ -74,7 +74,7 @@ namespace CSO_Responsive.Controllers
             var newOtpRecord = new EmailOTPViewModel
             {
                 Email = email,
-                OTP = int.Parse(otp),
+                OTP = otp,
                 ExpiresAt = expirationTime
             };
 
@@ -177,7 +177,7 @@ namespace CSO_Responsive.Controllers
             return View(user);
         }
 
-        public async Task<IActionResult> LoginWithOTPAsync(string userEmail, int otp, string? returnUrl = null)
+        public async Task<IActionResult> LoginWithOTPAsync(string userEmail, string otp, string? returnUrl = null)
         {
             var validateEmailOTP = await _emailOTPsRepository.CheckEmailAndOTPAsync(userEmail, otp, DateTime.Now);
             if (!validateEmailOTP.Success) { return Json(validateEmailOTP); }
@@ -232,21 +232,25 @@ namespace CSO_Responsive.Controllers
                     principal
                 );
 
+                string redirectUrl;
+
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) && returnUrl != "/")
-                    return Redirect(returnUrl);
+                    redirectUrl = returnUrl;
 
                 if ((canDashboardShowOnMobile || canDashboardShowOnDesktop) && canViewDashboard)
                 {
-                    return RedirectToAction("Index", "Dashboard");
+                    redirectUrl = Url.Action("Index", "Dashboard")!;
                 }
                 else if ((canCSOLogShowOnMobile || canCSOLogShowOnDesktop) && canViewCSOLog)
                 {
-                    return RedirectToAction("Index", "CSOLog");
+                    redirectUrl = Url.Action("Index", "CSOLog")!;
                 }
                 else
                 {
-                    return RedirectToAction("Welcome", "Home");
+                    redirectUrl = Url.Action("Welcome", "Home")!;
                 }
+
+                return Json(new { Success = true, RedirectUrl = redirectUrl });
 
             }
             else

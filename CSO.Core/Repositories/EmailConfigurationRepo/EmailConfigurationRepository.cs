@@ -267,7 +267,7 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
         }
     }
 
-    public async Task<bool> SendOTPEmailAsync(string userEmail, int otp)
+    public async Task<bool> SendOTPEmailAsync(string userEmail, string otp)
     {
         try
         {

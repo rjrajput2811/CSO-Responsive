@@ -1,159 +1,17 @@
 ﻿@{
     Layout = "~/Views/Shared/_Account.cshtml";
     ViewData["Title"] = "Login";
+
+    // Detect device
+    var ua = Context.Request.Headers["User-Agent"].ToString();
+    var isMobile = ua.Contains("Mobi") || ua.Contains("Android") || ua.Contains("iPhone");
 }
 
-<style>
-    .card {
-        border-radius: 15px;
-        transition: transform 0.2s ease-in-out;
-    }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-
-    .btn-primary {
-        background-color: #004080;
-        border: none;
-    }
-
-        .btn-primary:hover {
-            background-color: #004080;
-        }
-
-    a {
-        color: #007BFF;
-        text-decoration: none;
-        background-color: transparent;
-    }
-
-    .text-muted {
-        color: #005BAC !important;
-    }
-
-    @@media (max-width: 576px) {
-        h5 {
-            font-size: 16px !important;
-        }
-
-        .card {
-            margin: 10px;
-        }
-
-        .btn {
-            font-size: 14px;
-            padding: 10px 15px;
-        }
-    }
-</style>
-
-<!-- Content area -->
-<div class="content d-flex justify-content-center align-items-center">
-    <!-- Login card -->
-    <form class="login-form">
-        <input type="hidden" id="returnUrl" name="returnUrl" value="@ViewData["ReturnUrl"]" />
-        <div class="card mb-0 shadow" style="border-radius: 15px; overflow: hidden; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);">
-            <div class="text-center bg-white p-3">
-                <a>
-                    <img id="imglogo" name="imglogo" src="~/images/wipro-logo.png" class="img-fluid  shadow-0 " alt="" />
-                </a>
-            </div>
-
-            <div class="text-center bg-white">
-                <h5 style="font-weight:700;font-size:20px;color:#004080">Customer Satisfaction Opportunities</h5>
-            </div>
-
-            <div class="card-body">
-                <div class="form-group form-group-feedback form-group-feedback-left">
-                    <input type="email" id="txtEmail" class="form-control rounded-pill" placeholder="Email">
-                    <div class="form-control-feedback">
-                        <i class="icon-envelope text-muted"></i>
-                    </div>
-                </div>
-
-                <div id="txtOTP" class="form-group form-group-feedback form-group-feedback-left d-none">
-                    <input type="text" id="txtOTP" class="form-control rounded-pill" placeholder="OTP">
-                    <div class="form-control-feedback">
-                        <i class="icon-lock2 text-muted"></i>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <button id="btnLogin" type="button" class="btn btn-primary btn-block rounded-pill">Send OTP</button>
-                </div>
-
-                @* <div class="form-group d-flex align-items-center">
-                    <a href="@Url.Action("ForgotPassword", "Account")" id="forgotpassword" class="ml-auto">Forgot password?</a>
-                </div> *@
-            </div>
-        </div>
-    </form>
-    <!-- /login card -->
-
-</div>
-<!-- /content area -->
-
-<script asp-append-version="true">
-    $(document).ready(function () {
-        $('#txtOTP').on('input', function() {
-            const otpValue = $(this).val();
-            if (otpValue.length === 6 && /^\d{6}$/.test(otpValue)) {
-                $('#btnLogin').prop('disabled', false);
-            } else {
-                $('#btnLogin').prop('disabled', true);
-            }
-        });
-
-        $("#btnLogin").on('click', function () {
-            Blockloadershow();
-            if ($("#btnLogin").html() == 'Send OTP') {
-                if ($("#txtEmail").val() == '' || !isEmail($("#txtEmail").val())) {
-                    Blockloaderhide();
-                    showDangerAlert("Please enter valid email.");
-                    return false;
-                }
-
-                $.ajax({
-                    url: '@Url.Action("GenerateAndStoreOtp", "Account")',
-                    type: "GET",
-                    data: { email: $("#txtEmail").val() },
-                    success: function (response) {
-                        Blockloaderhide();
-                        if (!response.success) {
-                            showDangerAlert(response.message);
-                        }
-                        else {
-                            $("#txtOTP").removeClass('d-none');
-                            $("#btnLogin").html('Verify & Sign in');
-                            $('#btnLogin').prop('disabled', true);
-                            showSuccessAlert(response.message);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        Blockloaderhide();
-                        showDangerAlert('Error retrieving data: ' + error);
-                    }
-                });
-            }
-            else {
-                $.ajax({
-                    url: '@Url.Action("LoginWithOTP", "Account")',
-                    type: "GET",
-                    data: { userEmail: $("#txtEmail").val(), otp: $("#txtOTP").val(), returnUrl: $("#returnUrl").val() },
-                    success: function (response) {
-                        Blockloaderhide();
-                        if (!response.success) {
-                            showDangerAlert(response.message);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        Blockloaderhide();
-                        showDangerAlert('Error retrieving data: ' + error);
-                    }
-                });
-            }
-        });
-    });
-</script>
-
+@if (isMobile)
+{
+    @await Html.PartialAsync("_LoginWithOTP");
+}
+else
+{
+    @await Html.PartialAsync("_LoginWithPassword");
+}
