@@ -222,7 +222,7 @@ public class CSOLogController : BaseController
 
             var csoLogHistory = new CSOLogHistoryViewModel
             {
-                CSOLogId = model.Id,
+                CSOLogId = result.ObjectId ?? 1,
                 CSOLogBy = HttpContext.Session.GetInt32("UserId") ?? 0,
                 CSOLogOn = DateTime.Now
             };
