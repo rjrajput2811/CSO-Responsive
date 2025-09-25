@@ -23,4 +23,6 @@ public class CSOLogFileViewModel
     public int? DeletedBy { get; set; }
 
     public DateTime? DeletedOn { get; set; }
+
+    public bool IsFileFound { get; set; }
 }

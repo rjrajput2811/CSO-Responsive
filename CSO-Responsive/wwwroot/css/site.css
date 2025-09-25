@@ -25,4 +25,15 @@ body {
     height: 40px;
 }
 
+.attachment {
+    list-style-type: none;
+    padding: 0;
+}
+
+.attachmentFile {
+    padding: 5px;
+    background: #cce5ff;
+    margin: 5px;
+}
+
 

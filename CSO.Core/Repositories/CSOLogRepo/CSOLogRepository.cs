@@ -192,6 +192,7 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
                 Status2 = csoLogDetails.Status2,
                 Review2 = csoLogDetails.Review2,
                 AddedBy = csoLogDetails.AddedBy,
+                AddedOn = csoLogDetails.AddedOn,
                 SKUDetails = csoLogDetails.SKUDetails,
                 FinancialYear = csoLogDetails.FinancialYear,
                 RootCauseAnalysisDescription = csoLogDetails.RootCauseAnalysisDescription,

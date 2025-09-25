@@ -215,6 +215,9 @@ function InsertUpdateCSOLogAnay() {
             }
             else {
                 showSuccessAlert("CSO Log Updated Successfully.");
+                setTimeout(function () {
+                    window.open($("#hf_CSOLogAnalysisSolutionGridPage").val(), '_self');
+                }, 2500);
             }
         },
         error: function (xhr, status, error) {
@@ -305,6 +308,9 @@ function UpdateCSOLogRootCause(status) {
                 }
                 else {
                     showSuccessAlert("CSO Log Root Cause Analysis Submited Successfully.");
+                    setTimeout(function () {
+                        window.open($("#hf_CSOLogAnalysisSolutionGridPage").val(), '_self');
+                    }, 2500);
                 }
             }
         },
@@ -391,6 +397,9 @@ function UpdateCSOLogMonitor(status) {
                 }
                 else {
                     showSuccessAlert("CSO Log Monitor Submited Successfully.");
+                    setTimeout(function () {
+                        window.open($("#hf_CSOLogAnalysisSolutionGridPage").val(), '_self');
+                    }, 2500);
                 }
             }
         },
@@ -456,6 +465,9 @@ function UpdateCSOLogApproveReject(status) {
                 }
                 else {
                     showSuccessAlert("CSO Log Submited Successfully.");
+                    setTimeout(function () {
+                        window.open($("#hf_CSOLogAnalysisSolutionGridPage").val(), '_self');
+                    }, 2500);
                 }
             }
         },
@@ -519,6 +531,9 @@ function UpdateCSOLogClose(status) {
                 }
                 else {
                     showSuccessAlert("CSO Log Closed Successfully.");
+                    setTimeout(function () {
+                        window.open($("#hf_CSOLogAnalysisSolutionGridPage").val(), '_self');
+                    }, 2500);
                 }
             }
         },
@@ -527,4 +542,11 @@ function UpdateCSOLogClose(status) {
             showDangerAlert('Error saving data: ' + error);
         }
     });
+}
+
+function viewCSOLogFiles(fileName) {
+    var baseUrl = GetBaseUrl();
+    let url = baseUrl + '/CSOLogandAnalysisSolutionFiles/' + fileName;
+    const encoded = encodeURI(url);
+    window.open(encoded, '_blank');
 }

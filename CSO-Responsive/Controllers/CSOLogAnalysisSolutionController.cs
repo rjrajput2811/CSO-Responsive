@@ -16,6 +16,7 @@ using CSO.Core.Repositories.ProductTypeRepo;
 using CSO.Core.Repositories.UserRepo;
 using CSO.Core.Security;
 using CSO.Core.Services.SystemLogs;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Cryptography;
@@ -40,6 +41,7 @@ namespace CSO_Responsive.Controllers
         private readonly ICSOClassRepository _cSOClassRepository;
         private readonly ICSOLogHistoryRepository _csoLogHistoryRepository;
         private readonly IMailMatrixRepository _mailMatrixRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public CSOLogAnalysisSolutionController(ICSOLogAnalysisRepository csoLogAnalRepository,
                                                 ISystemLogService systemLogService, IDivisionRepository divisionRepository,
@@ -52,7 +54,8 @@ namespace CSO_Responsive.Controllers
                                                 ICSOLogFileRepository csoLogFileRepository, ICSOLogRepository csoLogRepository,
                                                 IComplaintTypeRepository complaintTypeRepository,ICSOClassRepository cSOClassRepository,
                                                 ICSOLogHistoryRepository csoLogHistoryRepository,
-                                                IMailMatrixRepository mailMatrixRepository)
+                                                IMailMatrixRepository mailMatrixRepository,
+                                                IWebHostEnvironment webHostEnvironment)
         {
             _csoLogAnalRepository = csoLogAnalRepository;
             _systemLogService = systemLogService;
@@ -69,6 +72,7 @@ namespace CSO_Responsive.Controllers
             _cSOClassRepository = cSOClassRepository;
             _csoLogHistoryRepository = csoLogHistoryRepository;
             _mailMatrixRepository = mailMatrixRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
         public IActionResult Index()
         {
@@ -163,6 +167,8 @@ namespace CSO_Responsive.Controllers
                 if (!int.TryParse(decryptedText, out int Id))
                     return BadRequest("Invalid decrypted ID");
                 model = await _csoLogAnalRepository.GetCSOLogById(Id);
+                var folderName = Path.Combine(_webHostEnvironment.WebRootPath, "CSOLogandAnalysisSolutionFiles");
+                model.CsoLogFiles = await _csoLogFileRepository.GetCSOLogFilesAsync(Id, folderName, null);
             }
             else
             {
@@ -310,9 +316,12 @@ namespace CSO_Responsive.Controllers
 
             if (!existsCSOLogHistory)
             {
+                var csoLogData = await _csoLogRepository.GetCSOLogById(model.Id);
                 var csoLogHistoryToCreate = new CSOLogHistoryViewModel
                 {
-                    CSOLogId = model.Id
+                    CSOLogId = model.Id,
+                    CSOLogBy = csoLogData.AddedBy,
+                    CSOLogOn = csoLogData.AddedOn
                 };
 
                 result = await _csoLogHistoryRepository.CreateCSOLogHistoryAsync(csoLogHistoryToCreate);

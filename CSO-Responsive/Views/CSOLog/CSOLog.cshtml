@@ -311,6 +311,25 @@
                     @* @Html.ValidationMessageFor(m => m.CSOLogFileName, "", new { @class = "text-danger" }) *@
                     @Html.Label("FileSize", "Maximum upload file size: 5 MB.", new { style = "font-style: italic; font-weight: normal;" })
                     <div class="form-text">Max size 5MB per file</div>
+                    @if(Model.CsoLogFiles.Count > 0)
+                    {
+                        <br />
+                        <div class="row col-12">
+                            <div class="col-4">
+                                <ul class="attachment">
+                                    @foreach(var file in Model.CsoLogFiles)
+                                    {
+                                        if (file.IsFileFound)
+                                        {
+                                            <li class='attachmentFile' id="">
+                                                <a class="title" onclick="viewCSOLogFiles('@file.FileName')" style="cursor: pointer; color:black; font-weight:700;">@file.FileName</a>
+                                            </li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
                 </div>
 
                 <div class="form-group col-3" style="display:none" id="DivTrackingNo">

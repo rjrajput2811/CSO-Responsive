@@ -265,11 +265,13 @@ function InsertUpdateUser() {
             Blockloaderhide();
             if (!response.success) {
                 var errorMessg = "";
-                for (var error of response.errors) {
-                    errorMessg += error + "\n";
-                }
-                if (errorMessg != "") {
-                    showDangerAlert(errorMessg);
+                if (response.errors != undefined) {
+                    for (var error of response.errors) {
+                        errorMessg += error + "\n";
+                    }
+                    if (errorMessg != "") {
+                        showDangerAlert(errorMessg);
+                    }
                 }
                 else {
                     showDangerAlert(response.message);
@@ -282,10 +284,10 @@ function InsertUpdateUser() {
                 }
                 else {
                     showSuccessAlert("User Saved Successfully.");
-                    setTimeout(function () {
-                        window.open($("#hf_UsersGridPage").val(), '_self');
-                    }, 2500);
                 }
+                setTimeout(function () {
+                    window.open($("#hf_UsersGridPage").val(), '_self');
+                }, 2500);
             }
         },
         error: function (xhr, status, error) {

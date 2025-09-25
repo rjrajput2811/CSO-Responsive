@@ -235,8 +235,17 @@ public class UsersController : BaseController
             return Json(new { Success = false, Errors = errors });
         }
 
+        
+
+
         if (userViewModel.Id > 0)
         {
+            var existingUser = await _userRepository.GetUserByIdAsync(userViewModel.Id);
+            if(existingUser.Email != userViewModel.Email)
+            {
+                var newEmail = await _userRepository.CheckExistingEmail(userViewModel.Email);
+                if (!newEmail.Success) { return Json(newEmail); }
+            }
             userViewModel.UpdatedBy = HttpContext.Session.GetInt32("UserId");
             userViewModel.UpdatedOn = DateTime.Now;
             var updateResult = await _userRepository.UpdateUserAsync(userViewModel);
@@ -244,6 +253,8 @@ public class UsersController : BaseController
         }
         else
         {
+            var newEmail = await _userRepository.CheckExistingEmail(userViewModel.Email);
+            if (!newEmail.Success) { return Json(newEmail); }
             userViewModel.AddedBy = HttpContext.Session.GetInt32("UserId") ?? 0;
             userViewModel.AddedOn = DateTime.Now;
             var insertResult = await _userRepository.InsertUserAsync(userViewModel);

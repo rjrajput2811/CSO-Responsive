@@ -378,6 +378,31 @@ public class UserRepository : SqlTableRepository, IUserRepository
         }
     }
 
+    public async Task<OperationResult> CheckExistingEmail(string email)
+    {
+        try
+        {
+            var existingEmail = await _dbContext.Users
+            .AnyAsync(i => i.Email == email);
+
+            if (existingEmail)
+            {
+                return new OperationResult
+                {
+                    Success = false,
+                    Message = "Email already exist. Please enter unique email."
+                };
+            }
+
+            return new OperationResult { Success = true };
+        }
+        catch (Exception ex)
+        {
+            _systemLogService.WriteLog(ex.Message);
+            throw;
+        }
+    }
+
     public async Task<User> GetUserDetailsByEmailAsync(string email)
     {
         try

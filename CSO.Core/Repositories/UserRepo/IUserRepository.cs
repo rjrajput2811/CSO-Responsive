@@ -19,5 +19,6 @@ public interface IUserRepository
     Task<int> SendOTPEmailToForgotPassword(string username, string OTP);
     Task<int> ChangePassword(string username, string password);
     Task<OperationResult> CheckValidWorkEmail(string email);
+    Task<OperationResult> CheckExistingEmail(string email);
     Task<User> GetUserDetailsByEmailAsync(string email);
 }

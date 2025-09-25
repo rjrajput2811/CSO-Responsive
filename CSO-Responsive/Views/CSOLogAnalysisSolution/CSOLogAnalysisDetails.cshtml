@@ -305,6 +305,7 @@
 <input id="hf_GetProductTypeListByBrandAndUser" type="hidden" value='@Url.Action("GetProductTypeListByBrandAndUser", "CSOLog")'>
 <input id="hf_GetNearestPlantListByPlantAndUser" type="hidden" value='@Url.Action("GetNearestPlantListByPlantAndUser", "CSOLog")'>
 <input id="hf_CSOLogGridPage" type="hidden" value='@Url.Action("Index", "CSOLog")'>
+<input id="hf_CSOLogAnalysisSolutionGridPage" type="hidden" value='@Url.Action("Index", "CSOLogAnalysisSolution")'>
 <input id="hf_SelectedBrandId" type="hidden" value='@Model.BrandId'>
 <input id="hf_SelectedProductTypeId" type="hidden" value='@Model.ProductTypeId'>
 <input id="hf_SelectedPlantId" type="hidden" value='@Model.PlantId'>
@@ -683,10 +684,25 @@
                                     </div>
                                     <div class="form-group col-3">
                                     </div>
-                                    <div class="form-group col-3">
-                                        <ul class="attachment" id="CSOLogImagesUL">
-                                        </ul>
-                                    </div>
+                                    @if (Model.CsoLogFiles.Count > 0)
+                                    {
+                                        <br />
+                                        <div class="row col-12">
+                                            <div class="col-4">
+                                                <ul class="attachment">
+                                                    @foreach (var file in Model.CsoLogFiles)
+                                                    {
+                                                        if (file.IsFileFound && file.Type == (int)CSOLogFileType.CSOLOg)
+                                                        {
+                                                            <li class='attachmentFile' id="">
+                                                                <a class="title" onclick="viewCSOLogFiles('@file.FileName')" style="cursor: pointer; color:black; font-weight:700;">@file.FileName</a>
+                                                            </li>
+                                                        }
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </form>
@@ -745,8 +761,25 @@
                             <h6 class="section-label mb-3">Supporting Attachments</h6>
                             <input id="csoRootCauseFile" type="file" class="form-control mb-2" @Html.Raw((!canAddRootCause && canEditRootCause) ? "disabled" : "")>
                             <div class="file-note">Max file size: 5 MB</div>
-                            <hr>
-                            <p class="mb-0">Attached: <a href="#">rca_image_apr24.jpg</a></p>
+                            @if (Model.CsoLogFiles.Count > 0)
+                            {
+                                <br />
+                                <div class="row col-12">
+                                    <div class="col-4">
+                                        <ul class="attachment">
+                                            @foreach (var file in Model.CsoLogFiles)
+                                            {
+                                                if (file.IsFileFound && file.Type == (int)CSOLogFileType.RootCauseAnalysisFile)
+                                                {
+                                                    <li class='attachmentFile' id="">
+                                                        <a class="title" onclick="viewCSOLogFiles('@file.FileName')" style="cursor: pointer; color:black; font-weight:700;">@file.FileName</a>
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -765,6 +798,25 @@
                             <label class="section-label">Attach File</label>
                             <input id="monitorFile" type="file" class="form-control" @Html.Raw((!canAddMonitor && canEditMonitor) ? "disabled" : null)>
                             <div class="file-note mt-1">Max file size: 5 MB</div>
+                            @if (Model.CsoLogFiles.Count > 0)
+                            {
+                                <br />
+                                <div class="row col-12">
+                                    <div class="col-4">
+                                        <ul class="attachment">
+                                            @foreach (var file in Model.CsoLogFiles)
+                                            {
+                                                if (file.IsFileFound && file.Type == (int)CSOLogFileType.MonitoringofCorrectiveActionFile)
+                                                {
+                                                    <li class='attachmentFile' id="">
+                                                        <a class="title" onclick="viewCSOLogFiles('@file.FileName')" style="cursor: pointer; color:black; font-weight:700;">@file.FileName</a>
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </form>
                     <div class="text-end mt-4">

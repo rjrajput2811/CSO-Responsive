@@ -12,7 +12,6 @@ public class CSOLogViewModel
     public int csoLogId { get; set; }
 
     public int CSONo { get; set; }
-
     
     public int UserId { get; set; }
     public string? UserName { get; set; }
@@ -138,4 +137,6 @@ public class CSOLogViewModel
     public int CloseThresholdDays { get; set; }
 
     public string? BaseUrl { get; set; }
+
+    public List<CSOLogFileViewModel> CsoLogFiles { get; set; } = [];
 }

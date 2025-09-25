@@ -35,6 +35,7 @@ public class CSOLogController : BaseController
     private readonly ICSOLogFileRepository _csoLogFileRepository;
     private readonly IMailMatrixRepository _mailMatrixRepository;
     private readonly ICSOLogHistoryRepository _csoLogHistoryRepository;
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
     public CSOLogController(ICSOLogRepository csoLogRepository,
                             ISystemLogService systemLogService,
@@ -47,7 +48,8 @@ public class CSOLogController : BaseController
                             IUserRepository userRepository,
                             ICSOLogFileRepository csoLogFileRepository,
                             IMailMatrixRepository mailMatrixRepository,
-                            ICSOLogHistoryRepository csoLogHistoryRepository)
+                            ICSOLogHistoryRepository csoLogHistoryRepository,
+                            IWebHostEnvironment webHostEnvironment)
     {
         _csoLogRepository = csoLogRepository;
         _systemLogService = systemLogService;
@@ -61,6 +63,7 @@ public class CSOLogController : BaseController
         _csoLogFileRepository = csoLogFileRepository;
         _mailMatrixRepository = mailMatrixRepository;
         _csoLogRepository = csoLogRepository;
+        _webHostEnvironment = webHostEnvironment;
     }
     public IActionResult Index()
     {
@@ -128,6 +131,8 @@ public class CSOLogController : BaseController
             if (!int.TryParse(decryptedText, out int Id))
                 return BadRequest("Invalid decrypted ID");
             model = await _csoLogRepository.GetCSOLogById(Id);
+            var folderName = Path.Combine(_webHostEnvironment.WebRootPath, "CSOLogandAnalysisSolutionFiles");
+            model.CsoLogFiles = await _csoLogFileRepository.GetCSOLogFilesAsync(Id, folderName, (int)CSOLogFileType.CSOLOg);
         }
         else
         {

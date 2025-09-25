@@ -211,13 +211,15 @@ function InsertUpdateCSOLog() {
         success: function (response) {
             Blockloaderhide();
             if (!response.success) {
-                var errorMessg = "";
-                for (var error of response.errors) {
-                    errorMessg += error + "\n";
-                }
-                if (errorMessg != "") {
-                    showDangerAlert(errorMessg);
-                }
+                if (response.errors != undefined) {
+                    var errorMessg = "";
+                    for (var error of response.errors) {
+                        errorMessg += error + "\n";
+                    }
+                    if (errorMessg != "") {
+                        showDangerAlert(errorMessg);
+                    }
+                }                
                 else {
                     showDangerAlert(response.message);
                 }
@@ -229,10 +231,10 @@ function InsertUpdateCSOLog() {
                 }
                 else {
                     showSuccessAlert("CSO Log Saved Successfully.");
-                    setTimeout(function () {
-                        window.open($("#hf_CSOLogGridPage").val(), '_self');
-                    }, 2500);
                 }
+                setTimeout(function () {
+                    window.open($("#hf_CSOLogGridPage").val(), '_self');
+                }, 2500);
             }
         },
         error: function (xhr, status, error) {
@@ -240,4 +242,11 @@ function InsertUpdateCSOLog() {
             showDangerAlert('Error saving data: ' + error);
         }
     });
+}
+
+function viewCSOLogFiles(fileName) {
+    var baseUrl = GetBaseUrl();
+    let url = baseUrl + '/CSOLogandAnalysisSolutionFiles/' + fileName;
+    const encoded = encodeURI(url);
+    window.open(encoded, '_blank');
 }
