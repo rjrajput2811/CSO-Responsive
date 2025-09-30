@@ -1,1 +1,332 @@
-﻿
+﻿@using CSO.Core.Security
+@using Microsoft.AspNetCore.Http
+@using CSO.Core.Repositories.SecurityActionRepo
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ISecurityActionRepository _securityActionRepository
+
+@{
+    ViewData["Title"] = "MIS";
+
+   
+}
+
+<!-- Tabulator CSS & JS -->
+<link href="https://unpkg.com/tabulator-tables@5.6.2/dist/css/tabulator.min.css" rel="stylesheet">
+<script src="https://unpkg.com/tabulator-tables@5.6.2/dist/js/tabulator.min.js"></script>
+
+<link href="~/css/fontawesome/styles.min.css" rel="stylesheet" />
+@* <link href="~/css/tabulator/tabulator.min.css" rel="stylesheet" /> *@
+<link href="~/css/tabulator/tabulator_bootstrap4.min.css" rel="stylesheet" />
+<script src="~/js/jquery.min.js"></script>
+<script src="~/js/jquery.datatables.js"></script>
+<link href="~/css/pnotify.css" rel="stylesheet" />
+<script src="~/js/pnotify.js"></script>
+<script src="~/js/pnotify.confirm.js"></script>
+<script src="~/lib/bootstrap/dist/js/popupAlert.js"></script>
+<script src="~/lib/bootstrap/dist/js/buttons.html5.min.js"></script>
+<script src="~/js/common.js"></script>
+<script src="~/js/xlsx.min.js"></script>
+@* <script src="~/js/tabulator.min.js"></script> *@
+<script src="~/js/aes.js"></script>
+<style>
+
+    .form-control {
+        padding: 0 10px !important;
+        border: 0;
+        border-bottom: 1px solid #cccccc;
+        border-radius: 0px;
+    }
+
+    label {
+        margin-bottom: 0;
+        margin-top: .3rem;
+    }
+
+    #scrollToTopBtn:hover {
+        background-color: #0056b3; /* Darker blue */
+    }
+
+    #scrollToTopBtn {
+        outline: none; /* Removes the focus border */
+    }
+
+    .tabulator .tabulator-header .tabulator-col {
+        font-size: 14px;
+        background-color: #D6E4F0;
+        font-weight: 600;
+        border-right: 1px solid #ccc;
+    }
+
+    .tabulator-row .tabulator-cell {
+        padding: 5px 5px;
+        font-size: 14px;
+        height: 30px;
+    }
+
+    .tabulator-cell:hover {
+        color: #4682B4 !important;
+        cursor: pointer !important;
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 0.5rem; /* Reduce space between each input group */
+    }
+
+    .custom-header {
+        background-color: #bec6e1 !important; /* Attractive blue background */
+        color: black; /* White text */
+        border-radius: 4px 4px 0 0; /* Rounded corners */
+        font-weight: bold;
+    }
+
+    /* Responsive pagination styling */
+    .tabulator-paginator {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 10px 15px;
+        background: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        font-size: 14px;
+    }
+
+    .tabulator-page,
+    .tabulator-page.active,
+    .tabulator-page.disabled {
+        padding: 6px 12px;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        background-color: #ffffff;
+        color: #495057;
+        cursor: pointer;
+        margin-right: .3rem;
+    }
+
+        .tabulator-page.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .tabulator-page.disabled {
+            color: #adb5bd;
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+
+    .tabulator-page-size {
+        height: 32px;
+        padding: 4px 8px;
+        font-size: 14px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        margin-right: 1rem;
+    }
+
+    @@media (max-width: 576px) {
+        .tabulator-paginator {
+            justify-content: center;
+        }
+
+        .tabulator-page-size {
+            width: 100%;
+            margin-top: 5px;
+        }
+    }
+
+    /*  body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #f4f6f9;
+                padding: 2rem;
+            } */
+
+    .badge-success {
+        background-color: #28a745;
+    }
+
+    .badge-warning {
+        background-color: #ffc107;
+        color: black;
+    }
+
+    .badge-secondary {
+        background-color: #6c757d;
+    }
+
+    .badge-danger {
+        background-color: #dc3545;
+    }
+
+    .tabulator .tabulator-cell .badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 6px;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    @@media screen and (max-width: 768px) {
+        #filter-module {
+            width: 100% !important;
+        }
+    }
+
+    .card {
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(17, 122, 139, 0.4);
+    }
+
+</style>
+<div class="content">
+    <div class="card" style="margin-top:10px;">
+        <div class="card-body d-flex justify-content-between align-items-center" style=" padding-top:8px;padding-bottom:8px;">
+            <div style="font-size:18px; font-weight: 600;">
+               MIS Report
+            </div>
+            <div>
+                <button id="backButton" class="btn btn-outline-primary ">
+                    <i class="fas fa-arrow-left"></i>Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+  
+
+
+    <!-- 🔎 Filter Section -->
+    <div class="card p-3 shadow-sm">
+        <div class="row g-3 align-items-center">
+
+            <!-- Filter Type -->
+            <div class="col-md-3 d-flex align-items-center">
+                <label for="ddlperiod" class="form-label fw-bold me-2 mb-0">Filter</label>
+                <select id="ddlperiod" class="form-select w-auto">
+                    <option value="1">Monthly</option>
+                    <option value="2">Quarterly</option>
+                    <option value="3">Yearly</option>
+                </select>
+            </div>
+
+            <!-- Month -->
+            <div class="col-md-3 d-flex align-items-center">
+                <label for="ddlpmonth" class="form-label fw-bold me-2 mb-0">Month</label>
+                <select id="ddlpmonth" class="form-select w-auto">
+                    <option value="1">Jan</option>
+                    <option value="2">Feb</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+
+            <!-- Type -->
+            <div class="col-md-3 d-flex align-items-center">
+                <label for="ddlType" class="form-label fw-bold me-2 mb-0">Type</label>
+                <select id="ddlType" class="form-select w-auto">
+                    <option value="">Select Type</option>
+                    <option value="1">Business Function</option>
+                    <option value="2">Location</option>
+                    <option value="3">Product Line</option>
+                    <option value="4">Division</option>
+                </select>
+            </div>
+           @*  <div class="col-md-3 d-flex align-items-center"> 
+                <label class="form-label fw-bold">Type Value</label> <select id="ddlTypeValue" class="form-select" multiple></select> </div> *@
+        </div>
+
+        
+        </div>
+    <div class="card p-3  shadow-sm">
+    <!-- 📑 Tabs -->
+    <ul class="nav nav-tabs" id="reportTabs" role="tablist">
+        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tabBusiness">Business Function</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabLocation">Location</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabProduct">Product Line</a></li>
+    </ul>
+
+    <div class="tab-content mt-3">
+        <!-- Business Function Table -->
+        <div class="tab-pane fade show active" id="tabBusiness">
+            <div id="tblBusinessTab"></div>
+        </div>
+
+        <!-- Location Table -->
+        <div class="tab-pane fade" id="tabLocation">
+            <div id="tblLocationTab"></div>
+        </div>
+
+        <!-- Product Line Table -->
+        <div class="tab-pane fade" id="tabProduct">
+            <div id="tblProductTab"></div>
+        </div>
+    </div>
+</div>
+</div>
+<script>
+  
+
+    // Business Function Tabulator
+    var businessTable = new Tabulator("#tblBusinessTab", {
+        data:sampleData,
+        layout:"fitColumns",
+        columns:[
+            {title:"Business Function", field:"name"},
+          
+                    { title: "CSOgenerated", field: "# of CSO Generated", responsive: 1,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "# of CSO Closed", field: "CSOClosed", responsive: 2, sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "# of A - Category CSO", field: "CategoryA", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "# of Root Cause", field: "RootStatusdays", responsive: 4, headerMenu: headerMenu, headerFilter: "input",formatter: formatStatus, hozAlign: "center", width: 130 },
+                    { title: " # of Monitoring", field: "MonitoringDays", responsive: 5,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: " # of Approve", field: "ApproveDays", responsive: 5,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: " # of Close", field: "CloseDays", responsive: 5,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+        ],
+    });
+
+    // Location Table
+    var locationTable = new Tabulator("#tblLocationTab", {
+        data:sampleData,
+        layout:"fitColumns",
+        columns:[
+            {title:"Location", field:"name"},
+           { title: "CSOgenerated", field: "# of CSO Generated", responsive: 1,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "# of CSO Closed", field: "CSOClosed", responsive: 2, sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "# of A - Category CSO", field: "CategoryA", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "# of Root Cause", field: "RootStatusdays", responsive: 4, headerMenu: headerMenu, headerFilter: "input",formatter: formatStatus, hozAlign: "center", width: 130 },
+                    { title: " # of Monitoring", field: "MonitoringDays", responsive: 5,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: " # of Approve", field: "ApproveDays", responsive: 5,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: " # of Close", field: "CloseDays", responsive: 5,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+      
+        ],
+    });
+
+    // Product Line Table
+    var productTable = new Tabulator("#tblProductTab", {
+        data:sampleData,
+        layout:"fitColumns",
+        columns:[
+            {title:"Product Line", field:"name"},
+           { title: "CSOgenerated", field: "# of CSO Generated", responsive: 1,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "# of CSO Closed", field: "CSOClosed", responsive: 2, sorter: "date", headerMenu: headerMenu, headerFilter: "input", hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: "# of A - Category CSO", field: "CategoryA", responsive: 3,  headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "left", width: 100 },
+                    { title: "# of Root Cause", field: "RootStatusdays", responsive: 4, headerMenu: headerMenu, headerFilter: "input",formatter: formatStatus, hozAlign: "center", width: 130 },
+                    { title: " # of Monitoring", field: "MonitoringDays", responsive: 5,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: " # of Approve", field: "ApproveDays", responsive: 5,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+                    { title: " # of Close", field: "CloseDays", responsive: 5,headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "center", width: 100 },
+        ],
+      
+    });
+</script>
+
