@@ -21,6 +21,7 @@ using CSO.Core.Repositories.UsersRoleRepo;
 using CSO.Core.Services.ActiveDirectoryUserRoleManagerService;
 using CSO.Core.Services.DashboardService;
 using CSO.Core.Services.ReportService.CSOLogReportService;
+using CSO.Core.Services.ReportService.MSIReportService;
 using CSO.Core.Services.SystemLogs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Server.IISIntegration;
@@ -37,6 +38,7 @@ builder.Services.AddDbContext<CSOResponsiveDbContext>(Options => Options.UseSqlS
 // Add services to the container.
 builder.Services.AddControllersWithViews()
     .AddRazorRuntimeCompilation();
+builder.Services.AddProgressiveWebApp();
 
 builder.Services.AddTransient<ISystemLogService, SystemLogService>();
 builder.Services.AddTransient<IUsersRoleRepository, UsersRoleRepository>();
@@ -63,6 +65,7 @@ builder.Services.AddTransient<ICSOLogHistoryRepository, CSOLogHistoryRepository>
 builder.Services.AddTransient<IEmailConfigurationRepository, EmailConfigurationRepository>();
 builder.Services.AddTransient<IActiveDirectoryUserRoleManager, ActiveDirectoryUserRoleManager>();
 builder.Services.AddTransient<ICSOLogReport, CSOLogReport>();
+builder.Services.AddTransient<IMSIReport, MSIReport>();
 builder.Services.AddTransient<IDashboardService, DashboardService>();
 builder.Services.AddTransient<IEmailOTPsRepository, EmailOTPsRepository>();
 builder.Services.AddScoped<IDbConnection>(db => new SqlConnection(connstring));
