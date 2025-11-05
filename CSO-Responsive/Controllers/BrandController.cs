@@ -27,7 +27,12 @@ namespace CSO_Responsive.Controllers
         public async Task<JsonResult> GetAllBrand()
         {
             var brandList = await _brandRepository.GetBrandList();
-            return Json(brandList);
+            var result = new
+            {
+                Count = brandList.Count,
+                Data = brandList
+            };
+            return Json(result);
         }
 
         [HttpGet]

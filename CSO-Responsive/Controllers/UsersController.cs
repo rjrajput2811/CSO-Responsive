@@ -49,7 +49,13 @@ public class UsersController : BaseController
     {
         var usersList = await _userRepository.GetAllUsersAsync();
         usersList = usersList.Where(u => u.Id != 1).ToList();
-        return Json(usersList);
+        var result = new
+        {
+            Count = usersList.Count,
+            Data = usersList
+        };
+
+        return Json(result);
     }
 
     //public async Task<ActionResult> GetUsersListAsync([FromBody] TabulatorRequest request)

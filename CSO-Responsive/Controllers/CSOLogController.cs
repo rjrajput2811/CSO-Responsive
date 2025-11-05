@@ -76,7 +76,13 @@ public class CSOLogController : BaseController
         string fYear = HttpContext.Session.GetString("FYear") ?? "";
         int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
         var csoList = await _csoLogRepository.GetCSOLogListAsync(fYear, userId);
-        return Json(csoList);
+        var result = new
+        {
+            Count = csoList.Count,
+            Data = csoList
+        };
+
+        return Json(result);
     }
 
     public async Task<IActionResult> CSOLogAsync(string id)

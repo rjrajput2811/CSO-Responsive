@@ -34,7 +34,12 @@ namespace CSO_Responsive.Controllers
         public async Task<JsonResult> GetComplaintType()
         {
             var compTypeList = await _compTypeRepository.GetAllComTypeList();
-            return Json(compTypeList);
+            var result = new
+            {
+                Count = compTypeList.Count,
+                Data = compTypeList
+            };
+            return Json(result);
         }
 
         [HttpGet]

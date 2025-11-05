@@ -85,7 +85,12 @@ namespace CSO_Responsive.Controllers
             string fYear = HttpContext.Session.GetString("FYear") ?? "";
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
             var csoList = await _csoLogAnalRepository.GetCSOLogListAsync(fYear, userId);
-            return Json(csoList);
+            var result = new
+            {
+                Count = csoList.Count,
+                Data = csoList
+            };
+            return Json(result);
         }
 
         //public IActionResult CSOLogAnalysisDetails()

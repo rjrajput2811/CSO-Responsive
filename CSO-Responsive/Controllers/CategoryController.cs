@@ -32,7 +32,12 @@ public class CategoryController : BaseController
     public async Task<ActionResult> GetCategory()
     {
         var list = await _categoryRepository.GetCategorysAsync();
-        return Json(list);
+        var result = new
+        {
+            Count = list.Count,
+            Data = list
+        };
+        return Json(result);
     }
 
     public async Task<JsonResult> GetById(int Id)

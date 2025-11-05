@@ -9,8 +9,9 @@ function loadUsersData() {
         type: 'GET',
         success: function (data) {
             Blockloaderhide();
-            if (data && Array.isArray(data)) {
-                OnDivGridLoad(data);
+            if (data && data.data && Array.isArray(data.data)) {
+                $("#userCount").text('(' + data.count + ')');
+                OnDivGridLoad(data.data);
             }
             else {
                 showDangerAlert('No data available to load.');
