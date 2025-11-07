@@ -216,7 +216,7 @@ function OnDivGridLoad(response) {
 
         columns.push(
             {
-                title: "SNo", field: "Sr_No", responsive: 1, sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
+                title: "SNo", field: "Sr_No", width: 50, responsive: 1, sorter: "number", headerMenu: headerMenu, hozAlign: "center", headerHozAlign: "left"
             },
             { title: "Name", field: "Name",responsive: 2, headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
             { title: "ADid", field: "ADid", responsive: 3, headerMenu: headerMenu, headerFilter: "input", hozAlign: "left", headerHozAlign: "center" },
@@ -230,7 +230,7 @@ function OnDivGridLoad(response) {
         // // Initialize Tabulator
         table = new Tabulator("#div_Table", {
             data: tabledata,
-            layout: "fitColumns",
+            layout: "fitDataTable",
             responsiveLayout: false,
             height: "auto",
             //responsiveLayoutCollapseFormatter: function (data) {

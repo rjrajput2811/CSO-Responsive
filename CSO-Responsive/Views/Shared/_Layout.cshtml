@@ -162,27 +162,50 @@
     <script>
         $(document).ready(function () {
             // Get the current URL
-            var currentUrl = window.location.href.toLowerCase();
+            // var currentUrl = window.location.href.toLowerCase();
 
             // Highlight the active menu item for non-treeview items
-            $('ul.nav-sidebar a').filter(function () {
-                return this.href.toLowerCase() === currentUrl;
-            }).addClass('menu-active');
+            // $('ul.nav-sidebar a').filter(function () {
+            //     return this.href.toLowerCase() === currentUrl;
+            // }).addClass('menu-active');
 
             // For treeview items (submenus)
-            $('ul.nav-group-sub a').filter(function () {
-                return this.href.toLowerCase() === currentUrl;
-            }).each(function () {
-                // Open the parent submenu and highlight the active item
-                $(this).closest('.nav-item-submenu').addClass('menu-open');
-            });
+            // $('ul.nav-group-sub a').filter(function () {
+            //     return this.href.toLowerCase() === currentUrl;
+            // }).each(function () {
+            //     Open the parent submenu and highlight the active item
+            //     $(this).closest('.nav-item-submenu').addClass('menu-open');
+            // });
 
-            $('.nav-group-sub').each(function () {
-                // Check if the submenu contains an active item
-                if ($(this).find('.menu-active').length > 0) {
-                    $(this).addClass('close');
-                }
-            });
+            // $('.nav-group-sub').each(function () {
+            //     Check if the submenu contains an active item
+            //     if ($(this).find('.menu-active').length > 0) {
+            //         $(this).addClass('close');
+            //     }
+            // });
+
+      var currentUrl = window.location.href.toLowerCase();
+
+        // Highlight the active menu item for non-treeview items
+
+        $('ul.nav-sidebar a').filter(function () {
+            return this.href.toLowerCase() === currentUrl;
+        }).addClass('menu-active');
+
+        // For treeview items (submenus)
+        $('ul.nav-group-sub a').filter(function () {
+            return this.href.toLowerCase() === currentUrl;
+        }).each(function () {
+            // Open the parent submenu and highlight the active item
+            $(this).closest('.nav-item-submenu').addClass('menu-open');
+        });
+
+        $('.nav-group-sub').each(function () {
+            // Check if the submenu contains an active item
+            if ($(this).find('.menu-active').length > 0) {
+                $(this).addClass('open');
+            }
+        });
 
             $('#ddlFinancialYear').on('change', function () {
                 var selectedFY = $(this).val();
