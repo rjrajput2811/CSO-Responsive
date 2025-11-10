@@ -77,6 +77,12 @@
                 <div class="form-group">
                     <button id="btnLogin" type="button" class="btn btn-primary btn-block rounded-pill">Send OTP</button>
                 </div>
+                <div class="form-group text-center">
+                    <b>OR</b>
+                </div>
+                <div class="form-group">
+                    <button id="btnLoginWithADID" type="button" class="btn btn-primary btn-block rounded-pill">Windows Login</button>
+                </div>
             </div>
         </div>
     </form>
@@ -152,6 +158,28 @@
                     }
                 });
             }
+        });
+
+        $("#btnLoginWithADID").on('click', function () {
+            Blockloadershow();
+            $.ajax({
+                url: '@Url.Action("LoginWithADID", "Account")',
+                type: "GET",
+                data: { returnUrl: $("#returnUrl").val() },
+                success: function (response) {
+                    Blockloaderhide();
+                    if (!response.success) {
+                        showDangerAlert(response.message);
+                    }
+                    else {
+                        window.location.href = response.redirectUrl;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Blockloaderhide();
+                    showDangerAlert('Error retrieving data: ' + error);
+                }
+            });
         });
     });
 </script>

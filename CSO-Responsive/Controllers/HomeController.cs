@@ -106,15 +106,13 @@ namespace CSO_Responsive.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("Login", "Account", new { returnUrl = returnUrl });
+                    return RedirectToAction("Login", "Account", new { returnUrl });
                 }
             }
             else
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = returnUrl });
+                return RedirectToAction("Login", "Account", new { returnUrl });
             }
-
-            return View();
         }
 
         public IActionResult Welcome()

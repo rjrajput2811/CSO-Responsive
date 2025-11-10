@@ -7,11 +7,11 @@
     var isMobile = ua.Contains("Mobi") || ua.Contains("Android") || ua.Contains("iPhone");
 }
 
-@if (isMobile)
-{
+@* @if (isMobile)
+{ *@
     @await Html.PartialAsync("_LoginWithOTP");
-}
+@* }
 else
 {
     @await Html.PartialAsync("_LoginWithPassword");
-}
+} *@
