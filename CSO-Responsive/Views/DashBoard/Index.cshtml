@@ -86,7 +86,11 @@
                 <label class="fw-bold" style="font-size:larger;">To</label>
                 <input id="ToDate" type="date" class="form-control">
             </div>
-           
+            <div class="col-sm-2 mt-4">
+                <button class="btn btn-outline-danger" onclick="exportToPDF()">
+                    <i class="fa-solid fa-file-pdf me-2"></i>Export To PDF
+                </button>
+            </div>
         </div>
 
         <!-- Charts -->
@@ -386,6 +390,75 @@
                 color += letters[Math.floor(Math.random() * 16)];
             }
             return color;
+        }
+
+        function exportToPDF() {
+            try {
+                // Initialize jsPDF (from the UMD library you included)
+                const { jsPDF } = window.jspdf;
+                // Create a new PDF in Portrait, using millimeters, on A4 paper
+                const doc = new jsPDF('p', 'mm', 'a4');
+
+                // --- PDF Layout Constants ---
+                const margin = 15; // Page margin
+                const chartGap = 20; // Gap between charts
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const contentWidth = pageWidth - (margin * 2);
+
+                // --- Page 1: Bar Charts ---
+
+                // Chart 1: Monthwise (Bar Chart)
+                const imgMonthwise = monthwiseChartInstance.toBase64Image();
+                let chartHeight = (contentWidth / 16) * 9; // 16:9 aspect ratio
+                let yPos = 25; // Start position (with space for title)
+
+                doc.setFontSize(16);
+                doc.text("CSO Logs Monthwise", margin, yPos - 8);
+                doc.addImage(imgMonthwise, 'PNG', margin, yPos, contentWidth, chartHeight);
+                yPos += chartHeight + chartGap; // Update Y position
+
+                // Chart 2: Phase Wise (Bar Chart)
+                const imgPhaseWise = phaseWiseAgingChartInstance.toBase64Image();
+                chartHeight = (contentWidth / 16) * 9; // 16:9 aspect ratio
+
+                doc.setFontSize(16);
+                doc.text("CSO Logs Phase Wise", margin, yPos - 8);
+                doc.addImage(imgPhaseWise, 'PNG', margin, yPos, contentWidth, chartHeight);
+
+
+                // --- Page 2: Pie/Doughnut Charts ---
+                doc.addPage();
+                yPos = 25; // Reset Y position for new page
+
+                // Chart 3: CSO by Plants (Doughnut)
+                // --- THIS IS THE CORRECTED LINE ---
+                const imgPlantwise = plantwiseChartInstance.toBase64Image();
+
+                // Pie/Doughnut charts look better as squares (1:1 aspect ratio)
+                let squareSize = contentWidth * 0.7; // Use 70% of width
+                let xPos = (pageWidth - squareSize) / 2; // Center the chart
+
+                doc.setFontSize(16);
+                doc.text("CSO by Plants", margin, yPos - 8);
+                doc.addImage(imgPlantwise, 'PNG', xPos, yPos, squareSize, squareSize);
+                yPos += squareSize + chartGap;
+
+                // Chart 4: Open vs Closed (Pie)
+                const imgOpenClose = openCloseChartInstance.toBase64Image();
+                squareSize = contentWidth * 0.7; // 1:1
+                xPos = (pageWidth - squareSize) / 2; // Center
+
+                doc.setFontSize(16);
+                doc.text("Open vs Closed", margin, yPos - 8);
+                doc.addImage(imgOpenClose, 'PNG', xPos, yPos, squareSize, squareSize);
+
+                // 4. Save the PDF
+                doc.save('CSO_Dashboard_Charts.pdf');
+
+            } catch (error) {
+                console.error("Error exporting to PDF:", error);
+                showDangerAlert('An error occurred while exporting the PDF.');
+            }
         }
     </script>
 </body>
