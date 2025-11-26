@@ -5,10 +5,12 @@ using CSO.Core.Security;
 using CSO.Core.Services.SystemLogs;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CSO.Core.Repositories.EmailConfigurationRepo;
 
