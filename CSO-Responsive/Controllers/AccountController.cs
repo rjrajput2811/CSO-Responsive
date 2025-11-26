@@ -61,7 +61,9 @@ namespace CSO_Responsive.Controllers
 
             if(existingNotExpiredOTP != null)
             {
-                result.Success = await _emailConfigurationRepository.SendOTPEmailAsync(email, existingNotExpiredOTP.OTP);
+                var emailBody = _emailConfigurationRepository.GenerateOtpLoginEmailBody(existingNotExpiredOTP.OTP).GetAwaiter().GetResult();
+
+                result.Success = await _emailConfigurationRepository.SendOTPEmailAsync(email, existingNotExpiredOTP.OTP, emailBody);
                 if (!result.Success)
                 {
                     result.Message = "An error occured while sending mail. Please refresh the page and try agian.";
@@ -88,7 +90,8 @@ namespace CSO_Responsive.Controllers
             result = await _emailOTPsRepository.CreateOTPAsync(newOtpRecord);
             if(!result.Success) { return Json(result); }
 
-            result.Success = await _emailConfigurationRepository.SendOTPEmailAsync(email, newOtpRecord.OTP);
+            var body = _emailConfigurationRepository.GenerateOtpLoginEmailBody(otp).GetAwaiter().GetResult();
+            result.Success = await _emailConfigurationRepository.SendOTPEmailAsync(email, newOtpRecord.OTP, body);
             if (!result.Success)
             {
                 result.Message = "An error occured while sending mail. Please refresh the page and try agian.";
