@@ -401,6 +401,7 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
                 _systemLogService.WriteLog(
                     $"SendOTPEmailAsync: Connecting to SMTP → {data.SmtpServer}:{data.Port} (StartTls)"
                 );
+                smtp.LocalDomain = "timesheetsoft.com";
 
                 smtp.Connect(data.SmtpServer, data.Port, SecureSocketOptions.StartTls);
                 _systemLogService.WriteLog("SendOTPEmailAsync: SMTP connection successful.");
