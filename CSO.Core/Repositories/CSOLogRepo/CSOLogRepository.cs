@@ -5,6 +5,7 @@ using CSO.Core.Security;
 using CSO.Core.Services.SystemLogs;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Data;
 
 namespace CSO.Core.Repositories.CSOLogRepo;
@@ -133,6 +134,7 @@ public class CSOLogRepository : SqlTableRepository, ICSOLogRepository
             csoLogData.UpdatedBy = model.UserId;
             csoLogData.UpdatedOn = DateTime.Now;
             csoLogData.SKUDetails = model.SKUDetails;
+            csoLogData.Status1 = csoLogData.Status1 == 0 ? (int)Status.Open : csoLogData.Status1;
 
             var result = await base.UpdateAsync<CSOLog>(csoLogData);
             return result;

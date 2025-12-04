@@ -107,7 +107,7 @@ $(function () {
                         }
                         $('#NearestPlantId').append(option);
                     });
-
+                    $('#NearestPlantId').prop("disabled", false);
                     $('#NearestPlantId').val($("#hf_SelectedNearestPlantId").val());
                     $('#NearestPlantId').trigger('change');
                     Blockloaderhide();

@@ -22,7 +22,7 @@ public class ProductTypeRepository : SqlTableRepository, IProductTypeRepository
         try
         {
             var productTypeList = await _dbContext.ProductTypes
-                .Where(i => (i.BrandId ?? "").Contains(brandId.ToString()))
+                .Where(i => ("," + (i.BrandId ?? "") + ",").Contains("," + brandId.ToString() + ","))
                 .Select(x => new ProductTypeViewModel
                 {
                     Id = x.Id,

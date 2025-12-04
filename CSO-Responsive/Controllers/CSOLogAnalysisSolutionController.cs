@@ -19,6 +19,7 @@ using CSO.Core.Services.SystemLogs;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -74,8 +75,28 @@ namespace CSO_Responsive.Controllers
             _mailMatrixRepository = mailMatrixRepository;
             _webHostEnvironment = webHostEnvironment;
         }
-        public IActionResult Index()
+        public IActionResult Index(string status, string divisionIds, string plantIds, DateTime? fromDate, DateTime? toDate)
         {
+            if(!string.IsNullOrEmpty(status))
+            {
+                TempData["Status"] = status;
+            }
+            if(!string.IsNullOrEmpty(divisionIds))
+            {
+                TempData["DivisionIds"] = divisionIds;
+            }
+            if(!string.IsNullOrEmpty(plantIds))
+            {
+                TempData["PlantIds"] = plantIds;
+            }
+            if (fromDate.HasValue)
+            {
+                TempData["FromDate"] = fromDate.Value.ToString("dd/MM/yyyy");
+            }
+            if (toDate.HasValue)
+            {
+                TempData["ToDate"] = toDate.Value.ToString("dd/MM/yyyy");
+            }
             return View();
         }
 
@@ -85,9 +106,46 @@ namespace CSO_Responsive.Controllers
             string fYear = HttpContext.Session.GetString("FYear") ?? "";
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
             var csoList = await _csoLogAnalRepository.GetCSOLogListAsync(fYear, userId);
+            var status = TempData["Status"]?.ToString();
+            var divisionIds = TempData["DivisionIds"]?.ToString();
+            var plantIds = TempData["PlantIds"]?.ToString();
+            DateTime? fromDate = !string.IsNullOrEmpty(TempData["FromDate"]?.ToString())
+                           ? DateTime.Parse(TempData["FromDate"].ToString())
+                           : null;
+            DateTime? toDate = !string.IsNullOrEmpty(TempData["ToDate"]?.ToString())
+                           ? DateTime.Parse(TempData["ToDate"].ToString())
+                           : null;
+            if (!string.IsNullOrEmpty(status))
+            {
+                csoList = csoList.Where(i => i.Status == status).ToList();
+            }
+            if(!string.IsNullOrEmpty(divisionIds))
+            {
+                var divisionIdList = divisionIds
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => int.TryParse(id, out var value) ? value : (int?)null)
+                    .Where(id => id.HasValue)
+                    .Select(id => id.Value)
+                    .ToList();
+                csoList = csoList.Where(i => divisionIdList.Contains(i.DivisionId)).ToList();
+            }
+            if(!string.IsNullOrEmpty(plantIds))
+            {
+                var plantIdList = plantIds
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => int.TryParse(id, out var value) ? value : (int?)null)
+                    .Where(id => id.HasValue)
+                    .Select(id => id.Value)
+                    .ToList();
+                csoList = csoList.Where(i => plantIdList.Contains(i.PlantId)).ToList();
+            }
+            if(fromDate.HasValue && toDate.HasValue)
+            {
+                csoList = csoList.Where(i => i.Logdate >= fromDate.Value && i.Logdate <= toDate.Value).ToList();
+            }
             var result = new
             {
-                Count = csoList.Count,
+                csoList.Count,
                 Data = csoList
             };
             return Json(result);

@@ -32,18 +32,23 @@ namespace CSO_Responsive.Controllers
             _securityActionRepository = securityActionRepository;
         }
 
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> IndexAsync(string? returnUrl = null)
         {
+            var ua = HttpContext.Request.Headers["User-Agent"].ToString();
+            var isMobile = ua.Contains("Mobi") || ua.Contains("Android") || ua.Contains("iPhone");
+            
+            if(isMobile)
+            {
+                return RedirectToAction("Login", "Account", new { returnUrl });
+            }
+
             string AdId = _activeDirectoryUserRoleManager.GetLoginUserName();
             if (!string.IsNullOrEmpty(AdId))
             {
                 var loginUser = await _userRepository.LoginWithAdId(AdId);
                 if(loginUser != null)
                 {
-                    var ua = HttpContext.Request.Headers["User-Agent"].ToString();
-                    var isMobile = ua.Contains("Mobi") || ua.Contains("Android") || ua.Contains("iPhone");
-
                     // === Dashboard ===
                     var canDashboardShowOnMobile = isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_MOBILE_DASHBOARD, loginUser.RoleId);
                     var canDashboardShowOnDesktop = !isMobile && await _securityActionRepository.CanDoAsync(SecurityActionsEnum.SEC_DESKTOP_DASHBOARD, loginUser.RoleId);

@@ -10,6 +10,8 @@ public class CSOLogGridModel
 
     public DateTime Logdate { get; set; }
 
+    public int DivisionId { get; set; }
+
     public string? DivisionName { get; set; }
 
     public string? CategoryName { get; set; }
@@ -25,6 +27,8 @@ public class CSOLogGridModel
     public string? BrandName { get; set; }
 
     public string? ProductTypeName { get; set; }
+
+    public int PlantId { get; set; }
 
     public string? PlantName { get; set; }
 
