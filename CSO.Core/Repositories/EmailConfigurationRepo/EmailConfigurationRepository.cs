@@ -1,13 +1,16 @@
-using CSO.Core.DatabaseContext;
+﻿using CSO.Core.DatabaseContext;
 using CSO.Core.Models;
 using CSO.Core.Repositories.Shared;
 using CSO.Core.Security;
 using CSO.Core.Services.SystemLogs;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
+using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CSO.Core.Repositories.EmailConfigurationRepo;
 
@@ -267,49 +270,174 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
         }
     }
 
-    public async Task<bool> SendOTPEmailAsync(string userEmail, string otp)
+    //public async Task<bool> SendOTPEmailAsync(string userEmail, string otp)
+    //{
+    //    try
+    //    {
+    //        var data = await _dbContext.EmailConfigurations.Where(x => x.Id > 0 && x.SmtpServer != null).FirstOrDefaultAsync();
+    //        if (data != null)
+    //        {
+    //            var email = new MimeMessage
+    //            {
+    //                Sender = MailboxAddress.Parse(data.UserName)
+    //            };
+    //            email.From.Add(email.Sender);
+
+    //            email.To.Add(MailboxAddress.Parse(userEmail));
+
+    //            string ssubject = "Your One-Time Password (OTP)";
+    //            string sBody = $"Your OTP for CSO login is: <b>{otp}</b>";
+
+    //            email.Subject = ssubject.ToString().Trim();
+    //            BodyBuilder bodyBuilder = new()
+    //            {
+    //                HtmlBody = sBody.ToString()
+    //            };
+
+    //            email.Body = bodyBuilder.ToMessageBody();
+
+    //            using var smtp = new SmtpClient();
+    //            smtp.CheckCertificateRevocation = false;
+    //            smtp.Connect(data.SmtpServer, data.Port, SecureSocketOptions.Auto);
+    //            smtp.Authenticate(data.UserName, data.Password);
+    //            smtp.Send(email);
+    //            smtp.Disconnect(true);
+    //            return true;
+    //        }
+    //        else
+    //        {
+    //            return false;
+    //        }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _systemLogService.WriteLog(ex.Message);
+    //        return false;
+    //    }
+    //}
+
+    private bool IsEmail(string input)
+    {
+        return Regex.IsMatch(input, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+    }
+
+    public async Task<bool> SendOTPEmailAsync(string userEmail, string otp, string body)
     {
         try
         {
-            var data = await _dbContext.EmailConfigurations.Where(x => x.Id > 0 && x.SmtpServer != null).FirstOrDefaultAsync();
-            if (data != null)
+            _systemLogService.WriteLog("SendOTPEmailAsync: Started.");
+
+            var data = await _dbContext.EmailConfigurations
+                .Where(x => x.Id > 0 && x.SmtpServer != null)
+                .FirstOrDefaultAsync();
+
+            if (data == null)
             {
-                var email = new MimeMessage
-                {
-                    Sender = MailboxAddress.Parse(data.UserName)
-                };
-                email.From.Add(email.Sender);
+                _systemLogService.WriteLog("SendOTPEmailAsync: FAILED → No SMTP configuration found.");
+                return false;
+            }
 
-                email.To.Add(MailboxAddress.Parse(userEmail));
+            _systemLogService.WriteLog(
+                $"SendOTPEmailAsync: Loaded SMTP config → Server:{data.SmtpServer}, Port:{data.Port}, SSL:{data.SslRequired}"
+            );
 
-                string ssubject = "Your One-Time Password (OTP)";
-                string sBody = $"Your OTP for CSO login is: <b>{otp}</b>";
+            // 🔑 Resolve actual email (support email OR Id/Code like PPS)
+            string emailAddress;
 
-                email.Subject = ssubject.ToString().Trim();
-                BodyBuilder bodyBuilder = new()
-                {
-                    HtmlBody = sBody.ToString()
-                };
-
-                email.Body = bodyBuilder.ToMessageBody();
-
-                using var smtp = new SmtpClient();
-                smtp.CheckCertificateRevocation = false;
-                smtp.Connect(data.SmtpServer, data.Port, SecureSocketOptions.Auto);
-                smtp.Authenticate(data.UserName, data.Password);
-                smtp.Send(email);
-                smtp.Disconnect(true);
-                return true;
+            if (IsEmail(userEmail))
+            {
+                emailAddress = userEmail;
             }
             else
             {
+                emailAddress = await _dbContext.Users
+                    .Where(u =>
+                        u.Id.ToString() == userEmail      // numeric id like PPS
+                        || u.UserName == userEmail        // login id (if any)
+                        || u.Email == userEmail)   // employee code (if you have this)
+                    .Select(u => u.Email)
+                    .FirstOrDefaultAsync();
+            }
+
+            if (string.IsNullOrWhiteSpace(emailAddress))
+            {
+                _systemLogService.WriteLog(
+                    $"SendOTPEmailAsync: FAILED → No valid email found for '{userEmail}'."
+                );
                 return false;
             }
+
+            _systemLogService.WriteLog($"SendOTPEmailAsync: Resolved recipient → {emailAddress}");
+
+            var email = new MimeMessage();
+            email.Sender = MailboxAddress.Parse(data.UserName);
+            email.From.Add(email.Sender);
+            email.To.Add(MailboxAddress.Parse(emailAddress));
+
+            string ssubject = "Your One-Time Password (OTP)";
+            //string sBody = "Your OTP for CSO login is: <b>{otp}</b>";
+
+            email.Subject = (ssubject ?? "No Subject").Trim();
+
+
+            //var bodyBuilder = new BodyBuilder
+            //{
+            //    HtmlBody = sBody
+            //};
+            BodyBuilder bodyBuilder = new BodyBuilder();
+            bodyBuilder.HtmlBody = body;
+
+            email.Body = bodyBuilder.ToMessageBody();
+
+            //_systemLogService.WriteLog($"SendOTPEmailAsync: Mail body → {sBody}");
+
+            _systemLogService.WriteLog("SendOTPEmailAsync: Email object created successfully.");
+
+            using (var smtp = new SmtpClient())
+            {
+                smtp.CheckCertificateRevocation = false;
+
+                // Use the SAME style as your working PPS mail (StartTls)
+                _systemLogService.WriteLog(
+                    $"SendOTPEmailAsync: Connecting to SMTP → {data.SmtpServer}:{data.Port} (StartTls)"
+                );
+
+                smtp.Connect(data.SmtpServer, data.Port, SecureSocketOptions.StartTls);
+                _systemLogService.WriteLog("SendOTPEmailAsync: SMTP connection successful.");
+
+                smtp.Authenticate(data.UserName, data.Password);
+                _systemLogService.WriteLog("SendOTPEmailAsync: SMTP authentication successful.");
+
+                smtp.Send(email);
+                _systemLogService.WriteLog("SendOTPEmailAsync: Email handed to SMTP server.");
+
+                smtp.Disconnect(true);
+            }
+
+            _systemLogService.WriteLog(
+                $"SendOTPEmailAsync: SUCCESS → OTP email sent to {emailAddress}."
+            );
+
+            return true;
         }
         catch (Exception ex)
         {
-            _systemLogService.WriteLog(ex.Message);
+            _systemLogService.WriteLog($"SendOTPEmailAsync ERROR → {ex}");
             return false;
         }
     }
+
+    public Task<string> GenerateOtpLoginEmailBody(string otp)
+    {
+        string body = $@"
+    <div style='font-family:Arial;font-size:14px;color:#333;'>
+        <p>Your OTP for login is:</p>
+        <h2>{WebUtility.HtmlEncode(otp)}</h2>
+        <p>This OTP is valid for the next 10 minutes.</p>
+        <p>Regards,<br>CSO Team</p>
+    </div>";
+
+        return Task.FromResult(body);
+    }
+
 }
