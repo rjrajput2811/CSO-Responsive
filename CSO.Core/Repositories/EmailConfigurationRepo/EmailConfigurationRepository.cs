@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using System.Net;
-using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -349,7 +348,7 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
                 BodyBuilder bodyBuilder = new BodyBuilder();
                 bodyBuilder.HtmlBody = sBody;
 
-                email.Body = bodyBuilder.ToMessageBody();
+            email.Body = bodyBuilder.ToMessageBody();
 
 
                 using (var smtp = new SmtpClient())
