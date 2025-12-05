@@ -30,7 +30,7 @@ public class DashboardService : IDashboardService
             parameters.Add("@toDate", toDate);
             using var multi = await _dbConnection.QueryMultipleAsync("SP_Get_CSO_Dashboard_Data", parameters, commandType: CommandType.StoredProcedure);
             var result = await multi.ReadFirstOrDefaultAsync<DashboardViewModel>();
-            result?.PlantData = (await multi.ReadAsync<PlantData>()).ToList();
+            result.PlantData = (await multi.ReadAsync<PlantData>()).ToList();
             return result;
         }
         catch (Exception ex)
