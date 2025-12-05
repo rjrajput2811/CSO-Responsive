@@ -22,7 +22,7 @@ public class NearestPlantRepository : SqlTableRepository, INearestPlantRepositor
         try
         {
             var nearestPlantList = await _dbContext.NearestPlants
-                .Where(i => (i.PlantId ?? "").Contains(plantId.ToString()) && i.IsActive)
+                .Where(i => ("," + (i.PlantId ?? "") + ",").Contains("," + plantId.ToString() + ",") && i.IsActive)
                 .Select(x => new NearestPlantViewModel
                 {
                     Id = x.Id,

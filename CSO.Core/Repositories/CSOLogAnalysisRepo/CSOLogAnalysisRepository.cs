@@ -48,6 +48,8 @@ namespace CSO.Core.Repositories.CSOLogAnalysisRepo
                     CSONo = 100 + data.Id,
                     UserName = data.UserName,
                     CSONoFYear = (100 + data.Id).ToString() + '/' + data.FinancialYear.ToString(),
+                    DivisionId = data.DivisionId,
+                    PlantId = data.PlantId,
                     PlantName = data.PlantName,
                     BrandName = data.BrandName,
                     ProductTypeName = data.ProductTypeName,

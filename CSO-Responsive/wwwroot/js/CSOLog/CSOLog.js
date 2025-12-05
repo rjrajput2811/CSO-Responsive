@@ -95,7 +95,7 @@ $(function () {
         $.ajax({
             url: $("#hf_GetNearestPlantListByPlantAndUser").val(),
             type: "GET",
-            data: { brandId: $("#BrandId").val() },
+            data: { plantId: $("#PlantId").val() },
             success: function (response) {
                 $('#NearestPlantId').empty();
                 $('#NearestPlantId').append($('<option>').val('').text('Select Nearest Plant'));
@@ -107,7 +107,7 @@ $(function () {
                         }
                         $('#NearestPlantId').append(option);
                     });
-
+                    $('#NearestPlantId').prop("disabled", false);
                     $('#NearestPlantId').val($("#hf_SelectedNearestPlantId").val());
                     $('#NearestPlantId').trigger('change');
                     Blockloaderhide();
