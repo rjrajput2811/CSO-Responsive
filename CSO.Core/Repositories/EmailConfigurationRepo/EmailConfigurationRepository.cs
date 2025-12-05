@@ -269,57 +269,6 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
         }
     }
 
-    //public async Task<bool> SendOTPEmailAsync(string userEmail, string otp)
-    //{
-    //    try
-    //    {
-    //        var data = await _dbContext.EmailConfigurations.Where(x => x.Id > 0 && x.SmtpServer != null).FirstOrDefaultAsync();
-    //        if (data != null)
-    //        {
-    //            var email = new MimeMessage
-    //            {
-    //                Sender = MailboxAddress.Parse(data.UserName)
-    //            };
-    //            email.From.Add(email.Sender);
-
-    //            email.To.Add(MailboxAddress.Parse(userEmail));
-
-    //            string ssubject = "Your One-Time Password (OTP)";
-    //            string sBody = $"Your OTP for CSO login is: <b>{otp}</b>";
-
-    //            email.Subject = ssubject.ToString().Trim();
-    //            BodyBuilder bodyBuilder = new()
-    //            {
-    //                HtmlBody = sBody.ToString()
-    //            };
-
-    //            email.Body = bodyBuilder.ToMessageBody();
-
-    //            using var smtp = new SmtpClient();
-    //            smtp.CheckCertificateRevocation = false;
-    //            smtp.Connect(data.SmtpServer, data.Port, SecureSocketOptions.Auto);
-    //            smtp.Authenticate(data.UserName, data.Password);
-    //            smtp.Send(email);
-    //            smtp.Disconnect(true);
-    //            return true;
-    //        }
-    //        else
-    //        {
-    //            return false;
-    //        }
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _systemLogService.WriteLog(ex.Message);
-    //        return false;
-    //    }
-    //}
-
-    private bool IsEmail(string input)
-    {
-        return Regex.IsMatch(input, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
-    }
-
     public async Task<bool> SendOTPEmailAsync(string userEmail, string otp)
     {
         try
@@ -327,34 +276,31 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
             var data = await _dbContext.EmailConfigurations.Where(x => x.Id > 0 && x.SmtpServer != null).FirstOrDefaultAsync();
             if (data != null)
             {
-
-                var email = new MimeMessage();
-                email.Sender = MailboxAddress.Parse(data.UserName);
+                var email = new MimeMessage
+                {
+                    Sender = MailboxAddress.Parse(data.UserName)
+                };
                 email.From.Add(email.Sender);
 
-                if (!string.IsNullOrEmpty(userEmail))
-                {
-                    email.To.Add(MailboxAddress.Parse(userEmail));
-                }
+                email.To.Add(MailboxAddress.Parse(userEmail));
 
                 string ssubject = "Your One-Time Password (OTP)";
                 string sBody = $"Your OTP for CSO login is: <b>{otp}</b>";
 
-                email.Subject = ssubject.ToString().Trim() ?? "No Subject";
-                BodyBuilder bodyBuilder = new BodyBuilder();
-                bodyBuilder.HtmlBody = sBody;
+                email.Subject = ssubject.ToString().Trim();
+                BodyBuilder bodyBuilder = new()
+                {
+                    HtmlBody = sBody.ToString()
+                };
 
                 email.Body = bodyBuilder.ToMessageBody();
 
-
-                using (var smtp = new SmtpClient())
-                {
-                    smtp.CheckCertificateRevocation = false;
-                    smtp.Connect(data.SmtpServer, data.Port, SecureSocketOptions.StartTls);
-                    smtp.Authenticate(data.UserName, data.Password);
-                    smtp.Send(email);
-                    smtp.Disconnect(true);
-                }
+                using var smtp = new SmtpClient();
+                smtp.CheckCertificateRevocation = false;
+                smtp.Connect(data.SmtpServer, data.Port, SecureSocketOptions.Auto);
+                smtp.Authenticate(data.UserName, data.Password);
+                smtp.Send(email);
+                smtp.Disconnect(true);
                 return true;
             }
             else
@@ -368,4 +314,58 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
             return false;
         }
     }
+
+    //private bool IsEmail(string input)
+    //{
+    //    return Regex.IsMatch(input, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+    //}
+
+    //public async Task<bool> SendOTPEmailAsync(string userEmail, string otp)
+    //{
+    //    try
+    //    {
+    //        var data = await _dbContext.EmailConfigurations.Where(x => x.Id > 0 && x.SmtpServer != null).FirstOrDefaultAsync();
+    //        if (data != null)
+    //        {
+
+    //            var email = new MimeMessage();
+    //            email.Sender = MailboxAddress.Parse(data.UserName);
+    //            email.From.Add(email.Sender);
+
+    //            if (!string.IsNullOrEmpty(userEmail))
+    //            {
+    //                email.To.Add(MailboxAddress.Parse(userEmail));
+    //            }
+
+    //            string ssubject = "Your One-Time Password (OTP)";
+    //            string sBody = $"Your OTP for CSO login is: <b>{otp}</b>";
+
+    //            email.Subject = ssubject.ToString().Trim() ?? "No Subject";
+    //            BodyBuilder bodyBuilder = new BodyBuilder();
+    //            bodyBuilder.HtmlBody = sBody;
+
+    //            email.Body = bodyBuilder.ToMessageBody();
+
+
+    //            using (var smtp = new SmtpClient())
+    //            {
+    //                smtp.CheckCertificateRevocation = false;
+    //                smtp.Connect(data.SmtpServer, data.Port, SecureSocketOptions.StartTls);
+    //                smtp.Authenticate(data.UserName, data.Password);
+    //                smtp.Send(email);
+    //                smtp.Disconnect(true);
+    //            }
+    //            return true;
+    //        }
+    //        else
+    //        {
+    //            return false;
+    //        }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _systemLogService.WriteLog(ex.Message);
+    //        return false;
+    //    }
+    //}
 }
