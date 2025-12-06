@@ -351,25 +351,52 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
             email.Body = bodyBuilder.ToMessageBody();
 
 
-                using (var smtp = new SmtpClient())
-                {
-                    smtp.CheckCertificateRevocation = false;
-                    smtp.Connect(data.SmtpServer, data.Port, SecureSocketOptions.StartTls);
-                    smtp.Authenticate(data.UserName, data.Password);
-                    smtp.Send(email);
-                    smtp.Disconnect(true);
-                }
-                return true;
-            }
-            else
+            using (var smtp = new SmtpClient())
             {
-                return false;
+                smtp.CheckCertificateRevocation = false;
+
+                // Use the SAME style as your working PPS mail (StartTls)
+                _systemLogService.WriteLog(
+                    $"SendOTPEmailAsync: Connecting to SMTP → {data.SmtpServer}:{data.Port} (StartTls)"
+                );
+
+                smtp.LocalDomain = "timesheetsoft.com";
+
+                smtp.Connect(data.SmtpServer, data.Port, SecureSocketOptions.StartTls);
+                _systemLogService.WriteLog("SendOTPEmailAsync: SMTP connection successful.");
+
+                smtp.Authenticate(data.UserName, data.Password);
+                _systemLogService.WriteLog("SendOTPEmailAsync: SMTP authentication successful.");
+
+                smtp.Send(email);
+                _systemLogService.WriteLog("SendOTPEmailAsync: Email handed to SMTP server.");
+
+                smtp.Disconnect(true);
             }
+
+            _systemLogService.WriteLog(
+                $"SendOTPEmailAsync: SUCCESS → OTP email sent to {emailAddress}."
+            );
+
+            return true;
         }
         catch (Exception ex)
         {
-            _systemLogService.WriteLog(ex.Message);
+            _systemLogService.WriteLog($"SendOTPEmailAsync ERROR → {ex}");
             return false;
         }
+    }
+
+    public Task<string> GenerateOtpLoginEmailBody(string otp)
+    {
+        string body = $@"
+    <div style='font-family:Arial;font-size:14px;color:#333;'>
+        <p>Your OTP for login is:</p>
+        <h2>{WebUtility.HtmlEncode(otp)}</h2>
+        <p>This OTP is valid for the next 10 minutes.</p>
+        <p>Regards,<br>CSO Team</p>
+    </div>";
+
+        return Task.FromResult(body);
     }
 }
