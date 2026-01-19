@@ -321,6 +321,114 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
         return Regex.IsMatch(input, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
     }
 
+    //public async Task<bool> SendOTPEmailAsync(string userEmail, string otp, string body)
+    //{
+    //    try
+    //    {
+    //        _systemLogService.WriteLog("SendOTPEmailAsync: Started.");
+
+    //        var data = await _dbContext.EmailConfigurations
+    //            .Where(x => x.Id > 0 && x.SmtpServer != null)
+    //            .FirstOrDefaultAsync();
+
+    //        if (data == null)
+    //        {
+    //            _systemLogService.WriteLog("SendOTPEmailAsync: FAILED → No SMTP configuration found.");
+    //            return false;
+    //        }
+
+    //        _systemLogService.WriteLog(
+    //            $"SendOTPEmailAsync: Loaded SMTP config → Server:{data.SmtpServer}, Port:{data.Port}, SSL:{data.SslRequired}"
+    //        );
+
+    //        // 🔑 Resolve actual email (support email OR Id/Code like PPS)
+    //        string emailAddress;
+
+    //        if (IsEmail(userEmail))
+    //        {
+    //            emailAddress = userEmail;
+    //        }
+    //        else
+    //        {
+    //            emailAddress = await _dbContext.Users
+    //                .Where(u =>
+    //                    u.Id.ToString() == userEmail      // numeric id like PPS
+    //                    || u.UserName == userEmail        // login id (if any)
+    //                    || u.Email == userEmail)   // employee code (if you have this)
+    //                .Select(u => u.Email)
+    //                .FirstOrDefaultAsync();
+    //        }
+
+    //        if (string.IsNullOrWhiteSpace(emailAddress))
+    //        {
+    //            _systemLogService.WriteLog(
+    //                $"SendOTPEmailAsync: FAILED → No valid email found for '{userEmail}'."
+    //            );
+    //            return false;
+    //        }
+
+    //        _systemLogService.WriteLog($"SendOTPEmailAsync: Resolved recipient → {emailAddress}");
+
+    //        var email = new MimeMessage();
+    //        email.Sender = MailboxAddress.Parse(data.UserName);
+    //        email.From.Add(email.Sender);
+    //        email.To.Add(MailboxAddress.Parse(emailAddress));
+
+    //        string ssubject = "Your One-Time Password (OTP)";
+    //        //string sBody = "Your OTP for CSO login is: <b>{otp}</b>";
+
+    //        email.Subject = (ssubject ?? "No Subject").Trim();
+
+
+    //        //var bodyBuilder = new BodyBuilder
+    //        //{
+    //        //    HtmlBody = sBody
+    //        //};
+    //        BodyBuilder bodyBuilder = new BodyBuilder();
+    //        bodyBuilder.HtmlBody = body;
+
+    //        email.Body = bodyBuilder.ToMessageBody();
+
+    //        //_systemLogService.WriteLog($"SendOTPEmailAsync: Mail body → {sBody}");
+
+    //        _systemLogService.WriteLog("SendOTPEmailAsync: Email object created successfully.");
+
+    //        using (var smtp = new SmtpClient())
+    //        {
+    //            smtp.CheckCertificateRevocation = false;
+
+    //            // Use the SAME style as your working PPS mail (StartTls)
+    //            _systemLogService.WriteLog(
+    //                $"SendOTPEmailAsync: Connecting to SMTP → {data.SmtpServer}:{data.Port} (StartTls)"
+    //            );
+
+    //            smtp.LocalDomain = "timesheetsoft.com";
+
+    //            smtp.Connect(data.SmtpServer, data.Port, SecureSocketOptions.StartTls);
+    //            _systemLogService.WriteLog("SendOTPEmailAsync: SMTP connection successful.");
+
+    //            smtp.Authenticate(data.UserName, data.Password);
+    //            _systemLogService.WriteLog("SendOTPEmailAsync: SMTP authentication successful.");
+
+    //            smtp.Send(email);
+    //            _systemLogService.WriteLog("SendOTPEmailAsync: Email handed to SMTP server.");
+
+    //            smtp.Disconnect(true);
+    //        }
+
+    //        _systemLogService.WriteLog(
+    //            $"SendOTPEmailAsync: SUCCESS → OTP email sent to {emailAddress}."
+    //        );
+
+    //        return true;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _systemLogService.WriteLog($"SendOTPEmailAsync ERROR → {ex}");
+    //        return false;
+    //    }
+    //}
+
     public async Task<bool> SendOTPEmailAsync(string userEmail, string otp, string body)
     {
         try
@@ -341,7 +449,7 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
                 $"SendOTPEmailAsync: Loaded SMTP config → Server:{data.SmtpServer}, Port:{data.Port}, SSL:{data.SslRequired}"
             );
 
-            // 🔑 Resolve actual email (support email OR Id/Code like PPS)
+            // 🔑 Resolve actual email (support email OR Id/Code)
             string emailAddress;
 
             if (IsEmail(userEmail))
@@ -352,9 +460,9 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
             {
                 emailAddress = await _dbContext.Users
                     .Where(u =>
-                        u.Id.ToString() == userEmail      // numeric id like PPS
-                        || u.UserName == userEmail        // login id (if any)
-                        || u.Email == userEmail)   // employee code (if you have this)
+                        u.Id.ToString() == userEmail ||
+                        u.UserName == userEmail ||
+                        u.Email == userEmail)
                     .Select(u => u.Email)
                     .FirstOrDefaultAsync();
             }
@@ -369,40 +477,36 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
 
             _systemLogService.WriteLog($"SendOTPEmailAsync: Resolved recipient → {emailAddress}");
 
+            // ===== CREATE EMAIL =====
             var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse(data.UserName);
             email.From.Add(email.Sender);
             email.To.Add(MailboxAddress.Parse(emailAddress));
 
             string ssubject = "Your One-Time Password (OTP)";
-            //string sBody = "Your OTP for CSO login is: <b>{otp}</b>";
-
             email.Subject = (ssubject ?? "No Subject").Trim();
 
-
-            //var bodyBuilder = new BodyBuilder
-            //{
-            //    HtmlBody = sBody
-            //};
             BodyBuilder bodyBuilder = new BodyBuilder();
             bodyBuilder.HtmlBody = body;
-
             email.Body = bodyBuilder.ToMessageBody();
-
-            //_systemLogService.WriteLog($"SendOTPEmailAsync: Mail body → {sBody}");
 
             _systemLogService.WriteLog("SendOTPEmailAsync: Email object created successfully.");
 
+            // ===== SEND VIA SMTP =====
             using (var smtp = new SmtpClient())
             {
                 smtp.CheckCertificateRevocation = false;
 
-                // Use the SAME style as your working PPS mail (StartTls)
+                // 🔥 AUTO EXTRACT DOMAIN FROM SMTP USERNAME
+                smtp.LocalDomain = GetDomainFromEmail(data.UserName);
+
+                _systemLogService.WriteLog(
+                    $"SendOTPEmailAsync: LocalDomain set to → {smtp.LocalDomain}"
+                );
+
                 _systemLogService.WriteLog(
                     $"SendOTPEmailAsync: Connecting to SMTP → {data.SmtpServer}:{data.Port} (StartTls)"
                 );
-
-                smtp.LocalDomain = "timesheetsoft.com";
 
                 smtp.Connect(data.SmtpServer, data.Port, SecureSocketOptions.StartTls);
                 _systemLogService.WriteLog("SendOTPEmailAsync: SMTP connection successful.");
@@ -440,6 +544,25 @@ public class EmailConfigurationRepository : SqlTableRepository, IEmailConfigurat
     </div>";
 
         return Task.FromResult(body);
+    }
+
+    private string GetDomainFromEmail(string email)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return "localhost";
+
+            var parts = email.Split('@');
+            if (parts.Length == 2 && !string.IsNullOrWhiteSpace(parts[1]))
+                return parts[1];
+
+            return "localhost";
+        }
+        catch
+        {
+            return "localhost";
+        }
     }
 
 }
