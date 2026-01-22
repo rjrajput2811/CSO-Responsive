@@ -24,10 +24,8 @@ using CSO.Core.Services.ReportService.CSOLogReportService;
 using CSO.Core.Services.ReportService.MSIReportService;
 using CSO.Core.Services.SystemLogs;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -73,27 +71,18 @@ builder.Services.AddScoped<IDbConnection>(db => new SqlConnection(connstring));
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
-//builder.Services.AddAuthentication(IISDefaults.AuthenticationScheme);
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(
-    options =>
+    .AddCookie(options =>
     {
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         options.LoginPath = new PathString("/Account/Login");
-    })
-    .AddNegotiate();
+    });
+
 builder.Services.AddAuthorization();
 
-//builder.Services.AddCors(opt =>
-//{
-//    opt.AddPolicy("CorsPolicy", builder => builder
-//        .AllowAnyHeader()
-//        .AllowAnyMethod()
-//        .WithOrigins(Configuration.GetSection(Constants.CORS_ORIGINS).Get<string[]>())
-//        .AllowCredentials());
-//});
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
